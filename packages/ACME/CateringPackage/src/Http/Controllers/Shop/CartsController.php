@@ -47,6 +47,7 @@ use Webkul\Customer\Repositories\WishlistRepository;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\CartRule\Repositories\CartRuleCouponRepository;
 use Webkul\Shop\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class CartsController extends Controller
 {
@@ -160,6 +161,76 @@ class CartsController extends Controller
         $add_in_cart=true;
         return redirect()->back()->with('add_in_cart', $add_in_cart);
     }
+
+
+
+    // sandeep add funtion for update mini cart items
+    public function update_miniCart_item($id){
+        $quantity = request()->quantity;
+        if ($quantity <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Quantity must be greater than zero.',
+            ]);
+        }
+
+        $cart = cart()->getCart();
+        $cartId = $cart->id;
+        
+
+
+        $itemData = DB::table('cart_items')->where('id',$id)->select('price','weight','quantity')->first();
+        if (!$itemData) {
+            return response()->json(['success' => false, 'message' => 'Item not found.']);
+        }
+
+        $TotalWeight = $itemData->weight * $quantity;
+        $total = $itemData->price * $quantity;
+        $oldQuantity = $itemData->quantity;
+        $newQuantity = $quantity - $oldQuantity;
+
+
+        $updateItemsTable = DB::table('cart_items')
+        ->where('id', $id)
+        ->update([
+            'quantity' => $quantity,
+            'total_weight'  => $TotalWeight,
+            'base_total_weight' => $TotalWeight,
+            'total'    => $total,
+            'base_total' => $total,
+            'updated_at' => now(),
+        ]);
+
+        // get cart total 
+        $NewTotalCart = DB::table('cart_items')
+                        ->where('cart_id', $cartId)
+                        ->sum('total');
+
+        $newCartItemsQty = $cart->items_qty + $newQuantity;
+
+        $cartTotal = $itemData->price * $newCartItemsQty;
+
+        $updateCartTable = DB::table('cart')
+        ->where('id', $cartId)
+        ->update([
+            'items_qty' => $newCartItemsQty,
+            'grand_total'  => $NewTotalCart,
+            'base_grand_total' => $NewTotalCart,
+            'sub_total'    => $NewTotalCart,
+            'base_sub_total' => $NewTotalCart,
+            'updated_at' => now(),
+        ]);
+
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Cart item updated successfully.',
+        'total_quantity'  =>  $newCartItemsQty,
+    ]);
+
+    }
+
+
 
     public function getMiniCartDetails()
     {

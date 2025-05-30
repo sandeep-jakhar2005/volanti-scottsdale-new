@@ -162,7 +162,7 @@ class CateringPackageController extends Controller
     public function create(Request $request)
     {
 
-          // sandeep  update defualt address in addresses table
+           // sandeep  update defualt address in addresses table
           if ($request->has('type') && $request->type == 'Update_Fbo_Billing') {
             $customer_last_address = request()->input('addresses_id');
             // $customer_id = request()->input('customer_id');

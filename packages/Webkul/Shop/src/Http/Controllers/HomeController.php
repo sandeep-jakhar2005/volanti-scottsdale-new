@@ -5,6 +5,7 @@ namespace Webkul\Shop\Http\Controllers;
 use Webkul\Shop\Http\Controllers\Controller;
 use Webkul\Core\Repositories\SliderRepository;
 use Webkul\Product\Repositories\SearchRepository;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -54,4 +55,12 @@ class HomeController extends Controller
     {
         return $this->searchRepository->uploadSearchImage(request()->all());
     }
+
+    // sandeep add function for view erorr logs
+    public function logs(){
+        $logs = DB::table('logs')->orderBy('id','desc')->paginate('10');
+
+        return view('shop::logs.error-log',compact('logs'));
+    }
+
 }

@@ -36,7 +36,7 @@
     <div
       id="cart-modal-content"
       class="modal-content dropdown-list sensitive-modal cart-modal-content cart__modal"
-      :class="{ hide: !cartItems.length }"
+      :class="{ hide: shouldHideCart }"
     >
       <!-- Tanish || custom element for mini-cart header start -->
       <div class="min-cart-items">
@@ -54,7 +54,7 @@
         <!-- Tanish || custom element for mini-cart header end -->
         <div class="mini-cart-container" id="mini-cart-duplicate-container">
           <div
-            class="row small-card-container col-12 mb-2" style ="border-bottom: 1px solid rgb(222, 226, 230);"
+            class="row small-card-container col-12 pt-2 pb-2 " style ="border-bottom: 1px solid rgb(222, 226, 230);"
             :key="index"
             v-for="(item, index) in cartItems"
           >
@@ -74,27 +74,26 @@
             </div> -->
             <div class="col-8 no-padding card-body align-vertical-top" style="padding-right: 10px !important">
               <div class="no-padding">
-                <div class="fs16 text-nowrap fw6 product-name" v-html="item.name"></div>
+                <div class="fs16 text-nowrap fw6 product-name pb-1" v-html="item.name"></div>
 
-                <div class="row mini-cart-instruction">
+                <div class="row mini-cart-instruction d-block" style="font-size: 11px;">
                   <!-- sandeep delete div -->
                 <!-- <div class="row mini-cart-instruction"> -->
-                  <span v-if="item.additional.attributes != undefined" style="font-size: 13px;">
-                    <strong>Preference: </strong>
+                  <div class="pb-1" v-if="item.additional.attributes != undefined">
+                    Preference:
                     <template v-for="attribute in item.additional.attributes">
                       <span v-if="attribute.option_label">
                         {{ attribute.option_label }}
                       </span>
                     </template>
-                  </span>
+                  </div>
 
-                  <span
+                  <div
                     v-if="
                       item.additional.special_instruction !== undefined &&
                       item.additional.special_instruction !== ''
                     "
-                    style="font-size: 13px;"><strong>Special Instruction: </strong
-                    >{{ item.additional.special_instruction }}</span
+                    >Special Instruction <br /><div style="background-color: #f2f2f3;padding:10px">{{ item.additional.special_instruction }}</div></div
                   >
                 </div>
               <!-- </div> -->
@@ -102,21 +101,62 @@
               </div>
   
 
-            <div class="fs14 card-current-price fw6 col-4 mt-2 p-0 text-left">
-                  <div class="display-inbl">
-                    <label class="fw5 m-auto">{{ __("checkout.qty") }}:</label>
-                    <span class="quantityValue ml-1">{{ item.quantity }}</span>
+            <div class="fs14 card-current-price fw6 col-4 mt-2 p-0 text-right">
+                  <div class="display-inbl pb-2" style="display: flex !important;">
+                    <!-- <img
+                      src="/themes/volantijetcatering/assets/images/close.png"
+                      alt="close Icon"
+                      width="6"
+                      height="6"
+                      class="bin-icon-image"
+                    /> -->
+                    <!-- <span class="quantityValue ml-1 fs13">{{ item.quantity }}</span> -->
                     <!-- <span class="remove-item" @click="removeProduct(item.id)"> -->
-                      <span class="bin_icon">
+                    <!-- <span class="group__input__field d-flex justify-content-between">
+                      <button class="border-0 editMinusBtn" style="width: 16px;" data-item-id="{{ item.id }}">-</button>
+                      <input type="number" class="text-center w-50 border-0 bg-light p-1 editQuantityInput" value="{{ item.quantity }}" data-item-id="{{ item.id }}">
+                      <button class="border-0 editPlusBtn" style="width: 16px;" data-item-id="{{ item.id }}">+</button>
+                    </span> -->
+                    <span class="group__input__field d-flex justify-content-between">
+                    <button
+                      class="border-0 editMinusBtn"
+                      style="width: 16px;"
+                      :data-item-id="item.id"
+                    >-</button>
+                    <input
+                      type="text"
+                      class="text-center w-50 border-0 bg-light p-1 editQuantityInput"
+                      :value="item.quantity"
+                      :data-item-id="item.id"
+                    >
+                    <button
+                      class="border-0 editPlusBtn"
+                      style="width: 16px;"
+                      :data-item-id="item.id"
+                    >+</button>
+                  </span>
+        
+                      <span class="bin_icon m-auto">
+                        <span class="bin-btn-ring ml-2"></span>
                       <span class="bin-icon">
-                        <img src="/themes/volantijetcatering/assets/images/bin.png" alt="Bin Icon" width="15" height="15" class="bin-icon-image ml-2" @click="removeProduct(item.id,$event)">
+                        <img src="/themes/volantijetcatering/assets/images/bin-mini-cart.png" alt="Bin Icon" width="18" height="18" class="bin-icon-image ml-2" @click="removeProduct(item.id,$event)">
                       </span>
-                      <span class="bin-btn-ring ml-2"></span>
                       </span>
 
 
                       <!-- </span> -->
                   </div>
+                  <!-- <button
+                      class="border-0 text-end w-auto UpdateQuantityButton ml-2"
+                      :data-item-id="item.id"
+                    ><img src="/themes/volantijetcatering/assets/images/save.png" alt="Save" style="width: 18px; height: 18px; background: #fff; pointer-events: none;"></button> -->
+                 
+                    <button
+                  class="border-0 text-end w-auto UpdateQuantityButton ml-2"
+                  :data-item-id="item.id"
+                >
+                  <img src="/themes/volantijetcatering/assets/images/save.png" alt="Save" style="width: 18px; height: 18px; background: #fff; pointer-events: none;">
+                </button>
                   <!-- <span class="card-total-price fw6">
                                         {{
                                             isTaxInclusive == "1"
@@ -193,6 +233,14 @@ export default {
     };
   },
 
+  computed: {
+    shouldHideCart() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return this.cartItems.length === 0 && !urlParams.has("summaryedit");
+    },
+  },
+
+
   mounted: function () {
     this.getMiniCartDetails();
   },
@@ -218,6 +266,10 @@ export default {
             }
 
             this.cartInformation = response.data.mini_cart.cart_details;
+
+            // sandeep add code for open mini cart 
+            this.openMiniCart();
+
           } else {
             this.cartCount = 0;
           }
@@ -226,11 +278,18 @@ export default {
           console.log(this.__("error.something_went_wrong"));
         });
     },
-
+    
+    openMiniCart() {
+      let cartModal = document.getElementById("cart-modal-content");
+      if (cartModal) {
+        cartModal.classList.remove("hide");
+        cartModal.classList.add("slide-cart-modal");
+      }
+  },
     removeProduct: function (productId,event) {
       let $clickedElement = $(event.currentTarget);
 
-    $clickedElement.closest('.bin-icon').hide();
+    $clickedElement.closest('.bin-icon').css('visibility', 'hidden');
     $clickedElement.closest('.display-inbl').find(".bin-btn-ring").show();
 
       this.$http
@@ -246,7 +305,7 @@ export default {
           );
 
           $clickedElement.closest('.display-inbl').find(".bin-btn-ring").hide();
-          $clickedElement.closest('.bin-icon').show();
+          $clickedElement.closest('.bin-icon').css('visibility', 'visible');
 
           if (!this.cartItems.length && this.isCheckoutPage()) {
             window.location.href = this.checkoutRoute;
@@ -256,7 +315,7 @@ export default {
           console.log(this.__("error.something_went_wrong"));
 
           $clickedElement.closest('.display-inbl').find(".bin-btn-ring").hide();
-          $clickedElement.closest('.bin-icon').show();
+          $clickedElement.closest('.bin-icon').css('visibility', 'visible');
         });
     },
 

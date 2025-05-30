@@ -285,26 +285,137 @@ class ProductRepository extends Repository
             /**
              * Filter collection by required attributes.
              */
-            foreach ($attributes as $attribute) {
-                $alias = $attribute->code . '_product_attribute_values';
+         //   foreach ($attributes as $attribute) {
+         //       $alias = $attribute->code . '_product_attribute_values';
 
+        //        $qb->leftJoin('product_attribute_values as ' . $alias, 'products.id', '=', $alias . '.product_id')
+        //            ->where($alias . '.attribute_id', $attribute->id);
+
+          //      if ($attribute->code == 'name') {
+         //           $qb->where($alias . '.text_value', 'like', '%' . urldecode($params['name']) . '%');
+        //        } elseif ($attribute->code == 'url_key') {
+        //            if (empty($params['url_key'])) {
+        //                $qb->whereNotNull($alias . '.text_value');
+       //             } else {
+       //                 $qb->where($alias . '.text_value', 'like', '%' . urldecode($params['url_key']) . '%');
+         //           }
+       //         } else {
+       //             $qb->where($alias . '.' . $attribute->column_name, 1);
+      //          }
+     //       }
+
+       
+  foreach ($attributes as $attribute) {
+             
+                $alias = $attribute->code . '_product_attribute_values';
+            
                 $qb->leftJoin('product_attribute_values as ' . $alias, 'products.id', '=', $alias . '.product_id')
                     ->where($alias . '.attribute_id', $attribute->id);
-
+              
+            
                 if ($attribute->code == 'name') {
-                    $qb->where($alias . '.text_value', 'like', '%' . urldecode($params['name']) . '%');
+                          
+                    $searchTerm = urldecode($params['name'] ?? '');
+                    $searchTerm = preg_replace('/\s+/', ' ', $searchTerm);
+            
+                    if (!empty($searchTerm)) {
+                        $words = explode(' ', $searchTerm);
+            
+                        // Add relevance scoring column
+                        $relevanceCase = "CASE ";
+                        foreach ($words as $index => $word) {
+                            $trimWord = trim($word);
+                            // Exact match gets highest score
+                            $relevanceCase .= "WHEN " . $alias . ".text_value LIKE '%" . $trimWord . "%' THEN 100 ";
+                            // Soundex match gets medium score
+                            $relevanceCase .= "WHEN SOUNDEX(" . $alias . ".text_value) = SOUNDEX('" . $trimWord . "') THEN 50 ";
+                        }
+                        $relevanceCase .= "ELSE 1 END";
+                        
+                        $qb->addSelect(DB::raw($relevanceCase . ' as relevance_score'));
+            
+                        $qb->where(function ($query) use ($words, $alias) {
+                            foreach ($words as $word) {
+                                $trimWord = trim($word);
+                                // Regular match
+                                $query->orWhere($alias . '.text_value', 'like', '%' . $trimWord . '%');
+                                
+                                // Soundex match for similar sounding words
+                                $query->orWhereRaw("SOUNDEX(" . $alias . ".text_value) = SOUNDEX(?)", [$trimWord]);
+                                
+                                // Character-by-character match
+                                $chars = str_split(strtolower($trimWord));
+                                $query->orWhere(function($subQuery) use ($chars, $alias) {
+                                    foreach ($chars as $char) {
+                                        if (trim($char) !== '') {
+                                            $subQuery->where(DB::raw('LOWER(' . $alias . '.text_value)'), 'like', '%' . $char . '%');
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        
+                        // Order by relevance score (highest first)
+                        $qb->orderByDesc('relevance_score');
+                    }
+            
                 } elseif ($attribute->code == 'url_key') {
-                    if (empty($params['url_key'])) {
+                   
+            
+                    $searchTerm = urldecode($params['url_key'] ?? '');
+                    $searchTerm = preg_replace('/\s+/', ' ', $searchTerm);
+            
+                    if (empty($searchTerm)) {
+                       
                         $qb->whereNotNull($alias . '.text_value');
                     } else {
-                        $qb->where($alias . '.text_value', 'like', '%' . urldecode($params['url_key']) . '%');
+                       
+            
+                        $words = explode(' ', $searchTerm);
+            
+                        // Add relevance scoring column
+                        $relevanceCase = "CASE ";
+                        foreach ($words as $index => $word) {
+                            $trimWord = trim($word);
+                            $relevanceCase .= "WHEN " . $alias . ".text_value LIKE '%" . $trimWord . "%' THEN 100 ";
+                            $relevanceCase .= "WHEN SOUNDEX(" . $alias . ".text_value) = SOUNDEX('" . $trimWord . "') THEN 50 ";
+                        }
+                        $relevanceCase .= "ELSE 1 END";
+                        
+                        $qb->addSelect(DB::raw($relevanceCase . ' as relevance_score'));
+            
+                        $qb->where(function ($query) use ($words, $alias) {
+                            foreach ($words as $word) {
+                                $trimWord = trim($word);
+                                // Regular match
+                                $query->orWhere($alias . '.text_value', 'like', '%' . $trimWord . '%');
+                                
+                                // Soundex match for similar sounding words
+                                $query->orWhereRaw("SOUNDEX(" . $alias . ".text_value) = SOUNDEX(?)", [$trimWord]);
+                                
+                                // Character-by-character match
+                                $chars = str_split(strtolower($trimWord));
+                                $query->orWhere(function($subQuery) use ($chars, $alias) {
+                                    foreach ($chars as $char) {
+                                        if (trim($char) !== '') {
+                                            $subQuery->where(DB::raw('LOWER(' . $alias . '.text_value)'), 'like', '%' . $char . '%');
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        
+                        // Order by relevance score (highest first)
+                        $qb->orderByDesc('relevance_score');
                     }
+            
                 } else {
+                    
                     $qb->where($alias . '.' . $attribute->column_name, 1);
                 }
             }
 
-            /**
+     /**
              * Filter the filterable attributes.
              */
             $attributes = $filterableAttributes->whereNotIn('code', [

@@ -34,7 +34,7 @@
                     <form
                         method="post"
                         action="{{ route('shop.customer.forgot_password.store') }}"
-                        @submit.prevent="onSubmit">
+                        @submit.prevent="onSubmit" id="forgot-password-form">
 
                         {{ csrf_field() }}
 
@@ -49,15 +49,19 @@
                                 type="email"
                                 name="email"
                                 class="form-style"
+ value="{{ old('email') }}"
                                 v-validate="'required|email'" />
 
                             <span class="control-error" v-if="errors.has('email')" v-text="errors.first('email')"></span>
                         </div>
 
-                        <div class="control-group">
-
-                            {!! Captcha::render() !!}
-
+                          <div class="control-group">
+                            <div id="recaptcha"></div>
+                            @error('g-recaptcha-response')
+                            <div class="error-message control-error">
+                                {{ $message }}
+                            </div>
+                        @enderror
                         </div>
 
                         {!! view_render_event('bagisto.shop.customers.forget_password_form_controls.after') !!}
@@ -77,5 +81,28 @@
 @push('scripts')
 
 {!! Captcha::renderJS() !!}
+
+<script>
+    window.siteKey = "{{ core()->getConfigData('customer.captcha.credentials.site_key') }}";
+    $(document).ready(function() {
+        // Handle form submission
+        jQuery("body").on('click', '.forget_password_button', function(e) {
+            e.preventDefault();
+
+            var recaptchaResponse = grecaptcha.getResponse();
+            console.log(recaptchaResponse);
+            $('.error-message').remove();
+
+            if (recaptchaResponse === '') {
+                console.log('captcha error ');
+                $('#recaptcha').after('<span class="error-message text-danger">Please select CAPTCHA</span>');
+            } else {
+                console.log('captcha not error ');
+                document.getElementById('forgot-password-form').submit();
+            }
+        });
+    });
+
+        </script>
 
 @endpush

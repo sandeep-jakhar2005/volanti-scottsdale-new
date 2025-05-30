@@ -8,7 +8,7 @@
         "axios": "^1.1.2",
         "jquery-ui": "^1.13.2",
         "laravel-vite-plugin": "^0.7.2",
-        "vite": "^4.0.0"
+        "vite": "^6.2.3"
     },
     "dependencies": {
         "mime": "^3.0.0",

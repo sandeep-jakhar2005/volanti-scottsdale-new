@@ -1714,7 +1714,8 @@ a.order__cancel__button:hover {
 
     #showInvoice .invoice-dialog-centered .invoice__modal .table-width{
         width: 500px !important;
-    }
+padding-right: 15px;   
+ }
 
     #showInvoice .invoice-dialog-centered{
         max-width: 100% !important;

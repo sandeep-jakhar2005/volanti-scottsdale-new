@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Sales\Generators\OrderSequencer;
 use Webkul\Sales\Models\Order as OrderModel;
+use Illuminate\Support\Str;
+use Webkul\Sales\Models\Order;
 
 class OrderRepository extends Repository
 {
@@ -66,7 +68,6 @@ class OrderRepository extends Repository
             }
 
             $data['status'] = 'pending';
-
             $order = $this->model->create(array_merge($data, ['increment_id' => $this->generateIncrementId()]));
 
             $order->payment()->create($data['payment']);
@@ -74,7 +75,7 @@ class OrderRepository extends Repository
             if (isset($data['shipping_address'])) {
                 unset($data['shipping_address']['customer_id']);
 
-                $order->addresses()->create($data['shipping_address']);
+              $order->addresses()->create($data['shipping_address']);
             }
 
             unset($data['billing_address']['customer_id']);
@@ -206,7 +207,7 @@ class OrderRepository extends Repository
      */
     public function generateIncrementId()
     {
-        return app(OrderSequencer::class)->resolveGeneratorClass();
+      return app(OrderSequencer::class)->resolveGeneratorClass();
     }
 
     /**

@@ -25,6 +25,24 @@
 @endpush
 
 @section('page-detail-wrapper')
+@php
+    use Illuminate\Support\Facades\DB;
+
+    //   sandeep add code for payment button 
+            $status_log = DB::table('order_status_log')
+                        ->leftJoin('order_status', 'order_status_log.status_id', '=', 'order_status.id')
+                        ->where('order_id',$order->id)
+                        ->select('order_status.status')
+                        ->get();
+
+            $paidExists = $status_log->contains('status', 'paid');
+            $excludedStatuses = ['pending', 'canceled', 'rejected'];
+            if ($paidExists) {
+                $excludedStatuses[] = 'paid';
+            }
+
+
+@endphp
 
     <div class="account-head text-center">
         <div class="head w-100">
@@ -443,7 +461,7 @@ $today = new DateTime('today');
                                     <td data-value="{{ __('shop::app.customer.account.order.view.price') }}"
                                         class="order-price-col order_view_data" style="border-right: 1px solid #cccccc !important;">
                                         <div class="order-qty">
-                                            <span>Quantity: </span> {{ $item->qty_ordered }}
+                                            {{ $item->qty_ordered }}
                                         </div>
 
                                     </td>
@@ -453,10 +471,10 @@ $today = new DateTime('today');
                                         data-value="{{ __('shop::app.customer.account.order.view.grand-total') }}" style="border-right: 1px solid #cccccc !important;">
                                         @if ($order->status != 'pending')
                                             {{ core()->formatPrice($item->total, $order->order_currency_code) }}
-                                            <div class="order-tax">
+                                            {{-- <div class="order-tax">
                                                 <span class="extra-price">+</span>
                                                 <span class="extra-price">{{ $item->tax_amount }}</span>
-                                            </div>
+                                            </div> --}}
 
 
                                             @if ($item->discount_amount > 0)
@@ -616,6 +634,18 @@ $today = new DateTime('today');
 
 
             </div>
+
+            @if (
+                !in_array($order->status, ['pending', 'canceled', 'rejected', 'paid', 'processing']) &&
+                    !in_array('paid', $excludedStatuses))
+            <div class="payment_button pt-3">
+                <form action="{{ route('order-invoice-view-detail', ['orderid'=> $order->id, 'customerid'=> $order->customer_id]) }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="email" value="{{ $order->customer_email }}">
+                    <input type="hidden" name="tail_number" value="{{ $order->fbo_tail_number }}">
+                    <button class="invoice_view_pay_button">Pay Now</button>
+                </form>
+            @endif
         </div>
     </div>
     {{--

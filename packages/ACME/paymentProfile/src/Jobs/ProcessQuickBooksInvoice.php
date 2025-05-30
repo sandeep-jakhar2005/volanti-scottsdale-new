@@ -27,11 +27,14 @@ class ProcessQuickBooksInvoice implements ShouldQueue
      */
     public function handle(): void
     {
+        
         // sandeep add code for create invoice in quickbook
         try {
             $quickbookInvoice = app(InvoicesController::class);
             // Call the createInvoice function from your class
             $quickbookInvoice->createInvoice($this->orderId);
+            $quickbookInvoice->createInvoicePdf($this->orderId);
+
         } catch (\Exception $e) {
             Log::error('Error processing QuickBooks invoice creation: ' . $e->getMessage());
         }

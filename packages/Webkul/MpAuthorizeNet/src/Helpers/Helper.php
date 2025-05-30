@@ -17,6 +17,7 @@ use Webkul\Sales\Models\Invoice;
 use Webkul\Sales\Repositories\OrderTransactionRepository;
 use ACME\paymentProfile\Jobs\ProcessQuickBooksInvoice;
 use ACME\paymentProfile\Jobs\UpdateQuickbookPayment;
+use App\Jobs\SendOrderFailedEmail;
 
 
 /**
@@ -180,12 +181,50 @@ class Helper
         // Create the controller and get the response
         $controller = new AnetController\CreateCustomerProfileController($request);
         log::info('controller', ['controller' => $controller]);
-        $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::SANDBOX);
+        $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION);
         // dd($response);
         log::info('response', ['response' => $response]);
 
+        $responseArray = json_decode(json_encode($response), true);
+        $messages = $responseArray['messages'] ?? [];
+        if (
+            isset($messages['resultCode']) &&
+            $messages['resultCode'] === 'Error'
+        ) {
+            $errorMessage = $messages['message'][0]['text'] ?? 'Unknown error';
+            log::error('Authorize.net error: ' . $errorMessage);
+            
+            $token = session('token');
+            // sandeep add code
+            if(auth()->guard('customer')->check()){
+                    $customerName = Cart::getCart()->customer_first_name . ' ' . Cart::getCart()->customer_last_name ?? "";
+            }else{
+                    $fboDetails = DB::table('fbo_details')
+                    ->where('customer_token', $token)
+                    ->whereNotNull('customer_token')
+                    ->orderBy('id', 'DESC')
+                    ->first();
+                    $customerName = $fboDetails->full_name ?? "";
+            }
+
+            log::info('billingAddress',['billingAddress'=>$billingAddress]);
+            if(isset($errorMessage)){
+                $orderData = [
+                    'order_id' => "N/A",
+                    'status' => 'N/A',
+                    'Name' => $customerName,
+                    'Email' => $email ?? "",
+                    'Mail_Heading' => "Payment Processing Failure",
+                    'Mail_Subject' => "Payment Failed Notification",
+                    'error_message' => $errorMessage,
+                ];
+                // Dispatch the job to send email
+                SendOrderFailedEmail::dispatch($orderData);
+            }
+        }
+
         return $response;
-    }
+}
 
     /**
      * Charge Customer Profile
@@ -196,7 +235,7 @@ class Helper
     function paymentResponse($savedCardPaymentResponse = '')
     {
 
-
+    try {
         if (!session()->has('ADMIN_PAYMENT')) {
             log::info('customer payment');
             $order = $this->orderRepository->create(Cart::prepareDataForOrder());
@@ -387,7 +426,11 @@ class Helper
                 return $error;
             }
         }
+        } catch (\Exception $e) {
+            log::error('Exception in paymentResponse', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+        }
     }
+
     /**
      * Charge Customer Profile
      *
@@ -395,7 +438,8 @@ class Helper
      */
     function chargeCustomerProfile($decodeUpdatedToken)
     {
-        if (session()->has('ADMIN_PAYMENT')) {
+    if (session()->has('ADMIN_PAYMENT')) {
+        try {
             $order_id = request()->input('order_id');
             $order = Order::where('id', $order_id)->first();
             $invoice = Invoice::select('id')->where('order_id', $order_id)->first();
@@ -433,7 +477,7 @@ class Helper
             $request->setRefId($this->refId);
             $request->setTransactionRequest($transactionRequestType);
             $controller = new AnetController\CreateTransactionController($request);
-            $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::SANDBOX);
+            $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION);
 
             Log::info('Response123:', ['response' => json_encode($response)]);
             $transactionResponse = $response->getTransactionResponse();
@@ -456,6 +500,10 @@ class Helper
             }
 
             return $response;
+
+        } catch (\Exception $e) {
+            Log::error('Payment Error:', ['message' => $e->getMessage()]);
+        }
 
         } else {
 
@@ -502,7 +550,10 @@ class Helper
     {
         log::info('createAnAcceptPaymentTransaction');
         // dd($MpauthorizeNetCardDecode);
-        if (session()->has('ADMIN_PAYMENT')) {
+
+    if (session()->has('ADMIN_PAYMENT')) {
+        try {
+
             // Create the payment object for a payment nonce
             // $opaqueData = new AnetAPI\OpaqueDataType();
             // $opaqueData->setDataDescriptor($MpauthorizeNetCardDecode->opaqueData->dataDescriptor);
@@ -565,11 +616,13 @@ class Helper
             $opaqueData = new AnetAPI\OpaqueDataType();
             $opaqueData->setDataDescriptor($MpauthorizeNetCardDecode->opaqueData->dataDescriptor);
             $opaqueData->setDataValue($MpauthorizeNetCardDecode->opaqueData->dataValue);
+            log::info('opaqueData',['opaqueData'=>$opaqueData]);
             // dd($order->billing_address);
 
             // Add the payment data to a paymentType object
             $paymentOne = new AnetAPI\PaymentType();
             $paymentOne->setOpaqueData($opaqueData);
+            log::info('paymentOne',['paymentOne'=>$paymentOne]);
 
             // $billingAddress = Cart::getCart()->billing_address;
             $billingAddress = $order->billing_address;
@@ -586,9 +639,14 @@ class Helper
             $customerAddress->setCountry($billingAddress->country);
             $customerAddress->setPhoneNumber($billingAddress->phone);
 
+            log::info('customerAddress',['customerAddress'=>$customerAddress]);
+
             // Set the customer's identifying information
             $customerData = new AnetAPI\CustomerDataType();
             $customerData->setId("C_" . time());
+
+            log::info('customerData',['customerData'=>$customerData]);
+
             // $customerData->setEmail($billingAddress->email);
 
             // Add values for transaction settings
@@ -596,11 +654,16 @@ class Helper
             $duplicateWindowSetting->setSettingName("duplicateWindow");
             $duplicateWindowSetting->setSettingValue("60");
 
+            log::info('duplicateWindowSetting',['duplicateWindowSetting'=>$duplicateWindowSetting]);
+
 
             // Create an OrderType object to set invoice details
             $orderType = new AnetAPI\OrderType();
             $orderType->setInvoiceNumber("INV_" . $invoice->id);
             $orderType->setDescription("Order #" . $order_id);
+
+            log::info('orderType',['orderType'=>$orderType]);
+
 
             // Create a TransactionRequestType object and add the previous objects to it
             $transactionRequestType = new AnetAPI\TransactionRequestType();
@@ -612,6 +675,10 @@ class Helper
             $transactionRequestType->addToTransactionSettings($duplicateWindowSetting);
             $transactionRequestType->setOrder($orderType);
 
+
+            log::info('transactionRequestType',['transactionRequestType'=>$transactionRequestType]);
+
+
             // Assemble the complete transaction request
             $request = new AnetAPI\CreateTransactionRequest();
             $request->setMerchantAuthentication($this->merchantAuthentication);
@@ -620,9 +687,40 @@ class Helper
             Log::info('Response123:', ['response' => json_encode($request)]);
             // Create the controller and get the response
             $controller = new AnetController\CreateTransactionController($request);
-            $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::SANDBOX);
+            $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION);
+
+            log::info('response',['response'=>$response]);
+            $responseArray = json_decode(json_encode($response), true);
+            $messages = $responseArray['messages'] ?? [];
+            if (
+                isset($messages['resultCode']) &&
+                $messages['resultCode'] === 'Error'
+            ) {
+                $errorMessage = $messages['message'][0]['text'] ?? 'Unknown error';
+                log::error('Authorize.net error: ' . $errorMessage);
+
+                if(isset($order)){
+                $orderData = [
+                    'order_id' => $order['increment_id'],
+                    'status' => $order['status'],
+                    'Name' => (!empty($order['customer_first_name']) && !empty($order['customer_last_name']))
+                    ? $order['customer_first_name'] . ' ' . $order['customer_last_name']
+                    : $order['fbo_full_name'],
+                    'Email' => !empty($order['customer_email']) ? $order['customer_email'] : $order['fbo_email_address'],
+                    'Mail_Heading' => "Payment Processing Failure",
+                    'Mail_Subject' => "Payment Failed Notification",
+                    'error_message' => $errorMessage,
+                ];
+                // Dispatch the job to send email
+                SendOrderFailedEmail::dispatch($orderData);
+            }
+        }
+
             // Log::info('Response123:', ['response' => json_encode($response)]);
             $transactionResponse = $response->getTransactionResponse();
+
+            log::info('transactionResponse',['transactionResponse'=>$transactionResponse]);
+
             if ($transactionResponse != null && $transactionResponse->getMessages() != null) {
                 $transactionId = $transactionResponse->getTransId();
 
@@ -643,8 +741,10 @@ class Helper
             }
 
             return $response;
-
-        } else {
+        }catch (\Exception $e) {
+            Log::error('Authorize.Net Transaction Failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+        }
+    }else {
 
             $obj = new \stdClass();
             $obj->refId = 'ref1699511536';
@@ -681,6 +781,7 @@ class Helper
             // dd($obj);
             return $obj;
         }
+
     }
 
     /**

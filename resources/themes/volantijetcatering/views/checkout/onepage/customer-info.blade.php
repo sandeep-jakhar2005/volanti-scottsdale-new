@@ -110,8 +110,8 @@
                                     <div class="col-lg-3 col-md-3 col-3">
                                         <input type="hidden" id="airport_id" value="0" class="">
                                         <button v-if="allAddress.length > 0" class="btn btn-danger m-auto address-btn"
-                                            disabled type="button" id="address_update">Search</button>
-                                        <button v-else class="btn btn-danger m-auto address-btn" disabled type="button"
+                                             type="button" id="address_update">Search</button>
+                                        <button v-else class="btn btn-danger m-auto address-btn" type="button"
                                             id="address_update">Search</button>
                                     </div>
                                 </div>
@@ -227,10 +227,10 @@
                                     <div class="col-lg-3 col-md-3 col-3">
                                         <input type="hidden" id="airport_id" value="0">
                                         @if ($customer_address)
-                                            <button class="btn btn-danger m-auto address-btn" disabled type="button"
+                                            <button class="btn btn-danger m-auto address-btn" type="button"
                                                 id="address_update">Search</button>
                                         @else
-                                            <button class="btn btn-danger m-auto address-btn" disabled type="button"
+                                            <button class="btn btn-danger m-auto address-btn" type="button"
                                                 id="address_update">Search</button>
                                         @endif
                                     </div>
@@ -459,7 +459,7 @@
             @else
                 <div class="address-container row full-width no-margin">
                     <div :key="" class="col-lg-6 col-md-12 address-holder pl0 ordering-from">
-                        <div class="border-0" style="width: 100%;">
+                        <div class="border-0 pb-0" style="width: 100%;">
                             <div class="row address-row">
                                 <div class="col-1">
                                     <div class="radio" id="checked-radio">
@@ -507,7 +507,7 @@
             @endif
         @endif
            
-        <div class="mt-2 text-break pl-4 pl-lg-3 mb-2 ml-lg-1  {{!isset($airpport) ? 'd-none' : ''}}" id="airport_fbo_details" type="none">
+        <div class="text-break pl-4 pl-lg-3 mb-2 pb-3  ml-lg-1  {{!isset($airpport) ? 'd-none' : ''}}" id="airport_fbo_details" type="none">
             <h5 class="child-card-title mb-0">Airport Fbo</h5>
             <p class="airport_fboName mb-0" id="AirportFbo_Name">{{ isset($airpport) ? $airpport->fbo_name : ''  }}</p>
         </div>
@@ -733,11 +733,6 @@
                 var airportFbo = jQuery('#airport-fbo-input').val();
                 var airportFboiD = jQuery('#selected-fbo-id').val();
                 // Disable the button if both inputs are empty
-                if (name === "" || airportFbo === "") {
-                    jQuery('#address_update').prop('disabled', true);
-                } else {
-                    jQuery('#address_update').prop('disabled', false);
-                }
             });
 
 
@@ -767,11 +762,11 @@
                 var fbo_name = $('#airport_fbo_details').find('#AirportFbo_Name').text().trim();
                 // var isButtonChecked = $(this).prop('checked');
 
-                if (isAcknowledgeChecked && paymentsaved && fbo_name !== "") {
-                    $('#checkout-place-order-button').prop('disabled', false);
-                } else {
-                    $('#checkout-place-order-button').prop('disabled', true); 
-                }
+                // if (isAcknowledgeChecked && paymentsaved && fbo_name !== "") {
+                //     $('#checkout-place-order-button').prop('disabled', false);
+                // } else {
+                //     $('#checkout-place-order-button').prop('disabled', true); 
+                // }
 
                 // sandeep update default addresss at 
                 // here when ajax hit then create airport or update
@@ -809,7 +804,7 @@
                 // here when ajax hit then show airport  
                 jQuery('#checkout_airport-fbo-list').hide();
                 if ($.inArray(name, customerArray) === -1) {
-                    jQuery('#address_update').prop('disabled', true);
+                    // jQuery('#address_update').prop('disabled', true);
                 }
  
                 typingTimer = setTimeout(function() {
@@ -840,7 +835,7 @@
                 var airportFbo = jQuery('#airport-fbo-input').val();
                 var fbo_id = jQuery("#selected-fbo-id").val();
                 if (airportFbo && fbo_id != '') {
-                    jQuery('#address_update').prop('disabled', false);
+                    // jQuery('#address_update').prop('disabled', false);
                 }
 
                 var name = jQuery(this).attr('data-attr');
@@ -859,18 +854,38 @@
             //  sandeep update address detail  
             jQuery('body').on('click', '#address_update', function() {
 console.log('click address button');
-                var fbo_id = jQuery("#selected-fbo-id").val();
+                var fbo_id = jQuery("#selected-fbo-id").val().trim();
                 var airport_id = jQuery('#auto_search').attr('attr');
-                var delivery_address = jQuery("#auto_search").val();
+                var delivery_address = jQuery("#auto_search").val().trim();
                 var address_Id = jQuery("#auto_search").attr('data');
                 // fbo 
-                var name = jQuery("#airport-fbo-input").val();
+                var name = jQuery("#airport-fbo-input").val().trim();
                 //sandeep 
+ if(!airport_id){
+                    let element = $('#auto_search');
+                    element.addClass('homepage_error_focus').attr('style', 'border: 1px solid #f84661 !important;');
+                    setTimeout(() => {
+                        element.removeClass('homepage_error_focus').removeAttr('style');
+                    }, 3000);
+                    return;
+                }
+
+                if(!fbo_id){
+                    let element = $('#airport-fbo-input');
+                    element.addClass('homepage_error_focus').attr('style', 'border: 1px solid #f84661 !important;');
+                    setTimeout(() => {
+                        element.removeClass('homepage_error_focus').removeAttr('style');
+                    }, 3000);
+                    return;
+                }
+
                 if (delivery_address === '' || name === '' || fbo_id === '') {
-                    jQuery('#address_update').prop('disabled', true);
+                    // jQuery('#address_update').prop('disabled', true);
                     e.preventDefault();
                     return false;
                 }
+
+
 
                 let originalContent = $(this).html();
                 $(this).css('min-width', $(this).outerWidth());
@@ -935,7 +950,7 @@ console.log('click address button');
                 $('#checkout_airport-fbo-list').hide();
 
                 // sandeep
-                jQuery('#address_update').prop('disabled', false);
+                // jQuery('#address_update').prop('disabled', false);
 
             });
 
@@ -974,8 +989,6 @@ console.log('click address button');
             jQuery('body').on('click', '#add-fbo-button', function(event) {
                 event.preventDefault();
                 let originalContent = $(this).html();
-                $(this).html('<span class="btn-ring"></span>');
-                $(this).find(".btn-ring").show();
 
                 let airport_id = jQuery('#auto_search').attr('attr');
                 let input_airport_id = $('#input_airport_id').val();
@@ -984,6 +997,10 @@ console.log('click address button');
                 let fboName = $('#fbo-name').val();
                 let fboaddress = $('#fbo-address').val();
                 let fboNotes = $('#fbo-notes').val();
+                if(fboName && fboaddress){
+                $(this).html('<span class="btn-ring"></span>');
+                $(this).find(".btn-ring").show();
+                }
 
                 if (airport_id || input_airport_id) {
                     $.ajax({
@@ -1003,11 +1020,7 @@ console.log('click address button');
                             $('#selected-fbo-id').val(response.data.id);
                             var fboId = $('#selected-fbo-id').val();
                             // sandeep search disabled button
-                            if (fboId === "") {
-                                jQuery('#address_update').prop('disabled', true);
-                            } else {
-                                jQuery('#address_update').prop('disabled', false);
-                            }
+
                             if (response.response) {
                                 resetFormFields();
                                 // updateFboDetails(response.data);
@@ -1018,9 +1031,9 @@ console.log('click address button');
                         },
                         error: function(xhr,status,error) {
                             if (xhr.status === 422) {
-                                $('#add-fbo-button').prop('disabled',true);
+                                // $('#add-fbo-button').prop('disabled',true);
                                 $.each(xhr.responseJSON.errors, function(key, value) {
-                                    $('#' + key + '-error').text(value[0]);
+                                    $('#' + key + '-error').text(value[0]).show();
                                 });
                             }
                             // sandeep add code
@@ -1037,7 +1050,7 @@ console.log('click address button');
 
             // sandeep ||add code 
             $('body').on('click','.modal_open_button',function(){
-                $('#add-fbo-button').prop('disabled',true);
+                // $('#add-fbo-button').prop('disabled',true);
             });
 
 

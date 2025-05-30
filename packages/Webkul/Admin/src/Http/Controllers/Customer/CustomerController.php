@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\DataGrids\CustomerDataGrid;
 use Webkul\Admin\DataGrids\CustomerOrderDataGrid;
+use Webkul\Admin\DataGrids\CustomerCartDataGrid;
 use Webkul\Admin\DataGrids\CustomersInvoicesDataGrid;
 use Webkul\Admin\Mail\NewCustomerNotification;
 use Webkul\Customer\Repositories\CustomerGroupRepository;
@@ -304,4 +305,19 @@ class CustomerController extends Controller
 
         return view($this->_config['view'], compact('customer'));
     }
+
+
+    // sandeep add function
+    public function carts($id)
+    {
+        if (request()->ajax()) {
+            request()->merge(['customer_id' => $id]);
+            return app(CustomerCartDataGrid::class)->toJson();
+        }
+
+        $customer = $this->customerRepository->find(request('id'));
+
+        return view($this->_config['view'], compact('customer'));
+    }
+
 }

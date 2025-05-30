@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use Webkul\User\Models\Admin;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\OrderConfirmationGuestEmailJob;
+use App\Jobs\OrderConfirmationAuthEmailJob;
 use App\Jobs\OrderConfirmationAdminEmailJob;
 use Webkul\Sales\Models\Order;
 
@@ -342,20 +343,19 @@ class CheckoutController extends Controller
                 'redirect_url' => $redirectUrl,
             ]);
 
-            //    dd($redirectUrl);
+          //   dd($redirectUrl);
         }
 
         log::info('saveOrderData');
-
         $order = $this->orderRepository->create(Cart::prepareDataForOrder());
 
         Cart::deActivateCart();
 
         Cart::activateCartIfSessionHasDeactivatedCartId();
 
-        log::info('saveOrderData', ['saveOrderData' => $order]);
         session()->flash('order', $order);
         Log::info('cart');
+
         return response()->json([
             'success' => true,
         ]);
@@ -368,12 +368,9 @@ class CheckoutController extends Controller
      */
     public function success()
     {
-        log::info('session_orderData', ['session_orderData' => session()->has('order')]);
-
         log::info('success');
         $order = session('order');
 
-        // log::info('orderdata',['orderdata'=>$order]);
         if (!$order = session('order')) {
             log::info('no data found');
             return redirect()->route('shop.checkout.cart.index');
@@ -435,6 +432,7 @@ class CheckoutController extends Controller
                 ->where('customer_token', $token)
                 ->orderBy('id', 'DESC')
                 ->first();
+
         }
 
     
@@ -461,12 +459,33 @@ class CheckoutController extends Controller
             ->first();
 
 
+
+            // sandeep add code for add app notifications
+            $appNotifications = DB::table('app_notifications')->insert([
+                    'customer_id' => $customerId ?? $customer->id,
+                    'order_id' => $orderId,
+                    'message' => "Order Place",
+                    'is_read' => 0
+            ]);
+
+            
+            // sandeep add code for if guest customer then update customer id
+            // if ($customerId == '') {
+            // DB::table('cart')
+            //     ->where('id', $order['cart_id'])
+            //     ->update([
+            //         'customer_id' => $customer->id
+            //     ]);
+            // }
+
+
         $airport_fbo_id = DB::table('addresses')
             ->select('airport_fbo_id')
             ->where('address_type', 'customer')
             ->where(auth()->check() ? 'customer_id' : 'customer_token', auth()->check() ? auth()->user()->id : $token)
             ->latest('created_at')
             ->first();
+
         //   dd($airport_fbo_id);
         //  sandeep update default address
         if ($customerId != '') {
@@ -534,7 +553,6 @@ class CheckoutController extends Controller
                 'email' => $email,
             ]);
         } else {
-
             DB::table('orders')
                 ->where('id', $orderId)
                 ->update([
@@ -551,13 +569,12 @@ class CheckoutController extends Controller
                     'delivery_time' => $fboDetails->delivery_time,
                     'airport_fbo_id' => $airport_fbo_id->airport_fbo_id,
                 ]);
-
-
             DB::table('airport_fbo_details')
                 ->where('customer_token', $token)
                 ->update([
                     'customer_id' => $customer->id,
                 ]);
+             
             DB::table('order_status_log')->insert([
                 'order_id' => $orderId,
                 'user_id' => $customer->id,
@@ -565,7 +582,7 @@ class CheckoutController extends Controller
                 'status_id' => 1,
                 'email' => $fboDetails->email_address,
             ]);
-            
+         
             CustomerProfileLog::where('customer_id', $customer->id)
                 ->orderBy('id', 'DESC')
                 ->first()
@@ -589,6 +606,7 @@ class CheckoutController extends Controller
                 'first_name' => null,
                 'email' => null,
             ]);
+
 
         $orderDetails = DB::table('order_items')
             ->select(
@@ -616,27 +634,51 @@ class CheckoutController extends Controller
             ->whereNull('order_items.parent_id')
             ->get();
 
+            log::info($orderId);
+            log::info($order['id']);
 
         // sandeep get shipping address data 
-        $shippingAddress = Order::find($order['id'])->shipping_address()->first();
+        $order = Order::find($orderId);
 
-        $order['shipping_address'] = $shippingAddress;
+        $extraData = [
+            'fbo_airport_name' => $orderDetails[0]->fbo_airport_name,
+            'fbo_airport_address' => $orderDetails[0]->fbo_airport_address,
+        ];
+
+
+        // $order['fbo_airport_name'] = $orderDetails[0]->fbo_airport_name;
+        // $order['fbo_airport_address'] = $orderDetails[0]->fbo_airport_name;
+        
+
+        // $order['shipping_address'] = $shippingAddress;
 
         // dd($orderDetails);
         $fullName = $fboDetails->full_name;
         $order['fbo_phone_number'] = $fboDetails->phone_number;
-
+  
         // sandeep || send guest user order confirmation mail
-         if (!Auth::check()) {
+        if (!Auth::check()) {
+            log::info('16');
             try {
                 Log::info('Preparing to queue mail for guest order', [
                     'email' => $fboDetails->email_address
                 ]);
-        
+                log::info('17');
                 // Dispatch the job to the queue
-                OrderConfirmationGuestEmailJob::dispatch($order, $fboDetails);
-                  
+                OrderConfirmationGuestEmailJob::dispatch($order, $fboDetails, $extraData);
+                log::info('18');
                 Log::info('Mail queued successfully for guest order');
+            } catch (\Exception $e) {
+                log::info('19');
+                Log::error('Error queuing mail', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+            }
+        }else{
+            try {
+                OrderConfirmationAuthEmailJob::dispatch($order);
+                log::info('mail send to auth user');
             } catch (\Exception $e) {
                 Log::error('Error queuing mail', [
                     'error' => $e->getMessage(),
@@ -647,24 +689,27 @@ class CheckoutController extends Controller
 
         // sandeep ||send admin order confirmation mail
             try {
-                OrderConfirmationAdminEmailJob::dispatch($order);
+                log::info('21');
+                OrderConfirmationAdminEmailJob::dispatch($order,$fboDetails, $extraData);
+                log::info('22');
                 Log::info('Email sent successfully to: ');
             } catch (\Exception $e) {
+                log::info('23');
                 Log::error('Failed to send email to: ' , [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString()
                 ]);
             }
-        Log::info('Order Data:', ['order' => $order]);
 
         log::info('return data to success page');
 
         session()->forget('order');
 
-        // dd($orderDetails);
-        return view($this->_config['view'], compact('order', 'orderDetails'));
-    }
 
+        return view($this->_config['view'], compact('order', 'orderDetails','fboDetails'));
+
+    }
+    
     /**
      * Order success page.
      *

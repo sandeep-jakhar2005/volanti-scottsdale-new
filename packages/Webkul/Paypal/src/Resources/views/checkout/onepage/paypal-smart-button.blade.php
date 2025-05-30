@@ -1,5 +1,5 @@
 @if (
-    request()->route()->getName() == 'shop.checkout.onepage.index'
+    request()->route()?->getName() == 'shop.checkout.onepage.index'
     && core()->getConfigData('sales.paymentmethods.paypal_smart_button.active')
     && core()->getConfigData('sales.paymentmethods.paypal_smart_button.active') == '1'
 )

@@ -830,13 +830,13 @@
                             <div class="input-group d-block">
                                 <div class="search-content">
                                     <div class="row search_wrapper">
-                                        <div class="col-lg-9 col-md-9 pr-0">
+                                        <div class="col-lg-9 col-md-9 col-8  pr-0">
                                             <input type="text" id="auto_search" placeholder="Search Delivery Location" class="form-control"
                                                 attr="{{ isset($airport_fbo) ? $airport_fbo->airport_id : '' }}"
                                                 value="{{ isset($order->shipping_address->airport_name) ? $order->shipping_address->airport_name : '' }}">
                                             <div id="address-list" class="suggestion-list"></div>
                                         </div>
-                                        <div class="col-lg-3 col-md-3">
+                                        <div class="col-lg-3 col-md-3 col-4">
                                             <input type="hidden" id="airport_id"
                                                 value="{{ isset($order->shipping_address) ? $order->shipping_address->airport_name : '' }}">
 

@@ -10,20 +10,21 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use ACME\paymentProfile\Mail\OrderInvoice;
 use Illuminate\Support\Facades\Log;
+use Webkul\Sales\Models\Order;
 
 class OrderInvoiceJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $order;
+    public $orderId;
     public $pdfPath;
     public $agent;
     /**
      * Create a new job instance.
      */
-    public function __construct($order,$agent,$pdfPath)
+    public function __construct($orderId,$agent,$pdfPath)
     {
-        $this->order = $order;
+        $this->orderId = $orderId;
         $this->pdfPath = $pdfPath;
         $this->agent = $agent;
     }
@@ -34,16 +35,17 @@ class OrderInvoiceJob implements ShouldQueue
      */
     public function handle(): void
     {
+        $order  = Order::where('id', $this->orderId)->first();
         // sandeep add code for send invoice mail
-        if($this->order->fbo_email_address === null){
-            $email = $this->order->customer_email;
+        if($order->fbo_email_address === null){
+            $email = $order->customer_email;
         }else{
-            $email = $this->order->fbo_email_address;
+            $email = $order->fbo_email_address;
         }
         
         try{ 
             log::info('email',['email'=>$email]);
-            Mail::to($email)->send(new OrderInvoice($this->order, $this->agent, $this->pdfPath));
+            Mail::to($email)->send(new OrderInvoice($order, $this->agent, $this->pdfPath));
         } catch (\Exception $e) {
             throw $e;
         }

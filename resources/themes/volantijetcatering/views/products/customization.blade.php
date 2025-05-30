@@ -87,6 +87,17 @@ Customization Services | Volanti Jet Catering
                     <span class="text-danger file-error"></span>
                 </div>
 
+                 <div class="control-group">
+                   <div id="recaptcha"></div> 
+                    @error('g-recaptcha-response')
+                    <div class="error-message control-error">
+                        {{-- {{ $message }} --}}
+                        Please select CAPTCHA
+                    </div>
+                @enderror
+
+                </div>
+
                 {{-- <div class="form-group">
                     <label>Upload File</label>
                     <div class="file">
@@ -114,20 +125,27 @@ Customization Services | Volanti Jet Catering
 </div>
 @stop
 @push('scripts')
+
+{!! Captcha::renderJS() !!}
     <script>
-        $(document).ready(function() {
-    
-        $('.sendbutton').prop('disabled',true);
+       window.siteKey = "{{ core()->getConfigData('customer.captcha.credentials.site_key') }}";
+      $(document).ready(function() {
+
+ setTimeout(function() {
+console.log(typeof grecaptcha !== "undefined" ? "reCAPTCHA Loaded" : "reCAPTCHA Not Loaded");
+    }, 3000);
             // sandeep || add validation code 
             jQuery("body").on('click', '.sendbutton', function(e) {
                 e.preventDefault();
 
+ $('.error-message').remove();
                 var fname = $('.fname-field').val(),
                     lname = $('.lname-field').val(),
                     email = $('.email-field').val(),
                     phoneNumber = $('.phone-field').val(),
                     message = $('.message-field').val(),
                     file = $('#uploadfile').val(),
+recaptchaResponse = grecaptcha.getResponse(),
                     hasError = false;
 
 
@@ -136,30 +154,48 @@ Customization Services | Volanti Jet Catering
 
                     var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
                          phonePattern = /^\(\d{3}\) \d{3}-\d{4}$/;
+var firstErrorField = null;
 
                     // Validation checks
                     if (!fname || fname.length > 25) { 
                         $('.fname-error').text(fname ? 'First name should not exceed 25 characters.' : 'First name is required.').fadeIn(); 
-                        hasError = true; 
+  if (!firstErrorField) firstErrorField = $('.fname-error');                       
+ hasError = true; 
                     }
                     if (!lname || lname.length > 25) { 
                         $('.lname-error').text(lname ? 'Last name should not exceed 25 characters.' : 'Last name is required.').fadeIn(); 
-                        hasError = true; 
+ if (!firstErrorField) firstErrorField = $('.lname-error');                       
+ hasError = true; 
                     }
                     if (!phoneNumber || !phonePattern.test(phoneNumber)) { 
                         $('.phone-error').text(phoneNumber ? 'Please enter a valid phone number (10 to 14 digits).' : 'Phone number is required.').fadeIn(); 
-                        hasError = true; 
+  if (!firstErrorField) firstErrorField = $('.phone-error');                       
+ hasError = true; 
                     }
                     if (!email || !emailPattern.test(email)) { 
                         $('.email-error').text(email ? 'Please enter a valid email address.' : 'Email is required.').fadeIn(); 
-                        hasError = true; 
+                        if (!firstErrorField) firstErrorField = $('.email-error');                    
+    hasError = true; 
                     }
 
-                    if (!message) { $('.message-error').text('Message is required.').fadeIn(); hasError = true; }
+                    if (!message) { $('.message-error').text('Message is required.').fadeIn();if (!firstErrorField) firstErrorField = $('.message-error'); hasError = true; }
 
-                    if (!file) { $('.file-error').text('file is required.').fadeIn(); hasError = true; }
+                    if (!file) { $('.file-error').text('file is required.').fadeIn(); if (!firstErrorField) firstErrorField = $('.file-error'); hasError = true; }
+  if (recaptchaResponse === '') {
+                        $('#recaptcha').after('<span class="error-message text-danger">Please select CAPTCHA</span>');
+                         if (!firstErrorField) firstErrorField = $('#recaptcha');
+ hasError = true;                     
+}
 
-
+                    if (hasError && firstErrorField && firstErrorField.length) {
+                        setTimeout(function() {
+                            var scrollPosition = firstErrorField.offset().top - 200;
+                            $('html, body').animate({
+                                scrollTop: scrollPosition
+                            }, 500);
+                        }, 100);
+                        return false;
+                    }
                    
                     if(!hasError){
                     jQuery("#customizationForm").submit();
@@ -172,7 +208,6 @@ Customization Services | Volanti Jet Catering
                             'align-items': 'center'
                     });
                 }else{
-                    $(this).prop('disabled',true);
                 }
             });
 
@@ -285,7 +320,6 @@ Customization Services | Volanti Jet Catering
         }
     });
 
-    $(this).closest('form').find('button[type="submit"]').prop('disabled', !isValid);
 });
 
 let selectedFiles = [];

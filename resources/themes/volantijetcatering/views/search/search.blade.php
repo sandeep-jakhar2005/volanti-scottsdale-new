@@ -90,17 +90,51 @@
 
              <!-- Sandeep || Display an error message if the search term is less than 3 characters -->
 
-             @if ($errorMessage)
+             @if (!empty($errorMessage))
                    <div class="search_error_message text-center">
                     <h2 class="fw6 col-12 text-center" style="font-size:27px">We're Sorry, We Could Not Find  Any Results For "{{app('request')->input('term')}}"</h2>
                     <span class="col-12">{{ $errorMessage }}</span>
+                    <div class="container category-page mb-5 pt-4">
+                        <h3 class="pt-3 m-0 text-center" style="font-size: 24px;">Explore More from Our Menu Collection</h3>
+                        <div class="mx-auto my-3" style="width: 60px; height: 2px; background-color: #9a7b4f;"></div>
+                        <div class="row subcategories">
+                            @foreach ($categories as $category)
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <a href={{ $category->slug }}>
+                                    <div class="card-block text-center mt-5">
+                                            <span class="text-center">{{ $category->name }}</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                   </div>
              @elseif (!$results)
-                    <h2 class="fw6 col-12 text-center"  style="font-size:27px">{{ __('shop::app.search.no-results') }}</h2>
+             <div>
+                    <h2 class="fw6 col-12 text-center pt-3"  style="font-size:27px">No Results Found For  "{{app('request')->input('term')}}"</h2>
+                    <p class="text-center" style="color: #666;">
+                        We couldn't find what you were looking for. Please try another search term or browse our categories.
+                    </p>
+                    <div class="container category-page mb-5 pt-4">
+                        <h3 class="pt-3 m-0 text-center" style="font-size: 24px;">Explore More from Our Menu Collection</h3>
+                        <div class="mx-auto my-3" style="width: 60px; height: 2px; background-color: #9a7b4f;"></div>
+                        <div class="row subcategories">
+                            @foreach ($categories as $category)
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <a href={{ $category->slug }}>
+                                    <div class="card-block text-center mt-5">
+                                            <span class="text-center">{{ $category->name }}</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
               @else
-            
                 @if ($results->isEmpty())
-                <div class="no-result-found">
+                <div class="no-result-found">$
 
                     <div>
                     <h2 class="fw6 col-12">{{ __('shop::app.products.whoops') }}</h2>
@@ -122,7 +156,7 @@
     
     
             <div class="centered-word  center-heading" > 
-                <h1 style='font-size: 54px;' class='fw-15 f-5 col-12 mb20 p-0 m-auto'>{{ $results->total() }} {{ __('shop::app.search.found-results') }} for "{{app('request')->input('term')}}" </h1>
+                <h1 style='font-size: 40px;' class='fw-15 f-5 col-12 mb20 p-0 m-auto pl-2'>{{ $results->total() }} {{ __('shop::app.search.found-results') }} for "{{app('request')->input('term')}}" </h1>
             </div>
             <img src="{{ asset('themes/velocity/assets/images/Food-Icon.png') }}" class="right-image search-right-image">
     

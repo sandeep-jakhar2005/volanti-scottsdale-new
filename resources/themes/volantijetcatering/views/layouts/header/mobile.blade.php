@@ -238,27 +238,33 @@
 
 @push('scripts')
 <script>
-
     //  sandeep || add searchbar in mobile 
     $(document).ready(function() {
 
-        $('body').on('click','.search_icon_mobile',function(){
-
-            $('.search-products').toggleClass('d-none');
-            $('.mobile-screen-header-col-1 .mobile-small-icon').addClass('d-none');
-
-
-        });
-
-       $('body').on('click','#close_button_mobile',function() {
+        $('body').on('click', '.search_icon_mobile', function() {
+        $('.mobile-screen-header-col-1 .mobile-small-icon').addClass('hiding');
+        setTimeout(function() {
+            $('.search-products').removeClass('d-none');
+            setTimeout(function() {
+                $('.search-products').addClass('show');
+                $('.mobile-screen-header-col-1 .mobile-small-icon').addClass('d-none');
+            }, 10);
+        }, 300);
+    });
+    
+    $('body').on('click', '#close_button_mobile', function() {
+        $('.search-products').removeClass('show');
+        setTimeout(function() {
             $('.search-products').addClass('d-none');
-            // $('#home-right-bar-container').css('margin-top', 'auto');
             $('.mobile-screen-header-col-1 .mobile-small-icon').removeClass('d-none');
 
-        });
+            setTimeout(function() {
+                $('.mobile-screen-header-col-1 .mobile-small-icon').removeClass('hiding');
+            }, 10);
+        }, 300);
+    });
 
     });
 
 </script>
-
 @endpush

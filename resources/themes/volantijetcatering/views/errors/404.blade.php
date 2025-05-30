@@ -4,51 +4,21 @@
     {{ __('admin::app.error.404.page-title') }}
 @stop
 
-@section('body-header')
-@endsection
-
-@section('full-content-wrapper')
-    <div class="error-page row text-center">
-        <div class="col-6">
-            <div
-                class="col-12 bg-image broken-image"
-            ></div>
-
-            <div class="col-12 fs24">
-                {{ __('velocity::app.error.page-lost-short') }}
-            </div>
-
-            <p class="col-12 fs20">
-                {{ __('velocity::app.error.page-lost-description') }}
-            </p>
+@section('content-wrapper')
+<div class="d-flex flex-column justify-content-center align-items-center pt-5">
+    <div class="error_page">
+        <div class="error_page_heading text-center">
+            <h1 class="">Page Not Found</h1>
         </div>
-
-        <div class="col-6">
-            <div class="row">
-
-                @if ($logo = core()->getCurrentChannel()->logo_url)
-                    <div
-                        class="col-12 velocity-icon bg-image"
-                        style="background-image: url('{{ $logo }}')"
-                    ></div>
-                @else
-                    <div class="col-12 velocity-icon bg-image"></div>
-                @endif
+        <div class="error_page_body pt-5">
+            <div class="col-12 text-start">
+                <p class="font-weight-bold">The page you requested was not found, and we have a fine guess why.</p>
+                <ul class="pt-4 pl-3">
+                    <li>If you typed the URL directly, please make sure the spelling is correct.</li>
+                    <li>The page no longer exists. In this case, we profusely apologize for the inconvenience and for any damage this may cause.</li>
+                </ul>
             </div>
-
-            <a class="row remove-decoration" href="{{ route('shop.home.index') }}">
-                <div class="col-12">
-                    <span class="custom-circle">></span>
-                </div>
-
-                <span class="col-12 fs16">
-                    {{ __('velocity::app.error.go-to-home') }}
-                </span>
-            </a>
         </div>
     </div>
-
+</div>
 @endsection
-
-@section('footer')
-@show

@@ -122,7 +122,7 @@ class paymentProfileController extends Controller
 
     public function storeinquery(Request $request)
     {
-        // dd($request->all()); // Check all request data
+       // dd($request->all()); // Check all request data
 // dd($request->files->all()); // Check files specifically
 
         $validator = Validator::make($request->all(), [

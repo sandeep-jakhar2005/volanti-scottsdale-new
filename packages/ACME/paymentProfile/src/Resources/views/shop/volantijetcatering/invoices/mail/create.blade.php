@@ -22,6 +22,7 @@
             background-color: #fff;
         }
 
+
         /* Add some spacing around the content */
         table.wrapper {
             width: 100%;
@@ -110,46 +111,75 @@
 @endpush
 
 
-<table class="wrapper">
+<table class="wrapper" style="margin: auto;width:100%;max-width:90%">
     <tr
         style="
-          text-align: center;
-          padding: 30px 0 0 0;
-          display: block;
-          width: 90%;
+        text-align: center;
+        padding: 30px 0 0 0;
+        display: block;
+        width: 90%;
         ">
         <td colspan="2" style="text-align: center !important; width: 100%; display: block">
-            <div style="max-width: 400px; margin: 0 auto">
-                <img src="https://images.squarespace-cdn.com/content/v1/6171dbc44e102724f1ce58cf/eda39336-24c7-499b-9336-c9cee87db776/VolantiStickers-11.jpg?format=1500w"
-                    style="width: 70%" />
+            <div style="text-align: center;">
+                <a href="{{ route('shop.home.index') }}">
+                    {{-- @include ('shop::emails.layouts.logo') --}}
+                    <img style="width: 100%;
+                    max-width: 300px;
+                    display: block;
+                    margin: 0 auto;"
+                        src="https://images.squarespace-cdn.com/content/v1/6171dbc44e102724f1ce58cf/eda39336-24c7-499b-9336-c9cee87db776/VolantiStickers-11.jpg?format=1500w"
+                        alt="Volantijet Catering" />
+                </a>
             </div>
         </td>
     </tr>
     <tr
         style="
-          background: #f6f6f6;
-          margin-top: 20px;
-          border-top: 1px dashed black;
-          padding: 20px;
-          display: flex;
-          justify-content: space-between;
+        background: #f6f6f6;
+        margin-top: 20px;
+        border-top: 1px dashed black;
+        padding: 20px;
+        padding-bottom:0px;
+        display: flex;
+        justify-content: space-between;
         ">
         <td style="width: 50%; text-align: left">
             <h1
                 style="
-              padding-bottom: 15px;
-              color: #000000;
-              font-size: 24px;
-              font-weight: bold;
-              margin-top: 0;
+            padding-bottom: 15px;
+            color: #000000;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 0;
             ">
                 Thank you for your order!
             </h1>
-            <p style="padding-bottom: 0px">
+
+        </td>
+        <td style="width: 50%; text-align: right">
+            <p>
+                Need Help? <br/>
+                Call us <a href="tel:1-866-864-8488">(480.657.2426)</a> or
+                <a href="mailto:jetcatering@volantiscottsdale.com" style="color: #007bff; font-weight: 600">Email us
+                </a>
+            </p>
+        </td>
+    </tr>
+        <tr
+        style="
+        background: #f6f6f6;
+        padding: 20px;
+        padding-top:0px;
+        display: flex;
+        justify-content: space-between;
+        ">
+        <td style="width: 100%; text-align: left">
+                    <p style="padding-bottom: 0px;margin-top:0px;">
                 Order No: <strong>{{ $order->increment_id }}</strong>
             </p>
 
             @if (!(auth('admin')->check() && auth('admin')->user()->role_id === 1))
+    <p style="display: flex; gap:10px;align-items:center;">
             <a href="{{ route('order-invoice-view', ['orderid' => $order->id, 'customerid' => $order->customer_id]) }}"
                 style="
             background: #444444;
@@ -160,17 +190,29 @@
             color: #fff;
             font-weight: 600;
             padding: 9px 15px;
-            ">Place
-                order</a>
-            @endif
-        </td>
-        <td style="width: 50%; text-align: right">
-            <p>
-                Need Help? <br/>
-                Call us <a href="tel:1-866-864-8488">(480.657.2426)</a> or
-                <a href="mailto:jetcatering@volantiscottsdale.com" style="color: #007bff; font-weight: 600">Email us
-                </a>
+            ">Pay Now</a>
+            
+            @if(!empty($order->quickbook_invoice_link))
+            <span style="font-weight: 600;padding:10px;">OR</span>
+
+            <a href="{{ $order->quickbook_invoice_link }}"
+            style="
+                background: #444444;
+                text-decoration: none;
+                border-radius: 5px;
+                float: left;
+                border: none;
+                color: #fff;
+                font-weight: 600;
+                padding: 9px 15px;
+            ">
+            Pay with QuickBooks
+        </a>
+
+        @endif
             </p>
+            @endif
+
         </td>
     </tr>
     <tr>
@@ -188,98 +230,46 @@
             </div>
         </td>
     </tr>
-    <tr
-        style="
-          background: #f6f6f6;
-          padding: 20px;
-          display: block;
-          vertical-align: text-top;
-        ">
-        <td>
-            <table>
-                <tr>
-                    <td style="font-weight: 600;" colspan="3">Order No: {{ $order->increment_id }}</td>
-                </tr>
-                <tr>
-                    {{-- sandeep change date time formate --}}
-                    <td colspan="3">Order Date & Time : {{ date('m-d-Y h:i:s A', strtotime($order->created_at)) }}</td>
-                </tr>
-                <tr style="padding-top: 30px; display: flex; gap: 20px">
-                    <td>
-                        <div class="order-details">
-                            {{-- <p>
-                                <b>Fbo Detail</b>
-                            </p> --}}
-                            {{-- <p><b>Ship Address</b></p> --}}
-                            <div class="mb-0"
-                                style="
-                            overflow: auto;
-                        ">
-                                <h6 class="" style="font-size:13px; margin-top:15px"><b>{{ __('shop::app.fbo-detail.client-info') }}</b></h6>
-                                <p class="">
-                                    {{ $order->fbo_full_name }}
-                                    <span style="float: left; width: 100%">
-                                        {{ $order->fbo_email_address }}
-                                    </span>
-                                    <span style="float: left; width: 100%">
-                                        {{ $order->fbo_phone_number }}
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="mt-3">
-                                <h6 class="" style="font-size:13px"><b>{{ __('shop::app.fbo-detail.aircraft-info') }}</b></h6>
-                                <p>
-                                    {{ $order->fbo_tail_number }}
-                                    <span style="float: left; width: 100%">
-                                        {{ $order->fbo_packaging }}
-                                    </span>
-                                    <span style="float: left; width: 100%">
-                                        {{ $order->fbo_service_packaging }}
-                                    </span>
-                                </p>
-                            </div>
+<tr style="background: #f6f6f6;">
+    <td style="padding: 20px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td style="font-weight: 600; font-size: 14px;" colspan="3">
+                    Order No: {{ $order->increment_id }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" style="padding-bottom: 15px;">
+                    Order Date & Time: {{ date('m-d-Y h:i:s A', strtotime($order->created_at)) }}
+                </td>
+            </tr>
+            <tr style="display: flex;word-wrap: break-word;">
+                <!-- Account Information -->
+                <td width="30%" valign="top" style="padding-right: 10px;">
+                    <p style="font-size: 15px; font-weight: bold; margin: 0 0 5px;">{{ __('shop::app.fbo-detail.client-info') }}</p>
+                    <p style="margin: 0;">{{ $order->fbo_full_name ?? 'N/A' }}</p>
+                    <p style="margin: 0;">{{ $order->fbo_email_address ?? 'N/A' }}</p>
+                    <p style="margin: 0;">{{ $order->fbo_phone_number ?? 'N/A' }}</p>
+                </td>
 
-                        </div>
-                    </td>
-                    <td style="padding-left: 20px">
-                        <div class="order-details"
-                            style="
-                        overflow: auto;
-                    ">
-                            <p class="mb-2">
-                                <b>Address</b>
-                            </p>
-                            {{-- <p><b>Bill Address</b></p> --}}
-                            <p style="margin-bottom: 0px">
-                                <span style="float: left; width: 100%">
-                                    {{ $order->shipping_address->airport_name }}
-                                </span>
-                                <span style="float: left; width: 100%">
-                                    {{ $order->shipping_address->address1 }}
-                                </span>
-                            </p>
-                        </div>
-                        @if (isset($airport_fbo))
-                            <div class="mt-3" style="line-break: anywhere">
-                                <p class="mb-2 text-dark"><b>Airport FBO</b></p>
-                                <input type="hidden" id="airport_fbo_airport_id"
-                                    value="{{ $airport_fbo->airport_id }}" attr="{{ $airport_fbo->customer_id }}">
-                                <p class="m-0">{{ $airport_fbo->name }}</p>
-                                <p class="m-0">{{ $airport_fbo->address }}</p>
-                            </div>
-                        @endif
-                    </td>
-                    @if ($order->status === 'paid')
-                        <td style="padding-left: 20px">
-                            <div class="order-details">
-                                <p><b>Payment : AuthorizeNet</b></p>
-                            </div>
-                        </td>
-                    @endif
-                </tr>
-            </table>
-        </td>
-    </tr>
+                <!-- Address -->
+                <td width="30%" valign="top" style="padding: 0 10px;">
+                    <p style="font-size: 15px; font-weight: bold; margin: 0 0 5px;">Address</p>
+                    <p style="margin: 0;">{{ $order->shipping_address->airport_name ?? 'N/A' }}</p>
+                    <p style="margin: 0;">{{ $order->shipping_address->address1 ?? 'N/A' }}</p>
+                </td>
+
+                <!-- Aircraft Information -->
+                <td width="30%" valign="top" style="padding-left: 10px;">
+                    <p style="font-size: 15px; font-weight: bold; margin: 0 0 5px;">{{ __('shop::app.fbo-detail.aircraft-info') }}</p>
+                    <p style="margin: 0;">{{ $order->fbo_tail_number ?? 'N/A' }}</p>
+                    <p style="margin: 0;">{{ $order->fbo_packaging ?? 'N/A' }}</p>
+                    <p style="margin: 0;">{{ $order->fbo_service_packaging ?? 'N/A' }}</p>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
     <tr>
         <td>
             <table style="width: 100%">
@@ -297,7 +287,21 @@
                     border-bottom: 1px dotted black;
                     margin-top: 20px;">
                             <div class="table-responsive" style="max-height: 500px;overflow-x: auto;">
-                                <table style="width: -webkit-fill-available;">
+                                <table style="width: -webkit-fill-available;border-collapse: collapse;" class="order-items-table">
+                                    <thead>
+                                        <tr style="background-color: #dfdfdf;">
+                                            <th style="text-align: left;padding: 8px">
+                                                Notes
+                                            </th>
+                                            <th style="text-align: left;padding: 8px">
+                                                {{ __('shop::app.customer.account.order.view.product-name') }}</th>
+                                            <th style="text-align: left;padding: 8px">{{ __('shop::app.customer.account.order.view.qty') }}
+                                            </th>
+                                            <th style="text-align: left;padding: 8px">
+                                                Price
+                                            </th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                         @foreach ($order->items as $item)
                                             @php
@@ -326,34 +330,40 @@
                                                     ->where('order_id', $order->increment_id)
                                                     ->value('additional_notes');
                                             @endphp
-                                            <tr class="order_view_table_body" style="height: 110px;">
+                                            <tr class="order_view_table_body" style="height: 60px; {{ $loop->index % 2 !== 0 ? 'background-color: #dfdfdf;' : 'background-color: #ffffff;' }}">
                                                 <td
                                                     style="
-                                                max-width: 130px;">
+                                                max-width: 110px;overflow: auto;">
                                                     {{-- <div>
                                                         <img class="product__img"
                                                             src="https://volantiscottsdale.mindwebtree.com/cache/large/product/118/LXDS3Ev1pMyGKEHvrBdRXM2856om0XaBPwnFOdb3.png"
                                                             alt="Product" style="height: 70px;width: 80px;" />
                                                     </div> --}}
-                                                    @if (isset($notes))
+                                        
                                                         <p class="m-0"
-                                                            style="max-height: 100px;overflow-y: auto;font-size: 11px;">
-                                                            {{ $notes }}</p>
-                                                    @endif
+                                                            style="max-height: 100px;overflow-y: auto;font-size: 11px;padding: 8px;">
+                                                            {{ trim($notes ?? '') !== '' ? $notes : 'N/A' }}</p>
+                                    
                                                 </td>
                                                 {{-- @dd($item) --}}
-                                                <td>
+                                                <td style="
+                                                max-width: 200px;overflow: auto;padding: 8px;">
                                                     {{ $item->name }}
                                                     @if ($optionLabel)
                                                         ({{ $optionLabel }})
                                                     @endif
+                                                    @if (!empty($specialInstruction))
+                                                    <div class="" style="gap:4px;font-size:11px;max-height: 100px;"><span><b>Special Instruction: </b> </span>
+                                                        <p class="m-0 display__notes" style="font-weight:500;margin:0px"> {{ $specialInstruction }}</p>
+                                                        </div>
+                                                    @endif
                                                 </td>
 
                                                 @if ($order->status === 'pending')
-                                                    <td>NA</td>
+                                                    <td style="padding: 8px;">NA</td>
                                                 @else
                                                     <td>{{ core()->formatBasePrice($item->price) }}
-                                                        <p style="margin: 0;" class="qty-row">
+                                                        <p style="margin: 0;padding: 8px;" class="qty-row">
                                                             Qty:
                                                             {{ $item->qty_ordered }}
                                                         </p>
@@ -391,28 +401,25 @@
             <tr style="vertical-align:text-top;display:flex;vertical-align:text-top;justify-content: space-around; line-break:anywhere">
                 <td style="width: 44%;">
                     <div>
-                        @php
-                            use ACME\paymentProfile\Models\OrderNotes;
+                    @php
+                        use ACME\paymentProfile\Models\OrderNotes;
 
-                            $commentsCount = OrderNotes::where('order_id', $order->id)->count();
+                        $comments = OrderNotes::orderBy('id', 'desc')->where('order_id', $order->id)->get();
+                    @endphp
 
-                        @endphp
-                        <div class="@if ($commentsCount > 0) d-block @else d-none @endif">
-                            <b class="text-break">ORDER NOTES: </b>
+                    @if ($comments->count() > 0)
+                        <div class="d-block">
+                            <b class="text-break">ORDER NOTES:</b>
                             <ul class="comment_list m-0"
                                 style="height:100px;overflow:auto;padding: 0;list-style: none;margin: 0;">
-                                @foreach (OrderNotes::orderBy('id', 'desc')->where('order_id', $order->id)->get() as $comment)
-                                    <li class="d-flex"
-                                        style="
-                                    margin: 0;
-                                ">
+                                @foreach ($comments as $comment)
+                                    <li class="d-flex" style="margin: 0;">
                                         @if ($comment->is_admin === 1)
                                             <p class="w-100"
-                                                style="color: rgb(157, 157, 157);font-size: 13px;margin:0;">Support:
+                                            style="color: rgb(157, 157, 157);font-size: 13px;margin:0;">
+                                                Support:
                                                 <span>{{ $comment->notes }}</span>
-                                                {{-- sandeep change date time formate --}}
-                                                 <span
-                                                    class="float-right">({{ date('m-d-Y h:i:s A', strtotime($comment->created_at)) }})</span>
+                                                <span class="float-right">({{ date('m-d-Y h:i:s A', strtotime($comment->created_at)) }})</span>
                                             </p>
                                         @else
                                             <p class="w-100" style="color: rgb(157, 157, 157);font-size: 13px;">
@@ -425,6 +432,8 @@
                                 @endforeach
                             </ul>
                         </div>
+                    @endif
+
                     </div>
                 </td>
                 <td style="width: 56%;">

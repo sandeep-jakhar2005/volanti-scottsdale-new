@@ -699,7 +699,7 @@ return [
             'dear' => 'Dear :customer_name',
             'dear-admin' => 'Dear :admin_name',
             'greeting' => 'Thanks for your Order :order_id placed on :created_at. Please note that your order is not yet accepted and will be processed shortly.',
-            'order_greeting' => "We're excited to confirm that we've received your order :order_id placed on :created_at. However, please note that the order is currently pending approval. We'll notify you as soon as there is any change in the status of your order",
+            'order_greeting' => "We're excited to confirm that we've received your order :order_id placed on :created_at. However, please note that the order is currently pending. We'll notify you as soon as there is any change in the status of your order",
             'greeting-admin' => 'Order Id :order_id placed on :created_at',
             'summary' => 'Summary of Order',
             'shipping-address' => 'Shipping Address',

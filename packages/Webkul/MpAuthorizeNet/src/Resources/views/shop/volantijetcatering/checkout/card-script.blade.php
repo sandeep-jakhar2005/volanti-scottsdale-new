@@ -38,12 +38,14 @@
     </form>
 
     <script>
-        $(document).ready(function() {
-            setTimeout(() => {
-                $('#checkout-place-order-button').attr('disabled', 'disabled');
-            }, 2000);
 
-            console.log('sss');
+
+        $(document).ready(function() {
+
+            // setTimeout(() => {
+            //     $('#checkout-place-order-button').attr('disabled', 'disabled');
+            // }, 2000);
+
             eventBus.$on('after-checkout-payment-section-added', function() {
                 // this part in this ready function will be executed on the basis of the event fired from the payment section's mounted hook and it will inject this code in to the window's event bus and the rest part of the code will be fired after that
 
@@ -73,30 +75,32 @@
                                         "disabled", "disabled");
                                 }
                             } else {
+                                console.log('not show credit card');
                                 $('.mpauthorizenet-add-card').css('display', 'none');
                                 $('#checkout-payment-continue-button').removeAttr("disabled",
                                     "disabled");
                                 $('.mpauthorizenet-cards-block').css('display', 'none');
-
                             }
 
                         });
 
-                        $('.payment-unsave input[type="radio"]').not('#saved-cards input[type="radio"]').on('click',  function() {
-                            $("#open-mpauthorizenet-modal").trigger('click');
-                        });
 
-                    $(document).on("click", "#open-mpauthorizenet-modal", function() {
-                        $("#authorizePay").trigger('click');
-                        console.log('samdesdfhd click');
 
-                        // sandeep add code
-                     $('.authroizenet-card-info > .radio-container > input[type="radio"]')
-                    .prop('checked', false);
-                    $('#checkout-place-order-button').prop('disabled', true)
-                    paymentsaved = false;
+                    // $('.payment-unsave input[type="radio"]').not('#saved-cards input[type="radio"]').on('click',  function() {
+                    //     $("#open-mpauthorizenet-modal").trigger('click');
+                    // });
 
-                    });
+                    // $(document).on("click", "#open-mpauthorizenet-modal", function() {
+                    // $("#authorizePay").trigger('click');
+                    // console.log('samdesdfhd click');
+
+                    // // sandeep add code
+                    // $('.authroizenet-card-info > .radio-container > input[type="radio"]')
+                    // .prop('checked', false);
+                    // // $('#checkout-place-order-button').prop('disabled', true)
+                    // paymentsaved = false;
+
+                    // });
 
                     $(document).on("click", "#delete-card", function() {
                         var card_id = $(this).data('id');
@@ -126,17 +130,18 @@
                                     // sandeep add code
                                     paymentsaved = false;
                                  // sandeep add new code 
-                                $('#saved-card-heading').html(`
-                                    <span class="control-info mb-5 mt-5">
-                                        Please <a id="open-mpauthorizenet-modal" style="color: rgb(0, 65, 255) !important; cursor: pointer;">
-                                        Add new card</a> to proceed.
-                                    </span>
-                                `);
+                                $('#saved-card-heading').hide();
+                                // $('#saved-card-heading').html(`
+                                //     <span class="control-info mb-5 mt-5">
+                                //         Please <a id="open-mpauthorizenet-modal" style="color: rgb(0, 65, 255) !important; cursor: pointer;">
+                                //         Add new card</a> to proceed.
+                                //     </span>
+                                // `);
 
                                     if (data == 1) {
                                         removeSavedCardNode(deleteId);
                                     }
-                               
+                            
                                 },
                                 error: function(data) {
                                     console.log(data);
@@ -166,6 +171,7 @@
                     $(document).on('click',
                         '.authroizenet-card-info > .radio-container > input[type="radio"]',
                         function() {
+                            // hideAuthorizeNetUI();
                             savedCardSelectedId = $(this).attr('id');
                             $('#checkout-payment-continue-button').removeAttr("disabled",
                                 "disabled");
@@ -195,7 +201,7 @@
                                 savedCardSelectedId: savedCardSelectedId
                             },
                             success: function(response) {
-                                console.log('test');
+                                console.log('send token response');
                                 console.log(checkPlacedOrder);
                                 var address_checkbox = $(
                                     '.address-container input[type="radio"]');
@@ -207,11 +213,11 @@
                                 console.log('fbo_name',fbo_name);
                                 if (response.success == 'true' && checked &&
                                     acknowledge_checkbox && fbo_name != "") {
-                                    $('#checkout-place-order-button').removeAttr(
-                                        'disabled');
+                                    // $('#checkout-place-order-button').removeAttr(
+                                    //     'disabled');
                                 } else {
-                                    $('#checkout-place-order-button').attr('disabled',
-                                        'disabled');
+                                    // $('#checkout-place-order-button').attr('disabled',
+                                    //     'disabled');
                                 }
                             }
                         });
@@ -230,12 +236,15 @@
 
         function responseHandler(response) {
             console.log('user payment error message');
-            // sandeep || add error message 
+            // sandeep || add error message
             if (response.messages.resultCode === "Error") {
                 var i = 0;
                 while (i < response.messages.message.length) {
                     $('.card_erorr_message').removeClass('d-none');
-                    $('.payment_error_message').text(response.messages.message[i].text);   
+                    $('.payment_error_message').text(response.messages.message[i].text); 
+                    $('html, body').animate({
+                        scrollTop: $('.card_erorr_message').offset().top - 100 
+                    }, 500);  
                     setTimeout(function(){
                         $('.payment_error_message').text('');
                         $('.card_erorr_message').addClass('d-none');
@@ -247,11 +256,21 @@
                     i = i + 1;
                 }
             } else {
+                console.log('hide credit card form');
+                // hideAuthorizeNetUI();
                 paymentFormUpdate(response);
+                $('.card_success_message').removeClass('d-none').text('Card submitted successfully!');
+                $('html, body').animate({
+                        scrollTop: $('.card_success_message').offset().top - 100 
+                    }, 500);
+                setTimeout(function(){
+                    $('.card_success_message').addClass('d-none').text('');
+                }, 4000);
             }
         }
 
         function paymentFormUpdate(response) {
+            console.log('payment response');
             var IsCustomer = {{ $IsCustomer }};
              //var result = confirm("Do you want to save card for future ? ");
             if (IsCustomer) {
@@ -326,8 +345,8 @@
                             paymentsaved = true;
                             var acknowledge_checkbox = $('#acknowledge_checkbox').is(':checked');
                             $('#checkout-payment-continue-button').removeAttr("disabled", "disabled");
-                            $('.mpauthorizenet-cards-block').css('display', 'none');
-                            $('.mpauthorizenet-add-card').css('display', 'none');
+                            // $('.mpauthorizenet-cards-block').css('display', 'none');
+                            // $('.mpauthorizenet-add-card').css('display', 'none');
                             // sandeep add
                             var fbo_name = $('#airport_fbo_details').find('#AirportFbo_Name').text();
                             console.log($('#airport-fbo-input').val(),'this is the clg');
@@ -335,7 +354,7 @@
                                 '.address-container input[type="radio"]');
                             var checked = address_checkbox.is(':checked');
                             if (checked && acknowledge_checkbox && fbo_name != '') {
-                                $('#checkout-place-order-button').removeAttr('disabled');
+                                // $('#checkout-place-order-button').removeAttr('disabled');
                                 // sandeep add code for click on place order button 
                                  if(checkPlacedOrder == "placed_order"){
                                   $('#checkout-place-order-button'). trigger('click');
@@ -352,7 +371,7 @@
 @elseif (
     (isset($orderId) && request()->is('admin/paymentprofile/customers/orders/view/' . $orderId)) ||
         (isset($customerId) &&
-            request()->is('paymentprofile/CheckoutCustomOrders*') &&
+            request()->is('CheckoutCustomOrders*') &&
             request()->input('orderid') == $orderId &&
             request()->input('customerid') == $customerId))
     {{-- Authorize.Net --}}

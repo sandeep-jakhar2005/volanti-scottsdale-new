@@ -20,12 +20,12 @@ return [
 
 
     // // sandeep Add code 
-    'client_id' => env('QUICKBOOKS_CLIENT_ID', 'ABZx4MxUKGoLlDQ9olYpZ3nzs3U0PxEU43HwX3BUrw9MWKiiUC'),
-    'client_secret' => env('QUICKBOOKS_CLIENT_SECRET', 'dgjjtaRTtNtWeAZgFXpakkEyAQOSc5zQRx3Pru9V'),
-    'redirect_uri' => env('QUICKBOOKS_REDIRECT_URI', 'http://localhost:8000/callback'),
-    'scope' => env('SCOPE', 'com.intuit.quickbooks.accounting'),
-    'baseUrl' => env('QUICKBOOKS_ENVIRONMENT', 'sandbox'),
-    'company_id' => env('QUICKBOOKS_REALM_ID', '9341453997124960'),
+    'client_id' => env('QUICKBOOKS_CLIENT_ID', 'ABIqeFgZKCl7HU8Nn2R7l4H1DxKzVSTdCxA8HqmJHTmAT6i3tH'),
+    'client_secret' => env('QUICKBOOKS_CLIENT_SECRET', 'CWUfVRwsC7ywFJM6bQuU84EfAgTbvAlSXEZEKkXQ'),
+    'redirect_uri' => env('QUICKBOOKS_REDIRECT_URI', 'https://catering.volantiscottsdale.com/callback'),
+    'scope' => env('SCOPE', 'com.intuit.quickbooks.accounting com.intuit.quickbooks.payment'),
+    'baseUrl' => env('QUICKBOOKS_ENVIRONMENT', 'production'),
+    'company_id' => env('QUICKBOOKS_REALM_ID', '123146565838279'),
 
 
 
@@ -277,5 +277,6 @@ return [
         'ProductImage' => Webkul\Product\Facades\ProductImage::class,
         'ProductVideo' => Webkul\Product\Facades\ProductVideo::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
+'DB' => Illuminate\Support\Facades\DB::class,
     ])->toArray(),
 ];

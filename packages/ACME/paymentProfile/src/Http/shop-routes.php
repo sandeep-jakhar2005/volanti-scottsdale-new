@@ -3,6 +3,16 @@ use ACME\paymentProfile\Http\Controllers\Admin\InvoicesController;
 use ACME\paymentProfile\Http\Controllers\Shop\paymentProfileController;
 use Illuminate\Support\Facades\Route;
 
+
+Route::get('/CheckoutCustomOrders', [paymentProfileController::class, 'payment_details'])->middleware(['web', 'theme', 'locale', 'currency'])->name('invoice.detail');
+
+Route::get('/checkoutCustomOrder', [paymentProfileController::class, 'view'])
+    ->middleware(['web', 'theme', 'locale', 'currency'])
+    ->defaults('_config', [
+        'view' => 'shop::sales.invoice-form',
+    ])->name('order-invoice-view');
+
+
 Route::group([
     'prefix' => 'paymentprofile',
     'middleware' => ['web', 'theme', 'locale', 'currency']
@@ -17,9 +27,6 @@ Route::group([
      * 
      */
 
-    Route::get('/checkoutCustomOrder', [paymentProfileController::class, 'view'])->defaults('_config', [
-        'view' => 'shop::sales.invoice-form',
-    ])->name('order-invoice-view');
     // Route::get('/invoicePayment', [paymentProfileController::class, 'payment_view'])->name('order-invoice-payment');
     /**
      * invoice detail
@@ -29,8 +36,6 @@ Route::group([
     Route::post('/CheckoutCustomOrdersdetail', [paymentProfileController::class, 'invoice_detail'])->defaults('_config', [
         'view' => 'shop::sales.invoice-detail',
     ])->name('order-invoice-view-detail');
-
-    Route::get('/CheckoutCustomOrders', [paymentProfileController::class, 'payment_details'])->name('invoice.detail');
 
 
     /**
@@ -64,6 +69,5 @@ Route::group([
     // Route::get('/customer/showinquery',[paymentProfileController::class,'showInquery'])->name('show.inquery');
   
 });
-
 
 

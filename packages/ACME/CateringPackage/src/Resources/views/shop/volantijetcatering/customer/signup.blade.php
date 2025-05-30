@@ -146,11 +146,14 @@
                             </div>
                         </div>
 
-                        {{-- <div class="form-group">
-
-                            {!! Captcha::render() !!}
-
-                        </div> --}}
+   <div class="form-group col-md-12 col-12 col-lg-12">
+                                <div id="recaptcha"></div> 
+                                @error('g-recaptcha-response')
+                                <div class="error-message control-error">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
 
                         {!! view_render_event('bagisto.shop.customers.login_form_controls.after') !!}
 
@@ -216,39 +219,22 @@
                         <div class="row">
                             {!! view_render_event('bagisto.shop.customers.signup_form_controls.before') !!}
 
-                            <div class="control-group col-12 col-lg-6 col-md-6 mb-3"
-                                :class="[errors.has('first_name') ? 'has-error' : '']">
-                                <label for="first_name" class="required label-style">
-                                    {{ __('shop::app.customer.signup-form.firstname') }}
+                         <div class="control-group col-12 col-lg-6 col-md-6 mb-3"
+                                :class="[errors.has('fullname') ? 'has-error' : '']">
+                                <label for="fullname" class="required label-style">
+                                    {{-- {{ __('shop::app.customer.signup-form.firstname') }} --}}
+                                    Full Name
                                 </label>
 
-                                <input type="text" class="form-control form-control-lg fname-field " name="first_name"
-                                    v-validate="'required'" value="{{ old('first_name') }}"
+                                <input type="text" class="form-control form-control-lg fname-field " name="fullname"
+                                    v-validate="'required'" value="{{ old('fullname') }}"
                                     data-vv-as="&quot;{{ __('shop::app.customer.signup-form.firstname') }}&quot;" />
 
                                 {{-- <span class="control-error" v-if="errors.has('first_name')"
                                     v-text="errors.first('first_name')"></span> --}}
                                 <span class="text-danger fname-error control-error"></span>
                             </div>
-
                             {!! view_render_event('bagisto.shop.customers.signup_form_controls.firstname.after') !!}
-
-                            <div class="control-group col-12 col-lg-6 col-md-6 mb-3"
-                                :class="[errors.has('last_name') ? 'has-error' : '']">
-                                <label for="last_name" class="required label-style">
-                                    {{ __('shop::app.customer.signup-form.lastname') }}
-                                </label>
-
-                                <input type="text" class="form-control form-control-lg  lname-field" name="last_name"
-                                    v-validate="'required'" value="{{ old('last_name') }}"
-                                    data-vv-as="&quot;{{ __('shop::app.customer.signup-form.lastname') }}&quot;" />
-
-                                {{-- <span class="control-error" v-if="errors.has('last_name')"
-                                    v-text="errors.first('last_name')"></span> --}}
-                                    <span class="text-danger lname-error control-error"></span>
-                            </div>
-
-                            {!! view_render_event('bagisto.shop.customers.signup_form_controls.lastname.after') !!}
 
                             <div class="control-group col-12 col-lg-6 col-md-6 mb-3"
                                 :class="[errors.has('email') && '{{ old('form_type', '') }}'
@@ -333,9 +319,14 @@
 
                             {!! view_render_event('bagisto.shop.customers.signup_form_controls.password_confirmation.after') !!}
                         </div>
-                        <div class="control-group">
 
-                            {!! Captcha::render() !!}   
+  <div class="control-group">
+                            <div id="recaptcha-register"></div> 
+                            @error('g-recaptcha-response')
+                            <div class="error-message control-error">
+                                {{ $message }}
+                            </div>
+                        @enderror
 
                         </div>
 
@@ -362,9 +353,10 @@
 @endsection
 
 @push('scripts')
-    {!! Captcha::renderJS() !!}
+   {!! Captcha::renderJS() !!}
 
     <script>
+       window.siteKey = "{{ core()->getConfigData('customer.captcha.credentials.site_key') }}";
         document.addEventListener("DOMContentLoaded", function() {
             var formType = document.getElementById("my-element").getAttribute("data-form-type");
 
@@ -402,18 +394,22 @@
 
       $('body').on('click', '#submit-form1, #submit-form2', function(e) {
         e.preventDefault();
+ $('.error-message').remove();
         const isForm1 = $(this).is('#submit-form1');
         const form = isForm1 ? '#form1' : '#form2';
         const email = $('.email-field').val();
         const password = $('.password-field').val();
         const fname = $('.fname-field').val();
-        const lname = $('.lname-field').val();
+        // const lname = $('.lname-field').val();
         const signemail = $('.email-field1').val();
         const phoneNumber = $('.phone-field').val();
         const signpassword = $('.password-field1').val();
         const confirmPassword = $('.cpassword-field').val();
+        var recaptchaResponse = grecaptcha.getResponse();
+        var recaptchaRegsiterResponse = window.recaptchaRegsiterResponse ?? '';
         let hasError = false;
-
+ let firstErrorElement = null;
+console.log('recaptchaRegsiterResponse',recaptchaRegsiterResponse);
         // Clear previous errors
         $('.control-error, .email-error, .password-error, .fname-error, .lname-error,.email-error1, .phone-error, .password-error1, .confirm-password-error').empty();
 
@@ -427,35 +423,55 @@
         if (isForm1) {
             if (email === '') {
                     $('.email-error').text('Email is required.').fadeIn();
-                    hasError = true;
+ if (!firstErrorElement) firstErrorElement = $('.email-error');                   
+ hasError = true;
                 } else if (!emailPattern.test(email)) {
                     $('.email-error').text('Please enter a valid email address.').fadeIn();
-                    hasError = true;
+ if (!firstErrorElement) firstErrorElement = $('.email-error');                   
+ hasError = true;
                 }
                 if (password === '') {
                     $('.password-error').text('The password field is required.').fadeIn();
-                    hasError = true;
+  if (!firstErrorElement) firstErrorElement = $('.password-error');                   
+ hasError = true;
                 }
+  if (recaptchaResponse === '') {
+                $('#recaptcha').after('<span class="error-message text-danger">Please select CAPTCHA</span>');
+               if (!firstErrorElement) firstErrorElement = $('#recaptcha');               
+
+ hasError = true;
+           
+ }
+
+        
         } else {
-            if (!fname) { $('.fname-error').text('First name is required.').fadeIn(); hasError = true; }
-                    if (!lname) { $('.lname-error').text('Last name is required.').fadeIn(); hasError = true; }
+            if (!fname) { $('.fname-error').text('First name is required.').fadeIn();if (!firstErrorElement) firstErrorElement = $('.fname-error'); hasError = true; }
                     if (phoneDigits < 10 || !phoneNumber || !phonePattern.test(phoneNumber)) { 
                         $('.phone-error').text(phoneNumber ? 'Please enter a valid 10-14 digit phone number.' : 'Phone number is required.').fadeIn(); 
-                        hasError = true; 
+ if (!firstErrorElement) firstErrorElement = $('.phone-error');                       
+ hasError = true; 
                     }
                     if (!signemail || !emailPattern.test(signemail)) { 
                         $('.email-error1').text(email ? 'Please enter a valid email address.' : 'Email is required.').fadeIn(); 
-                        hasError = true; 
+  if (!firstErrorElement) firstErrorElement = $('.email-error1');                       
+ hasError = true; 
                     }
-                    if (!signpassword) { $('.password-error1').text('The password field is required.').fadeIn(); hasError = true; }
+                    if (!signpassword) { $('.password-error1').text('The password field is required.').fadeIn();if (!firstErrorElement) firstErrorElement = $('.password-error1'); hasError = true; }
                     if (!confirmPassword || signpassword !== confirmPassword) { 
                         $('.confirm-password-error').text(confirmPassword ? 'Passwords do not match.' : 'The confirm password field is required.').fadeIn(); 
-                        hasError = true; 
+ if (!firstErrorElement) firstErrorElement = $('.confirm-password-error');                       
+ hasError = true; 
                     }
+     if (recaptchaRegsiterResponse === '') {
+console.log('empty captcah');
+                    $('#recaptcha-register').after('<span class="error-message text-danger">Please select CAPTCHA</span>');
+ if (!firstErrorElement) firstErrorElement = $('#recaptcha-register');                   
+ hasError = true; 
+                                   }
           }
 
-                $(this).prop('disabled', hasError);
-
+console.log('empty captcah3');
+                
                 // sandeep add code click on login button then remove register url
                 if($(this).is('#submit-form1')){
                     let url = window.location.href;
@@ -464,8 +480,14 @@
                         history.replaceState(null, '', url);
                     }
                  }
+                if (hasError && firstErrorElement.length) {
+                    $('html, body').animate({
+                        scrollTop: firstErrorElement.offset().top - 200
+                    }, 500);
+                }
 
                  if (!hasError) {
+console.log('empty captcah4');
                     $(this).html('<span class="btn-ring"></span>').find('.btn-ring').show().css({
                         'display': 'flex',
                         'justify-content': 'center',
@@ -510,25 +532,22 @@
         if (value.length === 0) {
             field.siblings('.fname-error').text('First name is required.').fadeIn();
             isValid = false;
-        } else if (value.length > 25) {
-            field.siblings('.fname-error').text('First name must be 25 characters or less.').fadeIn();
-            isValid = false;
         } else {
             field.siblings('.fname-error').fadeOut();
         }
     }
 
-    if (field.hasClass('lname-field')) {
-        if (value.length === 0) {
-            field.siblings('.lname-error').text('Last name is required.').fadeIn();
-            isValid = false;
-        } else if (value.length > 25) {
-            field.siblings('.lname-error').text('Last name must be 25 characters or less.').fadeIn();
-            isValid = false;
-        } else {
-            field.siblings('.lname-error').fadeOut();
-        }
-    }
+  //  if (field.hasClass('lname-field')) {
+    //    if (value.length === 0) {
+      //      field.siblings('.lname-error').text('Last name is required.').fadeIn();
+        //    isValid = false;
+     //   } else if (value.length > 25) {
+       //     field.siblings('.lname-error').text('Last name must be 25 characters or less.').fadeIn();
+         //   isValid = false;
+      //  } else {
+        //    field.siblings('.lname-error').fadeOut();
+     //   }
+ //   }
 
     if (field.hasClass('phone-field')) {
         if (value.length === 0) {
@@ -586,7 +605,6 @@
         }
     });
 
-    $(this).closest('form').find('button[type="submit"]').prop('disabled', !isValid);
 });
 
             var formType = getParameterByName('form');

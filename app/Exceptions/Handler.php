@@ -5,7 +5,8 @@ namespace App\Exceptions;
 use Throwable;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
-
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -67,6 +68,26 @@ class Handler extends ExceptionHandler
             }
         }
 
+  // ✅ Ensure validation errors properly redirect back with errors
+    if ($exception instanceof ValidationException) {
         return parent::render($request, $exception);
     }
+
+    // ✅ Handle HTTP exceptions like 404, 403, and 500
+    if ($exception instanceof HttpException) {
+        if ($exception->getStatusCode() === 500) {
+            return response()->view('shop::errors.500', [], 500);
+        }
+        return parent::render($request, $exception);
+    }
+
+    // ✅ Handle all other unexpected fatal errors (syntax errors, undefined errors, etc.)
+    if (!config('app.debug')) {
+       return response()->view('shop::errors.500', [], 500);
+    }
+
+
+        return parent::render($request, $exception);
+    }
+
 }

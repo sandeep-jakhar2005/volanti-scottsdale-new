@@ -15,6 +15,7 @@ use Webkul\MpAuthorizeNet\Repositories\MpAuthorizeNetCartRepository;
 use Webkul\MpAuthorizeNet\Helpers\Helper;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Log;
+use App\Jobs\SendOrderFailedEmail;
 
 
 /**
@@ -105,9 +106,9 @@ class MpAuthorizeNetConnectController extends Controller
             $orderId = request()->input('order_id');
             
             if(isset($orderId) && $orderId){
-                 DB::table('mpauthorizenet_cart')
-                 ->where('cart_id', $orderId)
-                 ->delete();
+                DB::table('mpauthorizenet_cart')
+                ->where('cart_id', $orderId)
+                ->delete();
             }else{
                 DB::table('mpauthorizenet_cart')
                 ->where('cart_id', Cart::getCart()->id)
@@ -464,6 +465,7 @@ class MpAuthorizeNetConnectController extends Controller
                         return redirect()->back();
                     }
                 } else {
+
                     log::info('21');                
                     log::info(Cart::getCart()->id);
                     $MpauthorizeNetCard = $this->mpauthorizenetcartRepository->findOneWhere([
@@ -487,6 +489,7 @@ class MpAuthorizeNetConnectController extends Controller
                             ->first();
 
                             $customerEmail = Cart::getCart()->customer_email;
+                            $customerName = Cart::getCart()->customer_first_name . ' ' . Cart::getCart()->customer_last_name ?? "";
                     }else{
                             $fboDetails = DB::table('fbo_details')
                             ->where('customer_token', $token)
@@ -494,14 +497,15 @@ class MpAuthorizeNetConnectController extends Controller
                             ->orderBy('id', 'DESC')
                             ->first();
                             $customerEmail = $fboDetails->email_address;
+                            $customerName = $fboDetails->full_name ?? "";
                     }
 
                 log::info('cartcustomerEmail',['customerEmail'=>$customerEmail]);
-                   
-                   log::info('guest_email',['guest_email'=>$customerEmail]);
+                
+                log::info('guest_email',['guest_email'=>$customerEmail]);
 
                     $guestPaymentprofile = $this->helper->createCustomerProfile($customerEmail, $MpauthorizeNetCardDecode);
-                     log::info('guestPaymentprofile',['guestPaymentprofile'=>$guestPaymentprofile]);
+                    log::info('guestPaymentprofile',['guestPaymentprofile'=>$guestPaymentprofile]);
 
                     $guestResponse = $this->helper->createAnAcceptPaymentTransaction($MpauthorizeNetCardDecode);
 
@@ -569,6 +573,43 @@ class MpAuthorizeNetConnectController extends Controller
         } catch (\Exception $e) {
             session()->flash('error', __('mpauthorizenet::app.error.something-went-wrong'));
             log::info('25');
+            $order = session('order');
+            log::info('order',['order'=>$order]);
+            log::error($e->getMessage());
+            if(isset($order)){
+            $orderData = [
+                'order_id' => $order['increment_id'],
+                'status' => $order['status'],
+                'Name' => $customerName ?? '',
+                'Email' => $customerEmail ?? '',
+                'Mail_Heading' => "Order Processing Failure",
+                'Mail_Subject' => "Order Failed Notification",
+                'error_message' => $e->getMessage(),
+            ];
+            // Dispatch the job to send email
+            SendOrderFailedEmail::dispatch($orderData);
+        }
+
+        // When the 'Save Card' option is selected and an error occurs, this condition should be triggered
+        if(isset($orderId)){
+            $order = DB::table('orders')->where('id', $orderId)->first();
+            $orderData = [
+                'order_id' => $order->increment_id,
+                'status' => $order->status,
+                'Name' => (!empty($order->customer_first_name) && !empty($order->customer_last_name))
+                    ? $order->customer_first_name . ' ' . $order->customer_last_name
+                    : $order->fbo_full_name,
+                'Email' => !empty($order->customer_email)
+                    ? $order->customer_email
+                    : $order->fbo_email_address,
+                'Mail_Heading' => "Payment Processing Failure",
+                'Mail_Subject' => "Payment Failed Notification",
+                'error_message' => $e->getMessage(),
+            ];
+            // Dispatch the job to send email
+            SendOrderFailedEmail::dispatch($orderData);
+        }
+
             return redirect()->route('shop.checkout.cart.index');
         }
     }

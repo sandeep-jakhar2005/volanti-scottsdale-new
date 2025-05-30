@@ -1,28 +1,40 @@
+@php
+    use Jenssegers\Agent\Agent;
+
+    $agent = new Agent();
+    $isDesktop = $agent->isDesktop();
+    $isTablet = $agent->isTablet();
+    
+@endphp
+
+
 @foreach ($getCategorydetail['products'] as $product)
 
     <div class="container product-card-new product-custom-class product-item"
         data-name="{{ strtolower($product['name']) }}">
-        <div class="row my-4 ml-0"> 
+        {{-- @include('ui::datagrid.pagination') --}}
+        <div class="row my-4 ml-0 @if (($isDesktop || $isTablet) || (!$isDesktop && !$isTablet && $product['type'] != 'simple')) align-items-center @endif"> 
             <meta name="csrf-token" content="{{ csrf_token() }}">
-            <div class="col-10 p-md-0 p-lg-0">
+            <div class="col-10 p-md-0 p-lg-0 pr-0">
                 <div class="product-name no-padding custom-product-name">
                     <span class="fs16" id = "ProductName">{{ $product['name'] }}</span>
                     <br />
                     <p>{{ $product['description'] }}</p>
-                     @if ($product['isSaleable'])
-                        @if ($product['type'] == 'simple')
-                            <a id="category_instructions" data-toggle="collapse" class="m-0"
-                                href="#category_instructions_Div{{ $product['id'] }}" role="button"
-                                aria-expanded="false" aria-controls="category_instructions_Div">Special Instructions
-                                (optional)
-                                +</a>
-                            <div class="collapse multi-collapse mb-2 mt-2"
-                                id="category_instructions_Div{{ $product['id'] }}">
-                                <div id="category_instructions_Div" class="">
-                                    <textarea id="textarea-customize" name="special_instruction"></textarea>
-                                </div>
-                            </div>
-                        @endif
+                    @if ($isDesktop || $isTablet)
+                    @if ($product['isSaleable'])
+                    @if ($product['type'] == 'simple')
+                    <a id="category_instructions" data-toggle="collapse" class="m-0"
+                        href="#category_instructions_Div{{ $product['id'] }}" role="button" aria-expanded="true"
+                        aria-controls="category_instructions_Div">Special Instructions
+                        (optional)
+                        <span class="toggle-icon">-</span></a>
+                    <div class="collapse multi-collapse mt-2 mb-2 show in" id="category_instructions_Div{{ $product['id'] }}">
+                        <div id="category_instructions_Div" class="">
+                            <textarea id="textarea-customize" name="special_instruction" placeholder="Add your special instructions here..."></textarea>
+                        </div>
+                    </div>
+                    @endif
+                    @endif
                     @endif
                 </div>
             </div>
@@ -51,7 +63,7 @@
                                 <button type="button" data-toggle="modal"
                                     data-target="#exampleModal{{ $product['id'] }}_{{ $cate_id }}"
                                     class="OptionsAddButton" id="AddToCartButtonpopup">Add</button>
-                                <span class="customisable">Customisable</span>
+                                <span class="customisable">Customizable</span>
                                 <br>
                                 <span id="successMessage_{{ $product['id'] }}_{{ $cate_id }}"
                                     class="text-success successMessage"></span>
@@ -70,7 +82,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <div class="modal-body">
+                                        <div class="modal-body p-3">
                                             <span class="fs16 ProductName"
                                                 id = "ProductName">{{ $product['name'] }}</span>
                                             <br />
@@ -101,7 +113,30 @@
                 @endif  
 
             </div>
+            @if (!$isDesktop && !$isTablet)
+            @if ($product['isSaleable'])
+            @if ($product['type'] == 'simple')
+            <div class="category-instructions-div col-12 p-md-0 p-lg-0">
+                <a id="category_instructions" data-toggle="collapse" class="m-0"
+                    href="#category_instructions_Div{{ $product['id'] }}" role="button"
+                    aria-expanded="false" aria-controls="category_instructions_Div">Special Instructions
+                    (optional)
+                    <span class="toggle-icon">-</span></a>
+                <div class="collapse multi-collapse mb-2 mt-2 show in"
+                    id="category_instructions_Div{{ $product['id'] }}">
+                    <div id="category_instructions_Div" class="">
+                        <textarea id="textarea-customize" name="special_instruction" placeholder="Add your special instructions here..."></textarea>
+                    </div>
+                </div>
+            </div>
+            @endif
+        @endif
+        @endif
         </div>
 
     </div>
 @endforeach
+
+<div class="pagination-wrapper">
+    {!! $getCategorydetail['paginationHTML'] !!}
+</div>

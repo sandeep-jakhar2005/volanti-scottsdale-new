@@ -82,6 +82,6 @@
     </div>
     <label style="color: #f84661" class="special_instruction">Special Instructions(optional)</label>
     <div id="category_instructions_Div" class="mt-1 w-100">
-        <textarea id="textarea-customize" name="special_instruction" class="p-2"></textarea>          
+        <textarea id="textarea-customize" name="special_instruction" class="p-2" placeholder="Add your special instructions here..."></textarea>          
     </div>
 

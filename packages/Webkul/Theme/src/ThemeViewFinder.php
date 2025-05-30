@@ -27,8 +27,9 @@ class ThemeViewFinder extends FileViewFinder
                 return $this->findInPaths($view, $paths);
             } catch(\Exception $e) {
                 if ($namespace !== 'shop') {
-                    if (strpos($view, 'shop.') !== false) {
-                        $view = str_replace('shop.', 'shop.' . Themes::current()->code . '.', $view);
+$currentTheme = Themes::current();
+                    if (strpos($view, 'shop.') !== false && $currentTheme) {
+                        $view = str_replace('shop.', 'shop.' . $currentTheme->code . '.', $view);
                     }
                 }
 
@@ -45,8 +46,9 @@ class ThemeViewFinder extends FileViewFinder
                 return $this->findInPaths($view, $paths);
             } catch(\Exception $e) {
                 if ($namespace != 'admin') {
-                    if (strpos($view, 'admin.') !== false) {
-                        $view = str_replace('admin.', 'admin.' . Themes::current()->code . '.', $view);
+ $currentTheme = Themes::current();
+                    if (strpos($view, 'admin.') !== false && $currentTheme) {
+                        $view = str_replace('admin.', 'admin.' . $currentTheme->code->code . '.', $view);
                     }
                 }
 

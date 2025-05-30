@@ -2,6 +2,8 @@
 @inject ('toolbarHelper', 'Webkul\Product\Helpers\Toolbar')
 
 @php
+    use Jenssegers\Agent\Agent;
+
 
     $list = $toolbarHelper->getCurrentMode() == 'list' ? true : false;
 
@@ -10,6 +12,11 @@
     $totalReviews = $reviewHelper->getTotalReviews($product);
 
     $avgRatings = ceil($reviewHelper->getAverageRating($product));
+
+    $agent = new Agent();
+    $isDesktop = $agent->isDesktop();
+    $isTablet = $agent->isTablet();
+
 
 @endphp
 
@@ -79,7 +86,7 @@
     
         <div class="card grid-card product-card-new search-product-card col-12 m-0">
 
-            <div class="product-info my-2 ml-0 d-flex justify-content-between align-items-start">
+            <div class="row my-4 ml-0 @if (($isDesktop || $isTablet) || (!$isDesktop && !$isTablet && $product['type'] != 'simple')) align-items-center @endif">
                 
                 {{-- sandeep delete code  --}}
             {{-- <div class="product-content">
@@ -119,18 +126,19 @@
                     <br>
                     <p class="text-left">{{ $product->description }}</p>
                     
+                    @if ($isDesktop || $isTablet)
                     @if ($product->isSaleable() && $product['type'] == 'simple')
-
                     <a id="category_instructions" data-toggle="collapse" class="m-0"
-                    href="#category_instructions_Div{{ $product['id'] }}" role="button" aria-expanded="false"
+                    href="#category_instructions_Div{{ $product['id'] }}" role="button" aria-expanded="true"
                     aria-controls="category_instructions_Div">Special Instructions
                     (optional)
-                    +</a>
-                <div class="collapse multi-collapse category_instructions_Div mt-3 mb-3" id="category_instructions_Div{{ $product['id'] }}">
+                    <span class="toggle-icon">-</span></a>
+                <div class="collapse multi-collapse category_instructions_Div mt-3 mb-3 show in" id="category_instructions_Div{{ $product['id'] }}">
                     <div id="category_instructions_Div" class="">
-                        <textarea id="textarea-customize" name="special_instruction" class="p-2"></textarea>          
+                        <textarea id="textarea-customize" name="special_instruction" class="p-2"  placeholder="Add your special instructions here..."></textarea>          
                     </div>
                 </div>
+                    @endif
                     @endif
                 </div>
                 {{-- sandeep delete code --}}
@@ -249,6 +257,22 @@
                 @endif
 
             </div>
+            @if (!$isDesktop && !$isTablet)
+            @if ($product->isSaleable() && $product['type'] == 'simple')
+            <div class="category-instructions-div col-12 p-md-0 p-lg-0">
+            <a id="category_instructions" data-toggle="collapse" class="m-0"
+            href="#category_instructions_Div{{ $product['id'] }}" role="button" aria-expanded="true"
+            aria-controls="category_instructions_Div">Special Instructions
+            (optional)
+            <span class="toggle-icon">-</span></a>
+        <div class="collapse multi-collapse category_instructions_Div mt-3 mb-3 show in" id="category_instructions_Div{{ $product['id'] }}">
+            <div id="category_instructions_Div" class="">
+                <textarea id="textarea-customize" name="special_instruction" class="p-2"  placeholder="Add your special instructions here..."></textarea>          
+            </div>
+        </div>
+        </div>
+            @endif
+            @endif
         </div>
         </div>
     {{-- </div> --}}

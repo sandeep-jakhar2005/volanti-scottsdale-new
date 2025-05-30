@@ -139,17 +139,17 @@ $(document).ready(function () {
         var fbo_name = $('#airport_fbo_details').find('#AirportFbo_Name').text();
         //console.log('fbo_name',fbo_name);
         if ($(this).is(':checked') && address_checkbox && fbo_name !== "") {
-            $('#checkout-place-order-button').prop('disabled', false);
+            // $('#checkout-place-order-button').prop('disabled', false);
         } else {
-            $('#checkout-place-order-button').prop('disabled', true);
+            // $('#checkout-place-order-button').prop('disabled', true);
         }
     });
 
 
-    $('body').on('click', '.register-form .register-btn', function () {
+    // $('body').on('click', '.register-form .register-btn', function () {
 
-        $(this).prop('disabled', true);
-    });
+    //     $(this).prop('disabled', true);
+    // });
 
     $('body').on('click', '#daySelect', function () {
         $('.delivery_select_date').toggle();
@@ -178,17 +178,9 @@ $(document).ready(function () {
             }
         });
 
-        const buttonDisabled = allEmpty || hasError;
-        form.find('.fbo_detail_button').prop('disabled', buttonDisabled);
-
 
         var val = $('#selected-fbo-id').val();
         //console.log(val);
-
-        if ($('#auto_search').val() != '' && $('#timeSlots').val() != '' && $('#selected-fbo-id').val() != '') {
-            jQuery('#address_btn').prop('disabled', false);
-            jQuery('.search-button').prop('disabled', false);
-        }
     });
 
 
@@ -220,14 +212,6 @@ $(document).ready(function () {
             }
         });
 
-        const buttonDisabled = allEmpty || hasError;
-        form.find('.fbo_detail_button').prop('disabled', buttonDisabled);
-
-
-        if ($('#auto_search').val() != '' && $('#daySelect').val() != '' && $('#selected-fbo-id').val() != '') {
-            jQuery('#address_btn').prop('disabled', false);
-            jQuery('.search-button').prop('disabled', false);
-        }
     });
 
 
@@ -442,61 +426,564 @@ $(document).ready(function () {
     }
     $('body').on('click', '#search-icon, .header_searchbar_close_button', toggleSearchBar);
 
-    // sandeep || add code search category page 
+    // sandeep || add code search category products page 
+    // $('body').on('input', '#tnb-google-search-input', function () {
+    //     var searchTerm = $(this).val().toLowerCase();
+    //     var hasVisibleProductInMainCategory = false;
+    //     var hasVisibleProductInChildCategory = false;
+
+    //     $('.childCategoryheading').show();
+    //     $('#categoryheading').show();
+
+    //     // Remove any existing "No results found!" message
+    //     $('.no-results-message').remove();
+    //     // Check main category products
+    //     $('.sub-category .product-item').each(function () {
+    //         var productName = $(this).data('name').toLowerCase();
+    //         if (productName.includes(searchTerm)) {
+    //             $(this).removeClass('hidden');
+    //             hasVisibleProductInMainCategory = true;
+    //         } else {
+    //             $(this).addClass('hidden');
+    //         }
+    //     });
+
+    //     // Check child category products
+    //     $('.child_category .product-item').each(function () {
+    //         var productName = $(this).data('name').toLowerCase();
+    //         if (productName.includes(searchTerm)) {
+    //             $(this).removeClass('hidden');
+    //             hasVisibleProductInChildCategory = true;
+    //         } else {
+    //             $(this).addClass('hidden');
+    //         }
+    //     });
+
+    //     // Update visibility of headings based on search results
+    //     if (hasVisibleProductInMainCategory && hasVisibleProductInChildCategory) {
+    //         // Both categories have visible products
+    //         $('.childCategoryheading').show();
+    //         $('#categoryheading').show();
+    //     } else if (hasVisibleProductInMainCategory) {
+    //         // Only main category has visible products
+    //         $('.childCategoryheading').hide();
+    //         $('#categoryheading').show();
+    //     } else if (hasVisibleProductInChildCategory) {
+    //         // Only child category has visible products
+    //         $('.childCategoryheading').show();
+    //         $('#categoryheading').hide();
+    //     } else {
+    //         // No products found in either category
+    //         $('.childCategoryheading').hide();
+    //         $('#categoryheading').hide();
+    //         $('#products_header').append('<div class="no-results-message text-center">No results found!</div>');
+    //     }
+
+    // });
+
+    
+    // $('body').on('input', '#tnb-google-search-input', function () {
+    //     var searchTerm = $(this).val().trim().toLowerCase();
+    //     var hasVisibleProductInMainCategory = false;
+    //     var hasVisibleProductInChildCategory = false;
+    
+    //     $('.childCategoryheading, #categoryheading').show();
+    //     $('.no-results-message').remove();
+    
+    //     if (searchTerm.length < 1) {
+    //         // Show all products if input is empty
+    //         $('.product-item').removeClass('hidden');
+    //         $('.childCategoryheading, #categoryheading').show();
+    //         return;
+    //     }
+    
+    //     // Build all product items into an array with their names
+    //     var allProducts = [];
+    //     $('.product-item').each(function () {
+    //         allProducts.push({
+    //             el: $(this),
+    //             name: $(this).data('name')?.toLowerCase() || ''
+    //         });
+    //     });
+    
+    //     var fuse = new Fuse(allProducts, {
+    //         keys: ['name'],
+    //         threshold: 0.6
+    //     });
+    
+    //     var results = fuse.search(searchTerm);
+    //     var matchedElements = results.map(function (res) {
+    //         return res.item.el[0];
+    //     });
+    
+    //     // Hide/show main category products
+    //     $('.sub-category .product-item').each(function () {
+    //         if (matchedElements.includes(this)) {
+    //             $(this).removeClass('hidden');
+    //             hasVisibleProductInMainCategory = true;
+    //         } else {
+    //             $(this).addClass('hidden');
+    //         }
+    //     });
+    
+    //     // Hide/show child category products
+    //     $('.child_category .product-item').each(function () {
+    //         if (matchedElements.includes(this)) {
+    //             $(this).removeClass('hidden');
+    //             hasVisibleProductInChildCategory = true;
+    //         } else {
+    //             $(this).addClass('hidden');
+    //         }
+    //     });
+    
+    //     // Headings control
+    //     if (hasVisibleProductInMainCategory && hasVisibleProductInChildCategory) {
+    //         $('.childCategoryheading, #categoryheading').show();
+    //     } else if (hasVisibleProductInMainCategory) {
+    //         $('.childCategoryheading').hide();
+    //         $('#categoryheading').show();
+    //     } else if (hasVisibleProductInChildCategory) {
+    //         $('.childCategoryheading').show();
+    //         $('#categoryheading').hide();
+    //     } else {
+    //         $('.childCategoryheading, #categoryheading').hide();
+    //         $('.search_not_found_message').append('<div class="no-results-message text-center">No results found!</div>');
+    //     }
+    // });
+    
+
+    // $('body').on('input', '#tnb-google-search-input', function () {
+    //     var searchTerm = $(this).val().trim().toLowerCase();
+    //     var hasVisibleProductInMainCategory = false;
+    //     var hasVisibleProductInChildCategory = false;
+    
+    //     $('.childCategoryheading, #categoryheading').show();
+    //     $('.no-results-message').remove();
+    
+    //     if (searchTerm.length < 1) {
+    //         // Show all products if input is empty
+    //         $('.product-item').removeClass('hidden');
+    //         $('.childCategoryheading, #categoryheading').show();
+    //         return;
+    //     }
+    
+    //     // Build all product items into an array with their names
+    //     var allProducts = [];
+    //     $('.product-item').each(function () {
+    //         allProducts.push({
+    //             el: $(this),
+    //             name: $(this).data('name')?.toLowerCase() || ''
+    //         });
+    //     });
+    
+    //     // Custom fuzzy search function
+    //     function fuzzyMatch(pattern, string) {
+    //         pattern = pattern.toLowerCase();
+    //         string = string.toLowerCase();
+            
+    //         let score = 0;
+    //         let patternIdx = 0;
+    //         let prevMatchIdx = -1;
+    //         let consecutiveMatches = 0;
+            
+    //         // Try to match all characters in pattern
+    //         for (let strIdx = 0; strIdx < string.length && patternIdx < pattern.length; strIdx++) {
+    //             if (string[strIdx] === pattern[patternIdx]) {
+    //                 // Character match
+    //                 patternIdx++;
+                    
+    //                 // Award bonus points for consecutive matches and matches after word boundaries
+    //                 if (prevMatchIdx === strIdx - 1) {
+    //                     consecutiveMatches++;
+    //                     score += consecutiveMatches * 2; // Consecutive matches are worth more
+    //                 } else {
+    //                     consecutiveMatches = 0;
+    //                     score += 1;
+    //                 }
+                    
+    //                 // Award bonus points for matches after spaces, hyphens, or underscores
+    //                 if (strIdx > 0 && (string[strIdx - 1] === ' ' || string[strIdx - 1] === '-' || string[strIdx - 1] === '_')) {
+    //                     score += 3;
+    //                 }
+                    
+    //                 // Award bonus points for matches at the beginning of the string
+    //                 if (strIdx === 0) {
+    //                     score += 4;
+    //                 }
+                    
+    //                 prevMatchIdx = strIdx;
+    //             }
+    //         }
+            
+    //         // If we matched all pattern characters
+    //         if (patternIdx === pattern.length) {
+    //             // Calculate how well the match fits the total string
+    //             let fitScore = pattern.length / string.length;
+                
+    //             // Combine scores - base match score plus fit score
+    //             return score + (fitScore * 6);
+    //         }
+            
+    //         return 0; // No match
+    //     }
+    
+    //     // Perform search and sort by score
+    //     var results = allProducts
+    //         .map(function(product) {
+    //             var score = fuzzyMatch(searchTerm, product.name);
+    //             return {
+    //                 item: product,
+    //                 score: score
+    //             };
+    //         })
+    //         .filter(function(result) {
+    //             return result.score > 0; // Only keep matches
+    //         })
+    //         .sort(function(a, b) {
+    //             return b.score - a.score; // Sort by score (descending)
+    //         });
+    
+    //     var matchedElements = results.map(function(res) {
+    //         return res.item.el[0];
+    //     });
+    
+    //     // Hide/show main category products
+    //     $('.sub-category .product-item').each(function () {
+    //         if (matchedElements.includes(this)) {
+    //             $(this).removeClass('hidden');
+    //             hasVisibleProductInMainCategory = true;
+    //         } else {
+    //             $(this).addClass('hidden');
+    //         }
+    //     });
+    
+    //     // Hide/show child category products
+    //     $('.child_category .product-item').each(function () {
+    //         if (matchedElements.includes(this)) {
+    //             $(this).removeClass('hidden');
+    //             hasVisibleProductInChildCategory = true;
+    //         } else {
+    //             $(this).addClass('hidden');
+    //         }
+    //     });
+    
+    //     // Headings control
+    //     if (hasVisibleProductInMainCategory && hasVisibleProductInChildCategory) {
+    //         $('.childCategoryheading, #categoryheading').show();
+    //     } else if (hasVisibleProductInMainCategory) {
+    //         $('.childCategoryheading').hide();
+    //         $('#categoryheading').show();
+    //     } else if (hasVisibleProductInChildCategory) {
+    //         $('.childCategoryheading').show();
+    //         $('#categoryheading').hide();
+    //     } else {
+    //         $('.childCategoryheading, #categoryheading').hide();
+    //         $('.search_not_found_message').append('<div class="no-results-message text-center">No results found!</div>');
+    //     }
+    // });
+
+
+    // $('body').on('input', '#tnb-google-search-input', function() {
+    //     var searchTerm = $(this).val().trim().toLowerCase();
+        
+    //     // Show all if search is empty
+    //     if (searchTerm.length < 1) {
+    //         $('.product-item').removeClass('hidden');
+    //         $('.childCategoryheading, #categoryheading').show();
+    //         $('.no-results-message').remove();
+    //         return;
+    //     }
+        
+    //     // Simple fuzzy search function
+    //     function fuzzySearch(needle, haystack) {
+    //         needle = needle.toLowerCase();
+    //         haystack = haystack.toLowerCase();
+            
+    //         let needlePos = 0;
+            
+    //         // Check if characters appear in sequence
+    //         for (let i = 0; i < haystack.length && needlePos < needle.length; i++) {
+    //             if (haystack[i] === needle[needlePos]) {
+    //                 needlePos++;
+    //             }
+    //         }
+            
+    //         // Return true if all characters were found
+    //         return needlePos === needle.length;
+    //     }
+        
+    //     // Reset visibility
+    //     $('.no-results-message').remove();
+    //     var mainVisible = false;
+    //     var childVisible = false;
+        
+    //     // Filter products
+    //     $('.product-item').each(function() {
+    //         var productName = $(this).data('name')?.toLowerCase() || '';
+    //         var isMatch = fuzzySearch(searchTerm, productName);
+            
+    //         if (isMatch) {
+    //             $(this).removeClass('hidden');
+    //             if ($(this).closest('.sub-category').length) mainVisible = true;
+    //             if ($(this).closest('.child_category').length) childVisible = true;
+    //         } else {
+    //             $(this).addClass('hidden');
+    //         }
+    //     });
+        
+    //     // Update headings visibility
+    //     if (mainVisible && childVisible) {
+    //         $('.childCategoryheading, #categoryheading').show();
+    //     } else if (mainVisible) {
+    //         $('.childCategoryheading').hide();
+    //         $('#categoryheading').show();
+    //     } else if (childVisible) {
+    //         $('.childCategoryheading').show();
+    //         $('#categoryheading').hide();
+    //     } else {
+    //         $('.childCategoryheading, #categoryheading').hide();
+    //         $('.search_not_found_message').append('<div class="no-results-message text-center">No results found!</div>');
+    //     }
+    // });
+
+
+    // $('body').on('input', '#tnb-google-search-input', function () {
+    //     const searchTerm = $(this).val().trim().toLowerCase();
+    //     $('.no-results-message').remove();
+    
+    //     // Show all if input is empty
+    //     if (!searchTerm) {
+    //         $('.product-item').removeClass('hidden');
+    //         $('.childCategoryheading, #categoryheading').show();
+    //         return;
+    //     }
+    
+    //     // Basic fuzzy word matcher
+    //     function fuzzyScore(query, target) {
+    //         let score = 0;
+    //         query = query.toLowerCase();
+    //         target = target.toLowerCase();
+    
+    //         if (target.includes(query)) return 100;
+    //         if (target.startsWith(query)) return 80;
+    //         if (target.split(' ').some(word => word.includes(query))) return 60;
+    
+    //         let i = 0;
+    //         for (let char of target) {
+    //             if (char === query[i]) {
+    //                 score += 5;
+    //                 i++;
+    //             }
+    //         }
+    //         return i === query.length ? score : 0;
+    //     }
+    
+    //     const searchWords = searchTerm.split(/\s+/);
+    //     let matches = [], mainVisible = false, childVisible = false;
+    
+    //     $('.product-item').each(function () {
+    //         const el = $(this);
+    //         const name = el.data('name')?.toLowerCase() || '';
+    //         const productWords = name.split(/\s+/);
+    
+    //         // Match each search word with full product name
+    //         let totalScore = 0;
+    //         for (let word of searchWords) {
+    //             let wordScore = 0;
+    //             for (let pw of productWords) {
+    //                 wordScore = Math.max(wordScore, fuzzyScore(word, pw));
+    //             }
+    //             totalScore += wordScore;
+    //         }
+    
+    //         if (totalScore > 0) {
+    //             matches.push({ element: el, score: totalScore });
+    //         }
+    //     });
+    
+    //     matches.sort((a, b) => b.score - a.score);
+    //     $('.product-item').addClass('hidden');
+    
+    //     matches.forEach(match => {
+    //         match.element.removeClass('hidden');
+    //         if (match.element.closest('.sub-category').length) mainVisible = true;
+    //         if (match.element.closest('.child_category').length) childVisible = true;
+    //     });
+    
+    //     // Adjust heading visibility
+    //     if (mainVisible && childVisible) {
+    //         $('.childCategoryheading, #categoryheading').show();
+    //     } else if (mainVisible) {
+    //         $('.childCategoryheading').hide();
+    //         $('#categoryheading').show();
+    //     } else if (childVisible) {
+    //         $('.childCategoryheading').show();
+    //         $('#categoryheading').hide();
+    //     } else {
+    //         $('.childCategoryheading, #categoryheading').hide();
+    //         $('.search_not_found_message').append('<div class="no-results-message text-center">No results found!</div>');
+    //     }
+    // });
+
+
+    // $('body').on('input', '#tnb-google-search-input', function () {
+    //     const searchTerm = $(this).val().trim().toLowerCase();
+    //     $('.no-results-message').remove();
+    
+    //     // Show all if input is empty
+    //     if (!searchTerm) {
+    //         $('.product-item').removeClass('hidden');
+    //         $('.childCategoryheading, #categoryheading').show();
+    //         return;
+    //     }
+    
+    //     // Simplified fuzzy word matcher
+    //     function fuzzyScore(query, target) {
+    //         query = query.toLowerCase();
+    //         target = target.toLowerCase();
+    
+    //         if (target.includes(query)) return 100;
+    //         if (target.startsWith(query)) return 80;
+    //         if (target.split(' ').some(word => word.includes(query))) return 60;
+            
+    //         // Character-by-character match
+    //         let score = 0, i = 0;
+    //         for (let char of target) {
+    //             if (char === query[i]) { score += 10; i++; }
+    //         }
+    //         return i === query.length ? score : 0;
+    //     }
+    
+    //     const searchWords = searchTerm.split(/\s+/);
+    //     let matches = [], mainVisible = false, childVisible = false;
+    
+    //     $('.product-item').each(function () {
+    //         const el = $(this);
+    //         const name = el.data('name')?.toLowerCase() || '';
+    //         let totalScore = 0;
+            
+    //         for (let word of searchWords) {
+    //             let wordScore = 0;
+    //             for (let pw of name.split(/\s+/)) {
+    //                 wordScore = Math.max(wordScore, fuzzyScore(word, pw));
+    //             }
+    //             totalScore += wordScore;
+    //         }
+    
+    //         if (totalScore > 0) matches.push({ element: el, score: totalScore });
+    //     });
+    
+    //     matches.sort((a, b) => b.score - a.score);
+    //     $('.product-item').addClass('hidden');
+    
+    //     matches.forEach(match => {
+    //         match.element.removeClass('hidden');
+    //         if (match.element.closest('.sub-category').length) mainVisible = true;
+    //         if (match.element.closest('.child_category').length) childVisible = true;
+    //     });
+    
+    //     // Adjust heading visibility
+    //     if (mainVisible && childVisible) {
+    //         $('.childCategoryheading, #categoryheading').show();
+    //     } else if (mainVisible) {
+    //         $('.childCategoryheading').hide();
+    //         $('#categoryheading').show();
+    //     } else if (childVisible) {
+    //         $('.childCategoryheading').show();
+    //         $('#categoryheading').hide();
+    //     } else {
+    //         $('.childCategoryheading, #categoryheading').hide();
+    //         $('.search_not_found_message').append('<div class="no-results-message text-center">No results found!</div>');
+    //     }
+    // });
+
     $('body').on('input', '#tnb-google-search-input', function () {
-        var searchTerm = $(this).val().toLowerCase();
-        var hasVisibleProductInMainCategory = false;
-        var hasVisibleProductInChildCategory = false;
-
-        $('.childCategoryheading').show();
-        $('#categoryheading').show();
-
-        // Remove any existing "No results found!" message
+        const searchTerm = $(this).val().trim().toLowerCase();
         $('.no-results-message').remove();
-        // Check main category products
-        $('.sub-category .product-item').each(function () {
-            var productName = $(this).data('name').toLowerCase();
-            if (productName.includes(searchTerm)) {
-                $(this).removeClass('hidden');
-                hasVisibleProductInMainCategory = true;
-            } else {
-                $(this).addClass('hidden');
+    
+        // Show all if input is empty
+        if (!searchTerm) {
+            $('.product-item').removeClass('hidden');
+            $('.childCategoryheading, #categoryheading').show();
+            return;
+        }
+    
+        // Improved fuzzy matcher
+        function fuzzyScore(query, target) {
+            query = query.toLowerCase();
+            target = target.toLowerCase();
+    
+            if (target.includes(query)) return 100;
+            if (target.startsWith(query)) return 80;
+    
+            // Match any word
+            if (target.split(' ').some(word => word.includes(query))) return 60;
+    
+            // Match across the entire string, character-by-character
+            let score = 0, i = 0;
+            for (let char of target) {
+                if (char === query[i]) {
+                    score += 10;
+                    i++;
+                }
             }
-        });
-
-        // Check child category products
-        $('.child_category .product-item').each(function () {
-            var productName = $(this).data('name').toLowerCase();
-            if (productName.includes(searchTerm)) {
-                $(this).removeClass('hidden');
-                hasVisibleProductInChildCategory = true;
-            } else {
-                $(this).addClass('hidden');
+            return i === query.length ? score : 0;
+        }
+    
+        const searchWords = searchTerm.split(/\s+/);
+        let matches = [], mainVisible = false, childVisible = false;
+    
+        $('.product-item').each(function () {
+            const el = $(this);
+            const name = el.data('name')?.toLowerCase() || '';
+            let totalScore = 0;
+    
+            // Fuzzy match across full name
+            totalScore = fuzzyScore(searchTerm, name);
+    
+            // If totalScore is still low, fallback to per-word scoring
+            if (totalScore < 60) {
+                for (let word of searchWords) {
+                    let wordScore = 0;
+                    for (let pw of name.split(/\s+/)) {
+                        wordScore = Math.max(wordScore, fuzzyScore(word, pw));
+                    }
+                    totalScore += wordScore;
+                }
             }
+    
+            if (totalScore > 0) matches.push({ element: el, score: totalScore });
         });
-
-        // Update visibility of headings based on search results
-        if (hasVisibleProductInMainCategory && hasVisibleProductInChildCategory) {
-            // Both categories have visible products
-            $('.childCategoryheading').show();
-            $('#categoryheading').show();
-        } else if (hasVisibleProductInMainCategory) {
-            // Only main category has visible products
+    
+        matches.sort((a, b) => b.score - a.score);
+        $('.product-item').addClass('hidden');
+    
+        matches.forEach(match => {
+            match.element.removeClass('hidden');
+            if (match.element.closest('.sub-category').length) mainVisible = true;
+            if (match.element.closest('.child_category').length) childVisible = true;
+        });
+    
+        // Adjust heading visibility
+        if (mainVisible && childVisible) {
+            $('.childCategoryheading, #categoryheading').show();
+        } else if (mainVisible) {
             $('.childCategoryheading').hide();
             $('#categoryheading').show();
-        } else if (hasVisibleProductInChildCategory) {
-            // Only child category has visible products
+        } else if (childVisible) {
             $('.childCategoryheading').show();
             $('#categoryheading').hide();
         } else {
-            // No products found in either category
-            $('.childCategoryheading').hide();
-            $('#categoryheading').hide();
-            $('#products_header').append('<div class="no-results-message text-center">No results found!</div>');
+            $('.childCategoryheading, #categoryheading').hide();
+            $('.search_not_found_message').append('<div class="no-results-message text-center">No results found!</div>');
         }
-
     });
+    
+
+    
+    
 });
+
 
 
 
@@ -581,7 +1068,7 @@ jQuery('body').on('click', '.add_button', function () {
                 modalTextarea.val('');
             } else {
                 nonModalTextarea.val('');
-                $('#category_instructions_Div' + productId).removeClass('show in');
+                // $('#category_instructions_Div' + productId).removeClass('show in');
             }
 
 
@@ -606,6 +1093,8 @@ jQuery('body').on('click', '.add_button', function () {
                 $(modalSelector).removeAttr('aria-modal');
                 $(modalSelector).attr('aria-hidden', 'true');
             }
+
+            $('#cart-modal-content').addClass('slide-cart-modal');
 
         },
         error: function (xhr) {
@@ -718,7 +1207,7 @@ $('body').on('click', '.custom-remove-item', function () {
     let token = $('meta[name="csrf-token"]').attr('content');
 
     let $clickedElement = $(this);
-    $clickedElement.closest('.bin-icon').hide();
+    $clickedElement.closest('.bin-icon').css('visibility', 'hidden');
     $clickedElement.closest('.display-inbl').find(".bin-btn-ring").show();
 
 
@@ -732,17 +1221,13 @@ $('body').on('click', '.custom-remove-item', function () {
             update_mini_cart(response, 'empty');
             // $clickedElement.closest('.bin-icon').show();
             // $clickedElement.closest('.display-inbl').find(".bin-btn-ring").hide();
-
-            $clickedElement.closest('.bin-icon').hide();
             $clickedElement.closest('.display-inbl').find(".bin-btn-ring").show();
-
         },
         error: function (xhr) {
-            $clickedElement.closest('.bin-icon').show();
+            $clickedElement.closest('.bin-icon').css('visibility', 'visible');
             $clickedElement.closest('.display-inbl').find(".bin-btn-ring").hide();
         }
     });
-
 
 })
 
@@ -826,7 +1311,7 @@ function update_mini_cart(response, type = null) {
             if (item.additional?.attributes && typeof item.additional.attributes === 'object') {
                 Object.values(item.additional.attributes).forEach(attribute => {
                     if (attribute.option_label) {
-                        attributesHtml += ` <strong>Preference: </strong><span>${attribute.option_label}</span>`;
+                        attributesHtml += ` Preference:<span>${attribute.option_label}</span>`;
                     }
                 });
             }
@@ -836,38 +1321,77 @@ function update_mini_cart(response, type = null) {
 
             //console.log(itemId, 'item');
             const newItemHtml =
-                '<div class="row small-card-container col-12 mb-2" style="border-bottom: 1px solid rgb(222, 226, 230);">' +
-                '    <div class="col-8 no-padding card-body align-vertical-top" style="padding-right:10px !important">' +
-                '        <div class="no-padding">' +
-                '            <div class="fs16 text-nowrap fw6 product-name">' + item.name + '</div>' +
-                '        <div class="row mini-cart-instruction">' +
-                '            <div class="row mini-cart-instruction" style="font-size:13px">' +
-                '' + attributesHtml +
-                (item.additional.special_instruction ?
-                    '<span><strong>Special Instruction: </strong>' + item.additional.special_instruction + '</span>' : '') +
-                '            </div>' +
-                '        </div>' +
-                '                </div>' +
-                '            </div>' +
-                '  <div class="fs14 card-current-price fw6 col-4 mt-2 p-0 text-left"">' +
-                '                <div class="display-inbl">' +
-                '                    <label class="fw5 m-auto">Qty:</label>' +
-                '                     <span class="ml5 ml-1">' + item.quantity + '</span>' +
-                '                    <span class="bin_icon">' +
-                '                    <span class="bin-icon">' +
-                '                        <img src="/themes/volantijetcatering/assets/images/bin.png" alt="Bin Icon" width="15" height="15" class="bin-icon-image custom-remove-item ml-2" data-item-id="' + itemId + '">' +
-                '                    </span>' +
-                '            <span class="bin-btn-ring ml-2"></span>' +
-                '                    </span>' +
-                '        </div>' +
-                '    </div>' +
-                '</div>';
+            '<div class="row small-card-container col-12 pt-2 pb-2" style="border-bottom: 1px solid rgb(222, 226, 230);">' +
+            '  <div class="col-8 no-padding card-body align-vertical-top" style="padding-right:10px !important">' +
+            '    <div class="no-padding">' +
+            '      <div class="fs16 text-nowrap fw6 product-name pb-1">' + item.name + '</div>' +
+            '      <div class="row mini-cart-instruction d-block" style="font-size:11px;">' +
+            '        ' + attributesHtml +
+            (item.additional.special_instruction
+              ? '<div class="pt-1">' +
+                'Special Instruction <br>' +
+                '<div style="background-color: #f2f2f3;padding: 10px">' +
+                item.additional.special_instruction +
+                '</div>' +
+                '</div>'
+              : '') +
+            '      </div>' +
+            '    </div>' +
+            '  </div>' +
+            '  <div class="fs14 card-current-price fw6 col-4 mt-2 p-0 text-right">' +
+            '    <div class="display-inbl pb-2" style="display: flex !important">' +
+            // '      <span class="trash_icon mr-2" style="cursor:pointer;">' +
+            // '        <img src="/themes/volantijetcatering/assets/images/close.png" alt="close Icon" width="6" height="6" class="bin-icon-image custom-remove-item" data-item-id="' + itemId + '">' +
+            // '      </span>' +
+            '      <span class="group__input__field d-flex justify-content-between">' +
+            '        <button class="border-0 editMinusBtn" style="width: 16px;" data-item-id="' + itemId + '">-</button>' +
+            '        <input type="text" class="text-center w-50 border-0 bg-light p-1 editQuantityInput" value="' + item.quantity + '" data-item-id="' + itemId + '">' +
+            '        <button class="border-0 editPlusBtn" style="width: 16px;" data-item-id="' + itemId + '">+</button>' +
+            '      </span>' +
+            '                    <span class="bin_icon m-auto">' +
+            '            <span class="bin-btn-ring ml-2"></span>' +
+            '                    <span class="bin-icon">' +
+            '                        <img src="/themes/volantijetcatering/assets/images/bin-mini-cart.png" alt="Bin Icon" width="18" height="18" class="bin-icon-image custom-remove-item ml-2" data-item-id="' + itemId + '">' +
+            '                    </span>' +
+            '                    </span>' +
+            '        </div>' +
+            '<button type="button" class="border-0 text-end w-auto UpdateQuantityButton" data-item-id="' + itemId + '"> ' +
+                '<img src="/themes/volantijetcatering/assets/images/save.png" alt="Save" style="width: 18px; height: 18px; background: #fff; pointer-events: none;">' +
+            '</button>'
+
+            '    </div>' +
+            '</div>';
+                // '<div class="row small-card-container col-12 pt-2 pb-2" style="border-bottom: 1px solid rgb(222, 226, 230);">' +
+                // '    <div class="col-8 no-padding card-body align-vertical-top" style="padding-right:10px !important">' +
+                // '        <div class="no-padding">' +
+                // '            <div class="fs16 text-nowrap fw6 product-name  pb-1">' + item.name + '</div>' +
+                // '        <div class="row mini-cart-instruction">' +
+                // '            <div class="row mini-cart-instruction  d-block" style="font-size:13px">' +
+                // '' + attributesHtml +
+                // (item.additional.special_instruction ?
+                //     '<span><strong>Special Instruction: </strong>' + item.additional.special_instruction + '</span>' : '') +
+                // '            </div>' +
+                // '        </div>' +
+                // '                </div>' +
+                // '            </div>' +
+                // '  <div class="fs14 card-current-price fw6 col-4 mt-2 p-0 text-left"">' +
+                // '                <div class="display-inbl">' +
+                // '                    <label class="fw5 m-auto">Qty:</label>' +
+                // '                     <span class="ml5 ml-1">' + item.quantity + '</span>' +
+                // '                    <span class="bin_icon">' +
+                // '                    <span class="bin-icon">' +
+                // '                        <img src="/themes/volantijetcatering/assets/images/bin.png" alt="Bin Icon" width="15" height="15" class="bin-icon-image custom-remove-item ml-2" data-item-id="' + itemId + '">' +
+                // '                    </span>' +
+                // '            <span class="bin-btn-ring ml-2"></span>' +
+                // '                    </span>' +
+                // '        </div>' +
+                // '    </div>' +
+                // '</div>';
 
             // Append the new item HTML to the container
             $container.append(newItemHtml);
         }
     }
-
 
     // Update the badge quantity if necessary
     const badge = document.querySelector('.badge-container .badge');
@@ -875,6 +1399,82 @@ function update_mini_cart(response, type = null) {
         badge.textContent = totalQuantity; // Update the badge with the total quantity
     }
 }
+
+
+
+
+
+jQuery('body').on('click', '.UpdateQuantityButton', function () {
+    let updateQuantityButton = $(this);
+    let quantity = updateQuantityButton.closest('.fs14.card-current-price').find('.editQuantityInput').val();
+    let itemId = updateQuantityButton.closest('.fs14.card-current-price').find('.editQuantityInput').data('item-id');
+    let token = $('meta[name="csrf-token"]').attr('content');
+    let $originalButtonHtml = $(this).html();
+    if (quantity <= 0) {
+        return false
+    }
+
+    let data = {
+        '_token': token,
+        'item_id': itemId,
+        'quantity': quantity,
+    };
+
+
+    $(this).html('');
+    $(this).html('<span class="save-btn-ring" style="display:inline-block;"></span>');
+    $.ajax({
+        url: 'checkout/update/mini_cart/' + itemId,
+        type: 'POST',
+        data: data,
+        success: function (response) {
+            console.log(response.total_quantity);
+            updateQuantityButton.html($originalButtonHtml); 
+            // Update the badge quantity if necessary
+            const badge = document.querySelector('.badge-container .badge');
+            if (badge) {
+                badge.textContent = response.total_quantity;
+            }
+
+        },
+        error: function (xhr) {
+            updateQuantityButton.html($originalButtonHtml); 
+        }
+    });
+});
+
+
+    // sandeep add plus minus quantity button 
+    // Add click event listener to plus button
+    jQuery('body').on('click', '.editPlusBtn', function() {
+        var parentContainer = $(this).parent().parent();
+        var quantityInput = parentContainer.find('.editQuantityInput');
+        var currentValue = parseInt(quantityInput.val(), 10);
+        var newValue = currentValue + 1;
+        quantityInput.val(newValue);
+    });
+
+    // Add click event listener to minus button
+        jQuery('body').on('click', '.editMinusBtn', function() {
+            var parentContainer = $(this).parent().parent();
+            var quantityInput = parentContainer.find('.editQuantityInput');
+            var currentValue = parseInt(quantityInput.val(), 10);
+            if (currentValue > 1) {
+                var newValue = currentValue - 1;
+                quantityInput.val(newValue);
+            }else {
+                quantityInput.val(1);
+            }
+        });
+
+        jQuery('body').on('input', '.editQuantityInput', function() {
+            var value = $(this).val().trim();
+            if (value === '' || isNaN(parseInt(value)) || parseInt(value) <= 0) {
+                $(this).val(1);
+            }
+        });
+
+
 
 // Hide all lists when clicking outside specific elements
 $('body').on('click', function (event) {
@@ -911,23 +1511,34 @@ $(document).on('click', '#timeSlots', function (event) {
 
 
 
-$('body').on('click', '.checkout__button, .fbo_button, .profile_update_button', function (event) {
+$('body').on('click', '.checkout__button, .fbo_button, .fbo_detail_button, .profile_update_button', function (event) {
     var self = this;
     var evt = event;
 
     setTimeout(function () {
         evt.preventDefault();
         var errorText = '';
+        var firstErrorElement = null;
 
         if ($(self).hasClass('fbo_button')) {
-            errorText = $('.control-group').find('.control-error').text();
-        } else if ($(self).hasClass('profile_update_button')) {
-            errorText = $('.row').find('.control-error').text();
+            // errorText = $('.control-group').find('.control-error').text();
+            firstErrorElement = $('.control-group').find('.control-error:visible').first();
+            errorText = firstErrorElement.text();
+        } else if ($(self).hasClass('fbo_detail_button')) {
+            // errorText = $('.row').find('.control-error').text();
+            firstErrorElement = $('.control-group').find('.control-error:visible').first();
+            errorText = firstErrorElement.text();
+        }else if ($(self).hasClass('profile_update_button')) {
+            // errorText = $('.row').find('.control-error').text();
+            firstErrorElement = $('.user-profile-input .control-error:visible').first();
+            errorText = firstErrorElement.text();
+            console.log('errorText',errorText);
         } else if ($(self).hasClass('.checkout__button')) {
             errorText = "";
         }
         
         if (errorText.trim() == '') {
+            console.log('no error');
             $(self).prop('disabled', false);
             $(self).html('<span class="btn-ring"></span>');
             $(self).find(".btn-ring").show();
@@ -937,7 +1548,30 @@ $('body').on('click', '.checkout__button, .fbo_button, .profile_update_button', 
                 'align-items': 'center'
             });
         } else {
-            $(self).prop('disabled', true);
+            console.log('sandeep checkout page');
+            // $(self).prop('disabled', true);
+            if (firstErrorElement.length) {
+                let modalBody = firstErrorElement.closest('.modal-body');
+            
+                if (modalBody.length) {
+                    // Scroll inside modal with -150 offset
+                    modalBody.animate({
+                        scrollTop: firstErrorElement.offset().top - modalBody.offset().top + modalBody.scrollTop() - 150
+                    }, 500);
+                } else {
+                    // Scroll normally if modal is not open
+                    $('html, body').animate({
+                        scrollTop: firstErrorElement.offset().top - 150
+                    }, 500);
+                }
+            }
+            
+
+            // if (firstErrorElement.length) {
+            //     $('html, body').animate({
+            //         scrollTop: firstErrorElement.offset().top - 150
+            //     }, 500);
+            // }
         }
     }, 10);
 });
@@ -946,12 +1580,12 @@ $('body').on('click', '.checkout__button, .fbo_button, .profile_update_button', 
 // fbo address add validation code
 $('body').on('input keyup change', '.input_wrapper input, .input_wrapper textarea', function () {
     const field = $(this);
-    const value = field.val();
+    const value = field.val().trim();
     let isValid = true;
 
     if (field.is('#fbo-name')) {
         if (value.length === 0) {
-            field.siblings('#name-error').text('Fbo Name is required.').fadeIn();
+            field.siblings('#name-error').text('The name field is required.').fadeIn();
             isValid = false;
         } else {
             field.siblings('#name-error').fadeOut();
@@ -967,52 +1601,47 @@ $('body').on('input keyup change', '.input_wrapper input, .input_wrapper textare
         }
     }
 
-    // Collect FBO details values
-    const fboName = $('#fbo-name').val();
-    const fboAddress = $('#fbo-address').val();
+    // // Collect FBO details values
+    // const fboName = $('#fbo-name').val();
+    // const fboAddress = $('#fbo-address').val();
 
-    const fields = field.closest('form').find('.control');
-    fields.each(function () {
-        const fieldValue = $(this).val();
-        const errorVisible = $(this).siblings('.control-error:visible').length > 0;
-        if (fieldValue.length === 0 || errorVisible) {
-            isValid = false;
-        }
-    });
-
-    const fboNameValid = fboName.length > 0;
-    const fboAddressValid = fboAddress.length > 0;
-
-    $('#add-fbo-button').prop('disabled', !fboNameValid || !fboAddressValid);
+    // const fields = field.closest('form').find('.control');
+    // fields.each(function () {
+    //     const fieldValue = $(this).val();
+    //     const errorVisible = $(this).siblings('.control-error:visible').length > 0;
+    //     if (fieldValue.length === 0 || errorVisible) {
+    //         isValid = false;
+    //     }
+    // });
 });
 
 // form validation code 
-$('body').on('input keyup change', '.control, .control-group input, .row input, .user-profile-input input', function () {
-    const field = $(this);
-    const form = field.closest('form');
-    let allEmpty = true;
-    let hasError = false;
+// $('body').on('input keyup change', '.control, .control-group input, .row input, .user-profile-input input', function () {
+//     const field = $(this);
+//     const form = field.closest('form');
+//     let allEmpty = true;
+//     let hasError = false;
 
-    const fields = form.find('.control, .control-group input, select');
+//     const fields = form.find('.control, .control-group input, select');
 
-    fields.each(function () {
-        const fieldValue = $(this).is('select') ? $(this).find('option:selected').val() : $(this).val();
-        const errorVisible = $(this).siblings('.control-error:visible').length > 0;
+//     fields.each(function () {
+//         const fieldValue = $(this).is('select') ? $(this).find('option:selected').val() : $(this).val();
+//         const errorVisible = $(this).siblings('.control-error:visible').length > 0;
 
-        if (fieldValue.length === 0 || parseFloat(fieldValue) <= 0 || errorVisible) {
-            hasError = true;
-        } else {
-            allEmpty = false;
-        }
-    });
+//         if (fieldValue.length === 0 || parseFloat(fieldValue) <= 0 || errorVisible) {
+//             hasError = true;
+//         } else {
+//             allEmpty = false;
+//         }
+//     });
 
-    const buttonDisabled = allEmpty || hasError;
-    form.find('.fbo_detail_button, .profile_update_button').prop('disabled', buttonDisabled);
+//     const buttonDisabled = allEmpty || hasError;
+//     form.find('.fbo_detail_button, .profile_update_button').prop('disabled', buttonDisabled);
 
-});
+// });
 
 // sandeep disbled button first time then null required fields
-$('#fbo_button, #add-fbo-button,  .register-btn, .signIn-btn').prop('disabled', true);
+// $('#fbo_button, #add-fbo-button,  .register-btn, .signIn-btn').prop('disabled', true);
 
 jQuery('body').on('click', '.custom-enquiry-button, #collect_payment', function () {
     $(this).css('min-width', $(this).outerWidth());
@@ -1053,3 +1682,109 @@ $('body').on('input', '#phone', function () {
     $(this).val(phone);
 
 });
+
+
+$('body').on('click', '#category_instructions', function() {
+    let href = $(this).attr('href');
+    let divId = href.replace('#', '');
+    let toggleIcon = $(this).find('.toggle-icon');
+
+    console.log(toggleIcon);
+    if (toggleIcon.text().trim() === '+') {
+        toggleIcon.text('-');
+    } else {
+        toggleIcon.text('+');
+    }
+});
+
+
+// sandeep add code for append credit card form to append in payment section
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (window.location.href.includes("/checkout") || window.location.href.includes("/CheckoutCustomOrders")) {
+        let appended = false;
+        const moveFormToCheckout = () => {
+            const acceptUI = document.getElementById("AcceptUIContainer");
+            const target = document.getElementById("customAcceptUIContainer");
+
+            if (acceptUI && target) {
+                target.appendChild(acceptUI);
+                appended = true;
+                acceptUI.style.all = "unset";
+                const radioLabel = document.querySelector('.payment-method.method-label .radio-view');
+                
+                if (radioLabel) {
+                    radioLabel.click();
+                }
+            } else {
+                // acceptUI.style.cssText += "display: none !important;";
+                if(!appended){
+                setTimeout(moveFormToCheckout, 400);
+                }
+            }
+        };
+        moveFormToCheckout();
+    }
+});
+
+
+
+
+
+// $(document).ready(function() {
+//     function checkMobileAndAddClass() {
+//     var isMobile = $(window).width() <= 767;
+// console.log('isMobile',isMobile);
+//     if (isMobile) {
+// console.log('inside mobile function');
+//         var isCheckoutPage = window.location.href.indexOf("checkout") > -1;
+// console.log('isCheckoutPage',isCheckoutPage);
+        
+//         if (isCheckoutPage) {
+//             var buttonExists = $("#checkout-place-order-button").length > 0;
+//             if(buttonExists){
+//             console.log('place order butoon is visible');
+//             $(".footer").addClass("placeOrder");
+//         } else {
+//             console.log('place order butoon is not visible');
+//             $(".footer").removeClass("placeOrder");
+//         }
+//         }
+//     } else {
+//         console.log('not mobile screen');
+//         $(".footer").removeClass("placeOrder");
+//     }
+// }
+
+//     checkMobileAndAddClass();
+    
+//     $(window).resize(function() {
+//     checkMobileAndAddClass();
+//     });
+// });
+
+
+function checkMobileAndAddClass() {
+    var isMobile = $(window).width() <= 767;
+    var isCheckoutPage = window.location.href.includes("onepage/checkout") > -1;
+    
+    if (isMobile && isCheckoutPage) {
+        var isSecondSection = $("#checkout-second-section").data("second-section") === true;
+        if (isSecondSection) {
+            $(".footer").addClass("hasPlaceOrderButton");
+        } else {
+            $(".footer").removeClass("hasPlaceOrderButton");
+        }
+    } else {
+        $(".footer").removeClass("hasPlaceOrderButton");
+    }
+}
+
+// Initial check
+checkMobileAndAddClass();
+
+// Check on resize
+$(window).resize(function() {
+    checkMobileAndAddClass();
+});
+

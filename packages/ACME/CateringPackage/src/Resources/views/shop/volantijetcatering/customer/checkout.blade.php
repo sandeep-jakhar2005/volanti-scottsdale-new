@@ -157,7 +157,8 @@
                             <div class="control-group col-sm-12 col-md-6 mb-3"
                                 :class="[errors.has('fullname') ? 'has-error' : '']">
                                 <label for="fullname" class="required label-style mandatory">
-                                    {{ __('shop::app.fbo-detail.fullname') }}
+                                    {{-- {{ __('shop::app.fbo-detail.fullname') }} --}}
+                                    Full Name
                                 </label>
 
                                 {{-- <input type="text" class="form-control form-control-lg"
@@ -327,10 +328,10 @@
                         {{-- <button class="theme-btn fbo-guest-btn mx-auto mt-4" type="submit">
                 {{ __('shop::app.fbo-detail.fbo-guest-button') }}
             </button> --}}
-                        <p class="text-center mt-3"> want to pay faster next time?</p>
+                        <p class="text-center mt-3"> Make your next checkout faster! <br>Create an account today.</p>
                         <div class="col-12  mb-5 thank__create d-flex justify-content-center">
                             <a href="{{ route('shop.customer.session.create') }}?form=register">
-                                <button class="btn-lg  bg-light create_account_button">Create account</button>
+                                <button class="btn-lg  bg-light create_account_button">Sign Up & Save Time</button>
                             </a>
                         </div>
                     @endif
@@ -351,7 +352,9 @@
 @endpush --}}
 @else
     @section('content-wrapper')
-        {{-- @dd($fboDetails) --}}
+       <div id="checkout-second-section" data-second-section="true"></div> 
+
+{{-- @dd($fboDetails) --}}
         <checkout></checkout>
     @endsection
 
@@ -364,8 +367,8 @@
     <div class="container">
         <div id="checkout" class="checkout-process row offset-lg-1 col-lg-11 col-md-12">
             <h1 class="col-12 text-center my-4">{{ __('velocity::app.checkout.checkout') }}</h1>
-            <div class="col-lg-4 col-md-6 col-12 border checkout-left">
-                <div class="step-content information" id="address-section">
+            <div class="col-lg-6 col-md-6 col-12 border checkout-left">
+                <div class="step-content information" id="address-section" tabindex="-1">
                     @include('shop::checkout.onepage.customer-info')
                 </div>
 
@@ -435,7 +438,7 @@
                                             </div>
                                             <div class="control-group col-sm-12 col-md-6 col-lg-6 mb-3" :class="[errors.has('fullname') ? 'has-error' : '']">
                                                 <label for="fullname" class="required label-style mandatory">
-                                                    {{ __('shop::app.fbo-detail.fullname') }}
+                                                  Full Name
                                                 </label>
                                                 <input type="text" class="form-control form-control-lg" value="{{ $fboDetails->full_name }}"
                                                     v-validate="'required'" name='fullname' />
@@ -644,30 +647,30 @@
 
                 </div>
                 <!-- end customer info -->
-
-
-             
+            
 
                 <div class="row checkout-summary add_mt_to_summary border-top">
                     <div class="border-0 order-summary w-100">
                         <div class="card-body  fw6">
-                            <h4 class="card-title order-summary fw6">Order Summary</h4>    
+                            <div class="summery_heading col-12 p-0 d-flex justify-content-between">
+                            <h4 class="card-title order-summary fw6">Order Summary</h4> 
+                            <span class=""><a href="{{ route('shop.product.parentcat', ['summaryedit']) }}" class="text-danger pointer" id="OrderSumarry_edit">edit</a></span>
+                            </div>
                             <ol class='summary-body'>
                                 @foreach($cart->items as $cartItem)
-
                                 @php
                                 $optionLabel = null;
                                 
                                 if(isset($cartItem->additional['attributes'])){
                                 $attributes = $cartItem->additional['attributes'];
 
-                                  foreach ($attributes as $attribute) {
-                                  if(isset($attribute['option_label']) && $attribute['option_label']!=''){
-                                  $optionLabel = $attribute['option_label'];
+                                foreach ($attributes as $attribute) {
+                                if(isset($attribute['option_label']) && $attribute['option_label']!=''){
+                                $optionLabel = $attribute['option_label'];
                                 }
-                              }
                             }
-                              @endphp
+                            }
+                            @endphp
                                 <li>
                                     <div class='row mx-1'>
                                         <div class='col-8'>
@@ -731,7 +734,7 @@
                 </div>  -->
 
             </div>
-            <div class='col-lg-4 col-md-6 col-12 border checkout-right'>
+            <div class='col-lg-6 col-md-6 col-12 border checkout-right'>
             <div
                     class="step-content payment"
                     id="payment-section"
@@ -780,7 +783,7 @@
                 <span class="payment_error_message"></span>
                 </div>
                 
-                <div class="acknowledge_checkbox d-flex">
+                <div class="acknowledge_checkbox d-flex pt-3">
                     <input type="checkbox" id="acknowledge_checkbox" class="mt-1"/>
                     <p>I acknowledge that this is an order request. 
                         This order will reviewed and confirmed by the Volanti team. If your order is within 24 hours we suggest you follow up with a phone call after submission.</p>
@@ -790,7 +793,7 @@
                     <button
                     type="button"
                     class="theme-btn"   
-                    :disabled="!isPlaceOrderEnabled"
+                    {{-- :disabled="!isPlaceOrderEnabled" --}}
                     @click="placeOrder()"                    
                     v-if="selected_payment_method.method != 'paypal_smart_button'"
                     id="checkout-place-order-button">
@@ -1183,8 +1186,7 @@
                                 saveAddress: async function() {
                                     if (this.showPaymentSection || this.showSummarySection) {
                                         //   this.showPaymentSection = false;
-                                        if ($('#mpauthorizenet').is(':checked') && $('#checkout-place-order-button')
-                                            .prop('disabled')) {
+                                        if ($('#mpauthorizenet').is(':checked')) {
                                             jQuery('.mpauthorizenet-add-card').css('display', 'block');
                                             jQuery('#saved-cards').css('display', 'block');
                                         }
@@ -1368,49 +1370,63 @@
                                 placeOrder: async function() {
                                     // sandeep|| add code for when payment not save then open payment popop
                                     var rediocheked = $('input[name="saved-card"]:checked');
-                                    //console.log('rediocheked', rediocheked);
-                                    //console.log('paymentsaved', paymentsaved);
-
-                                    @auth('customer')
-                                        if (!paymentsaved && !rediocheked.length) {
-                                            if ($('.payment-saved input[type="radio"]').length) {
-                                            console.log('Saved cards found');
-                                            $('.payment-saved input[type="radio"]').not('#saved-cards input[type="radio"]').trigger('click');
-                                        } else {
-                                            console.log('No saved cards, using unsaved');
-                                            $('.payment-unsave input[type="radio"]').not('#saved-cards input[type="radio"]').trigger('click');
-                                        }
-                                            $("#open-mpauthorizenet-modal").trigger('click');
-                                            checkPlacedOrder="placed_order"
-                                            return;
-                                        }
-                                    @endauth
-                                    @guest
-                                    if (!paymentsaved) {
-                                        $('.payment-unsave input[type="radio"]').not('#saved-cards input[type="radio"]').trigger('click');
-                                        $("#open-mpauthorizenet-modal").trigger('click');
-                                        checkPlacedOrder="placed_order"
-                                        return;
-                                    }
-                                @endguest
 
                                 // sandeep add code || check redio buttons and airport name
                                 var address_checkbox = $('.address-container input[type="radio"]:checked');
+                                var selected_airport_id = $('#selected_airport_id').val();
                                 var acknowledge_checkbox = $('#acknowledge_checkbox').is(':checked');
                                 var fbo_name = $('#airport_fbo_details').find('#AirportFbo_Name').text().trim();
+                                if (!address_checkbox || !fbo_name) {
+                                    let button = document.querySelector('.add-address-btn');
+                                    if(!button){
+                                        button = document.querySelector('#address-section');
+                                    }
+                                    if (button) {
+                                    button.classList.add('checkout_error_button_message');
+                                    button.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                                    setTimeout(() => {
+                                        button.classList.remove('checkout_error_button_message'); 
+                                    }, 3000); 
+                                }
+                                    return;
+                                }
+                                if (!paymentsaved) {
+                                    let button = document.querySelector('.payment-methods');
+                                    if (button) {
+                                    button.classList.add('checkout_error_button_message');
+                                    button.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                                    setTimeout(() => {
+                                        button.classList.remove('checkout_error_button_message'); 
+                                    }, 3000); 
+                                }
+                                return;
+                                }
+
+                                if(!acknowledge_checkbox){
+                                    let button = document.querySelector('#acknowledge_checkbox');
+                                    if (button) {
+                                    button.classList.add('checkout_error_button_message');
+                                    button.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                                    setTimeout(() => {
+                                        button.classList.remove('checkout_error_button_message'); 
+                                    }, 3000); 
+                                }
+                                    return;
+                                }
 
                                 var checkout_button = $('#checkout-place-order-button');
                                 if (!acknowledge_checkbox || address_checkbox.length === 0 || !paymentsaved ||
                                     fbo_name === "") {
-                                    $(checkout_button).prop('disabled', true);
                                     return;
                                 }
 
-                                $(checkout_button).prop('disabled', true);
                                 $(checkout_button).html('<span class="btn-ring"></span>');
                                 $(".btn-ring").show();
 
-                                if (this.isPlaceOrderEnabled) {
+                                // if (this.isPlaceOrderEnabled) {
 
                                     this.disable_button = false;
                                     this.isPlaceOrderEnabled = true;
@@ -1449,7 +1465,7 @@
 
                                             // sandeep add code || add button original html
                                             $('#checkout-place-order-button').replaceWith(`
-                                            <button type="button" id="checkout-place-order-button" class="theme-btn" disabled="disabled">
+                                            <button type="button" id="checkout-place-order-button" class="theme-btn">
                                                 Place Order
                                                 <span class="btn-ring"></span>
                                             </button>
@@ -1459,9 +1475,9 @@
                                                 .message ? error.response.data.message :
                                                 "{{ __('shop::app.common.error') }}");
                                         })
-                                } else {
-                                    this.disable_button = true;
-                                }
+                                // } else {
+                                //     this.disable_button = true;
+                                // }
                             },
 
                             handleErrorResponse: function(response, scope) {

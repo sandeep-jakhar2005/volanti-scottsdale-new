@@ -54,7 +54,7 @@ class OrderConfirmationGuestEmailJob implements ShouldQueue
             Mail::to($email)
                 ->send(new GuestNewOrderNotification(
                     $this->order, 
-                    $this->fboDetails->full_name
+                    $this->fboDetails
                 ));
                 Log::info('Email sent successfully to: ' . $this->fboDetails->email_address);
         } catch (\Exception $e) {

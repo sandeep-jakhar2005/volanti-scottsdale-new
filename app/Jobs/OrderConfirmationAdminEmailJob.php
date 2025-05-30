@@ -17,13 +17,17 @@ class OrderConfirmationAdminEmailJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $order;
+    protected $fboDetails;
+    protected $extraData;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($order)
+    public function __construct($order,$fboDetails, $extraData)
     {
         $this->order = $order;
+        $this->fboDetails = $fboDetails;
+        $this->extraData = $extraData;
 
     }
 
@@ -36,16 +40,30 @@ class OrderConfirmationAdminEmailJob implements ShouldQueue
         // send admin order confirmation mail
         $admins = Admin::select('name', 'email')->where('role_id','1')->get();
         $order = $this->order;
-        foreach ($admins as $admin) {
-            try {
-                Mail::to($admin->email)->send(new AdminOrderNotification($order, $admin->name));
-                Log::info('Email sent successfully to: ' . $admin->email);
-            } catch (\Exception $e) {
-                Log::error('Failed to send email to: ' . $admin->email, [
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ]);
-            }
+        $fboDetails = $this->fboDetails;
+        $extraData = $this->extraData;
+
+        $emailList = $admins->pluck('email')->toArray();
+        try {
+            Mail::to($emailList)
+                ->send(new AdminOrderNotification($order, $fboDetails,$extraData));
+            Log::info('Email sent to: ' . implode(', ', $emailList));
+        } catch (\Exception $e) {
+            Log::error('Failed to send email', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
         }
+        // foreach ($admins as $admin) {
+        //     try {
+        //         Mail::to($admin->email)->send(new AdminOrderNotification($order, $admin->name,$fboDetails));
+        //         Log::info('Email sent successfully to: ' . $admin->email);
+        //     } catch (\Exception $e) {
+        //         Log::error('Failed to send email to: ' . $admin->email, [
+        //             'error' => $e->getMessage(),
+        //             'trace' => $e->getTraceAsString()
+        //         ]);
+        //     }
+        // }
     }
 }

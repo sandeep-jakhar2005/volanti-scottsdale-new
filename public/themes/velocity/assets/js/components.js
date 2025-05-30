@@ -3471,6 +3471,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       cartCount: 0
     };
   },
+  computed: {
+    shouldHideCart: function shouldHideCart() {
+      var urlParams = new URLSearchParams(window.location.search);
+      return this.cartItems.length === 0 && !urlParams.has("summaryedit");
+    }
+  },
   mounted: function mounted() {
     this.getMiniCartDetails();
   },
@@ -3501,6 +3507,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             _iterator.f();
           }
           _this.cartInformation = response.data.mini_cart.cart_details;
+
+          // sandeep add code for open mini cart 
+          _this.openMiniCart();
         } else {
           _this.cartCount = 0;
         }
@@ -3508,10 +3517,17 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         console.log(_this.__("error.something_went_wrong"));
       });
     },
+    openMiniCart: function openMiniCart() {
+      var cartModal = document.getElementById("cart-modal-content");
+      if (cartModal) {
+        cartModal.classList.remove("hide");
+        cartModal.classList.add("slide-cart-modal");
+      }
+    },
     removeProduct: function removeProduct(productId, event) {
       var _this2 = this;
       var $clickedElement = $(event.currentTarget);
-      $clickedElement.closest('.bin-icon').hide();
+      $clickedElement.closest('.bin-icon').css('visibility', 'hidden');
       $clickedElement.closest('.display-inbl').find(".bin-btn-ring").show();
       this.$http["delete"]("".concat(this.$root.baseUrl, "/cart/remove/").concat(productId)).then(function (response) {
         _this2.cartItems = _this2.cartItems.filter(function (item) {
@@ -3520,14 +3536,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         _this2.$root.miniCartKey++;
         window.showAlert("alert-".concat(response.data.status), response.data.label, response.data.message);
         $clickedElement.closest('.display-inbl').find(".bin-btn-ring").hide();
-        $clickedElement.closest('.bin-icon').show();
+        $clickedElement.closest('.bin-icon').css('visibility', 'visible');
         if (!_this2.cartItems.length && _this2.isCheckoutPage()) {
           window.location.href = _this2.checkoutRoute;
         }
       })["catch"](function (exception) {
         console.log(_this2.__("error.something_went_wrong"));
         $clickedElement.closest('.display-inbl').find(".bin-btn-ring").hide();
-        $clickedElement.closest('.bin-icon').show();
+        $clickedElement.closest('.bin-icon').css('visibility', 'visible');
       });
     },
     isCheckoutPage: function isCheckoutPage() {
@@ -5699,7 +5715,7 @@ var render = function render() {
   }) : _vm._e()])])]), _vm._v(" "), _c("div", {
     staticClass: "modal-content dropdown-list sensitive-modal cart-modal-content cart__modal",
     "class": {
-      hide: !_vm.cartItems.length
+      hide: _vm.shouldHideCart
     },
     attrs: {
       id: "cart-modal-content"
@@ -5714,7 +5730,7 @@ var render = function render() {
   }, _vm._l(_vm.cartItems, function (item, index) {
     return _c("div", {
       key: index,
-      staticClass: "row small-card-container col-12 mb-2",
+      staticClass: "row small-card-container col-12 pt-2 pb-2",
       staticStyle: {
         "border-bottom": "1px solid rgb(222, 226, 230)"
       }
@@ -5726,50 +5742,94 @@ var render = function render() {
     }, [_c("div", {
       staticClass: "no-padding"
     }, [_c("div", {
-      staticClass: "fs16 text-nowrap fw6 product-name",
+      staticClass: "fs16 text-nowrap fw6 product-name pb-1",
       domProps: {
         innerHTML: _vm._s(item.name)
       }
     }), _vm._v(" "), _c("div", {
-      staticClass: "row mini-cart-instruction"
-    }, [item.additional.attributes != undefined ? _c("span", {
+      staticClass: "row mini-cart-instruction d-block",
       staticStyle: {
-        "font-size": "13px"
+        "font-size": "11px"
       }
-    }, [_c("strong", [_vm._v("Preference: ")]), _vm._v(" "), _vm._l(item.additional.attributes, function (attribute) {
+    }, [item.additional.attributes != undefined ? _c("div", {
+      staticClass: "pb-1"
+    }, [_vm._v("\n                  Preference:\n                  "), _vm._l(item.additional.attributes, function (attribute) {
       return [attribute.option_label ? _c("span", [_vm._v("\n                      " + _vm._s(attribute.option_label) + "\n                    ")]) : _vm._e()];
-    })], 2) : _vm._e(), _vm._v(" "), item.additional.special_instruction !== undefined && item.additional.special_instruction !== "" ? _c("span", {
+    })], 2) : _vm._e(), _vm._v(" "), item.additional.special_instruction !== undefined && item.additional.special_instruction !== "" ? _c("div", [_vm._v("Special Instruction "), _c("br"), _c("div", {
       staticStyle: {
-        "font-size": "13px"
+        "background-color": "#f2f2f3",
+        padding: "10px"
       }
-    }, [_c("strong", [_vm._v("Special Instruction: ")]), _vm._v(_vm._s(item.additional.special_instruction))]) : _vm._e()])])]), _vm._v(" "), _c("div", {
-      staticClass: "fs14 card-current-price fw6 col-4 mt-2 p-0 text-left"
+    }, [_vm._v(_vm._s(item.additional.special_instruction))])]) : _vm._e()])])]), _vm._v(" "), _c("div", {
+      staticClass: "fs14 card-current-price fw6 col-4 mt-2 p-0 text-right"
     }, [_c("div", {
-      staticClass: "display-inbl"
-    }, [_c("label", {
-      staticClass: "fw5 m-auto"
-    }, [_vm._v(_vm._s(_vm.__("checkout.qty")) + ":")]), _vm._v(" "), _c("span", {
-      staticClass: "quantityValue ml-1"
-    }, [_vm._v(_vm._s(item.quantity))]), _vm._v(" "), _c("span", {
-      staticClass: "bin_icon"
+      staticClass: "display-inbl pb-2",
+      staticStyle: {
+        display: "flex !important"
+      }
     }, [_c("span", {
+      staticClass: "group__input__field d-flex justify-content-between"
+    }, [_c("button", {
+      staticClass: "border-0 editMinusBtn",
+      staticStyle: {
+        width: "16px"
+      },
+      attrs: {
+        "data-item-id": item.id
+      }
+    }, [_vm._v("-")]), _vm._v(" "), _c("input", {
+      staticClass: "text-center w-50 border-0 bg-light p-1 editQuantityInput",
+      attrs: {
+        type: "text",
+        "data-item-id": item.id
+      },
+      domProps: {
+        value: item.quantity
+      }
+    }), _vm._v(" "), _c("button", {
+      staticClass: "border-0 editPlusBtn",
+      staticStyle: {
+        width: "16px"
+      },
+      attrs: {
+        "data-item-id": item.id
+      }
+    }, [_vm._v("+")])]), _vm._v(" "), _c("span", {
+      staticClass: "bin_icon m-auto"
+    }, [_c("span", {
+      staticClass: "bin-btn-ring ml-2"
+    }), _vm._v(" "), _c("span", {
       staticClass: "bin-icon"
     }, [_c("img", {
       staticClass: "bin-icon-image ml-2",
       attrs: {
-        src: "/themes/volantijetcatering/assets/images/bin.png",
+        src: "/themes/volantijetcatering/assets/images/bin-mini-cart.png",
         alt: "Bin Icon",
-        width: "15",
-        height: "15"
+        width: "18",
+        height: "18"
       },
       on: {
         click: function click($event) {
           return _vm.removeProduct(item.id, $event);
         }
       }
-    })]), _vm._v(" "), _c("span", {
-      staticClass: "bin-btn-ring ml-2"
-    })])])])]);
+    })])])]), _vm._v(" "), _c("button", {
+      staticClass: "border-0 text-end w-auto UpdateQuantityButton ml-2",
+      attrs: {
+        "data-item-id": item.id
+      }
+    }, [_c("img", {
+      staticStyle: {
+        width: "18px",
+        height: "18px",
+        background: "#fff",
+        "pointer-events": "none"
+      },
+      attrs: {
+        src: "/themes/volantijetcatering/assets/images/save.png",
+        alt: "Save"
+      }
+    })])])]);
   }), 0)]), _vm._v(" "), _c("div", {
     staticClass: "mini-cart-footer"
   }, [_c("div", {

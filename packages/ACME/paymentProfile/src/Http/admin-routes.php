@@ -183,10 +183,9 @@ Route::group([
 });
 
 
+
+
+
 // sandeep add quickbook route
 Route::post('/webhook/quickbooks', [QuickBookController::class, 'checkInvoiceStatus'])->name('quickbooks.checkInvoiceStatus');
-
-
-
-
 

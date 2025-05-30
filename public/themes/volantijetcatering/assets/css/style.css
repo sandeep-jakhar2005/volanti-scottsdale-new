@@ -8,7 +8,87 @@
     src: url(../fonts/font-awesome/Fino-Sans-Regular.otf);
 }
 
+/* #AcceptUIContainer {
+    all: unset !important;
+} */
 
+#search-item-list{
+    padding-left: 15px !important;
+    padding-right: 25px !important;
+}
+
+
+.UpdateQuantityButton{
+    height: 23px;
+    width: 50px;
+    background: none;
+    color: white;
+    /* padding-top: 0px; */
+    border-radius: 5px;
+    width: 65px;
+    height: 29px;
+}
+
+.UpdateQuantityButton:focus{
+ outline: none !important;
+}
+
+
+.flatpickr-day.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    color: #ccc;
+}
+
+
+.form-control,
+.form-control-lg {
+    font-size: 16px !important;
+}
+
+input[type=checkbox]{
+    width: auto !important;
+    height: 13px !important;
+}
+
+
+
+.checkout_error_button_message{
+    border: 1px solid #f84661 !important;
+    box-shadow: 0 0 20px #f84661;
+    transition: all 1s ease;
+}
+
+.homepage_error_focus{
+    border: 1px solid #f84661 !important;
+    box-shadow: 0 0 15px #f84661;
+}
+
+.search-products {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-out;
+}
+
+.search-products.show {
+    opacity: 1;
+    max-height: 500px;
+}
+
+.mobile-small-icon {
+    opacity: 1;
+    transition: opacity 0.3s ease-out;
+}
+
+.mobile-small-icon.hiding {
+    opacity: 0;
+}
+
+
+.vue-go-top{
+    display: none;
+}
 
 
 .account-content .account-layout .account-table-content .image-wrapper .image-item .remove-image {
@@ -318,6 +398,10 @@ body .modal-content textarea {
 
 /* add-fbo popup end */
 
+.checkout-right{
+    min-height: 1010px;
+}
+
 .checkout-right .acknowledge_checkbox p {
     max-width: 90%;
 }
@@ -354,6 +438,20 @@ body .modal-content textarea {
     padding: 10px;
     cursor: pointer;
     font-size: 14px;
+}
+
+
+/* sandeep add css */
+.servicepackaging .custom-dropdown option, 
+.packagingsection .custom-dropdown option {
+    font-size: 15px !important;
+}
+
+
+.delivery_select ul li,
+#address-list ul li,
+.custom-dropdown-list .custom-option {
+    font-size: 13px !important;
 }
 
 .airport__fbo__detail #airport-fbo-input {
@@ -758,7 +856,7 @@ body .checkout-summary1 {
     display: inline-block;
     vertical-align: middle;
     position: initial !important;
-    margin-left: 20px !important;
+    margin-left: 5px !important;
 }
 
 
@@ -778,7 +876,39 @@ body .checkout-summary1 {
     animation: ring 1.2s linear infinite;
     /* left: 13px; */
     position: relative;
-    margin-left: 20px !important;
+    margin-left: 6px !important;
+}
+
+@keyframes ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Loader style */
+.save-btn-ring {
+    position: relative !important;
+}
+
+.save-btn-ring {
+    display: none;
+}
+
+.save-btn-ring:after {
+    content: "";
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    border-color: #f84661 transparent #f84661 transparent;
+    animation: ring 1.2s linear infinite;
+    position: relative;
+    margin-left: 6px !important;
 }
 
 @keyframes ring {
@@ -1010,8 +1140,14 @@ body .close:focus {
 }
 
 .order_invoice_view .shopping_cart .table__body td {
-    color: #818181;
+    color: #000000;
     font-weight: 600;
+}
+
+
+/* sandeep add css  */
+.table__body .order_view_table_body .product_name{
+    max-width: 200px;
 }
 
 .order_invoice_view .order__view__payment h5 {
@@ -1019,7 +1155,7 @@ body .close:focus {
 }
 
 .order_invoice_view .order__view__payment p {
-    color: #878787;
+    /* color: #878787; */
     font-weight: 600;
 }
 
@@ -1096,21 +1232,26 @@ body .close:focus {
 }
 
 .invoice_view_pay_button {
-    width: 130px;
-    border-radius: 10px;
-    padding: 3px;
-    font-weight: 600;
+    width: 200px;
+    border-radius: 5px;
+    height: 35px;
+    font-size: 18px;
+    font-weight: 500;
     color: #ffffff;
-    /* border: 1px solid #000000; */
-    border: none;
+    /*border: 1px solid #000000;
+    */border: none;
     background: #F84761;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
 }
 
 .pay_disable {
     cursor: not-allowed;
-    color: grey !important;
-    border: 1px solid grey !important;
-    background: transparent !important;
+    color: #fff !important;
+    border: 1px solid #f84661 !important;
+    background: #f84661 !important;
 }
 
 .existing_card #saved-cards {
@@ -1148,7 +1289,7 @@ body .close:focus {
 
 .fbo-detail .thank__create button {
     height: 43px;
-    width: 185px;
+    width: 200px;
     font-size: 16px;
 }
 
@@ -1644,7 +1785,7 @@ body #app {
 }
 
 .authorze_payment_row .radio-view {
-    color: #F84E60;
+    color: #000000D4;
 }
 
 .thank__you h4 {
@@ -2354,6 +2495,8 @@ button.btn-rate {
 #checkout {
     display: flex;
     justify-content: center;
+    width: 820px !important;
+    margin: auto;
 }
 
 .checkout-summary {
@@ -2374,7 +2517,7 @@ button.btn-rate {
 
 .summary-body {
     /* margin-left: 15px; */
-    max-height: 200px;
+    max-height: 280px;
     overflow: auto;
     padding: 16px;
     overflow-x: hidden;
@@ -2830,7 +2973,7 @@ a.theme-btn:hover {
     z-index: 999 !important;
     height: 100% !important;
     top: 70px !important;
-    right: -350px !important;
+    right: -450px !important;
     transition: all 150ms ease-in-out;
     -webkit-transition: all 150ms ease-in-out;
     -moz-transition: all 150ms ease-in-out;
@@ -3004,7 +3147,7 @@ a.theme-btn:hover {
 }
 
 .suggestion-icon {
-    width: 25px !important;
+    width: 20px !important;
     height: auto !important;
     border: none !important;
     top: -14px;
@@ -3048,6 +3191,7 @@ a.theme-btn:hover {
 
 .list-group-item .row .airport-name {
     color: #f84d61;
+    font-size: 15px;
 }
 
 .custom-header .searchbar,
@@ -3387,7 +3531,7 @@ a.theme-btn:hover {
     position: absolute;
     width: 100%;
     height: 100%;
-    top: -5px;
+    top: 0px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -4046,6 +4190,10 @@ display: none !important;
 }
 
 @media only screen and (max-width: 992px) {
+    .paymen__section .payment_section{
+        width: 75% !important;
+    }
+
     body .authorize-text {
         padding-left: 10px !important;
     }
@@ -4157,8 +4305,26 @@ display: none !important;
     }
 }
 
+
+
 @media only screen and (max-width: 767px) {
 
+
+    .paymen__section .payment_section{
+        width: 100% !important;
+    }
+
+    #customAcceptUIContainer{
+    padding-left: 0px !important;
+    }
+
+    .checkout-right{
+        min-height: unset;
+    }
+
+    #checkout{
+        width: auto !important;
+    }
     /* 21-05-2024 || home page start*/
     .register-buttons {
         width: 100%;
@@ -4232,7 +4398,7 @@ display: none !important;
 
     .checkout-right .acknowledge_checkbox {
         position: relative;
-        top: 30px;
+        top: 10px;
     }
 
     .search-section-1 .home__date__time .search_label_wrapper {
@@ -4460,7 +4626,7 @@ display: none !important;
 
     .listing-title-section .centered-word h1 {
         font-weight: 600;
-        font-size: 23px !important;
+        font-size: 22px !important;
         margin: 0;
     }
 
@@ -6282,6 +6448,7 @@ display: none !important;
     margin: 0 !important;
     top: 70px !important;
     height: calc(100% - 70px) !important;
+    width:450px !important;
 }
 
 .single-product-page .right .add-to-cart-btn button {
@@ -7404,9 +7571,14 @@ ul.footer-links {
 
 }
 
+#textarea-customize::placeholder {
+    color: #000000D4;
+    font-size: 14px;
+}
+
 #category_instructions_Div {
-    width: 70%;
-    height: 70px !important;
+    width: 65%;
+    height: 90px !important;
 }
 
 
@@ -7417,6 +7589,9 @@ ul.footer-links {
     border: 1px solid #D7D7D7;
     font-size: medium !important;
     height: 70px;
+    background: #f2f2f36b;
+    padding: 5px 10px 5px 10px;
+    line-height: normal;
 }
 
 
@@ -7970,14 +8145,14 @@ margin-top: 5px !important;
 /* checkout sidbar css */
 
 .small-card-container .card-body .product-name{
-  font-size: 17px !important;
+  font-size: 15px !important;
 }
 
 /* checkout sidbar instruction and cart page instruction css */
 .small-card-container .card-body .mini-cart-instruction span{
     max-width: 200px !important;
-   white-space: normal !important;
-   word-wrap: break-word !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
 }
 
 
@@ -8200,13 +8375,33 @@ margin-top: 5px !important;
 /* order view account information css */
 .order-location-section .Fbo-details .account_information,
 .order-location-section .Fbo-details .aircraft_information {
-   padding-left: 10px !important;
+    padding-left: 10px !important;
 }
 
 @media screen and (max-width: 767px) {
     .order-location-section .Fbo-details .account_information,
     .order-location-section .Fbo-details .aircraft_information {
-       padding: 0 !important;
+    padding: 0 !important;
+    }
+
+    .hasPlaceOrderButton{
+    padding-bottom: 60px;
+    }
+
+    .place-order-btn{
+        position: fixed !important;
+        bottom: 0px;
+        top: unset !important;
+        height: 65px !important;
+    }
+
+    #checkout-place-order-button{
+        height: 65px !important;
+        width: 100% !important;
+        top: unset !important;
+        align-items: center !important;
+        font-size: 28px !important;
+        box-shadow: 0 0 20px #f84661;
     }
 
     /* user profile css */
@@ -8321,7 +8516,7 @@ input[type="search"]::-webkit-search-cancel-button {
     height: 34px;
     justify-content: center !important;
     align-items: center;
-    font-size: 19px !important;
+    font-size: 13px !important;
     color: white !important;
     font-weight: 500 !important;
     cursor: pointer !important;
@@ -8464,7 +8659,6 @@ input[type="search"]::-webkit-search-cancel-button {
 
     .custom-enquiry-banner-botom {
         height: 5px;
-        background-color: #666;
     }
 
     .enquiry-button{
@@ -8588,3 +8782,4 @@ content: "";
 .child-card-title{
     font-size: 17px !important;
 }
+

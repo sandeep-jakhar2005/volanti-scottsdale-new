@@ -28,8 +28,8 @@ class OrderReject extends Mailable
      */
     public function build()
     {
-
-        return $this->subject('Order Rejected')->view('paymentprofile::admin.sales.orders.mail.orderReject');
+        $increment_id = $this->order->increment_id;
+        return $this->subject('Order Rejected'. ' #' . $increment_id)->view('paymentprofile::admin.sales.orders.mail.orderReject');
     
     }
 }

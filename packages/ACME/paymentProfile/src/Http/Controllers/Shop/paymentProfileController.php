@@ -60,6 +60,7 @@ class paymentProfileController extends Controller
 
         return view($this->_config['view'], compact('order_detail'));
     }
+    
 
     public function invoice_detail(Request $request)
     {
@@ -78,6 +79,8 @@ class paymentProfileController extends Controller
 
             // return view($this->_config['view'], compact('order','agent'));
             Session::put('invoice-form-fill', true);
+            Session::put('invoice-order-id', $orderid);
+            Session::put('invoice-customer-id', $customerid);
 
             return redirect()->route('invoice.detail', ['orderid' => $orderid, 'customerid' => $customerid]);
 
@@ -103,10 +106,14 @@ class paymentProfileController extends Controller
     {
 
         $form_fill = Session::get('invoice-form-fill');
+        $form_fill_orderId = Session::get('invoice-order-id');
+        $form_fill_customerId = Session::get('invoice-customer-id');
+
         if (!isset($request->orderid) || !isset($request->customerid)) {
             return redirect('/');
         }
-        if (!$form_fill) {
+
+        if (!$form_fill || $form_fill_orderId != $request->orderid || $form_fill_customerId != $request->customerid) {
             return redirect()->route('order-invoice-view', ['orderid' => $request->orderid, 'customerid' => $request->customerid]);
         }
 
@@ -134,6 +141,7 @@ class paymentProfileController extends Controller
             'email' => 'required|email',
             'mobile_number' => 'required|regex:/^\(\d{3}\) \d{3}-\d{4}$/',
             'message' => 'required',
+            'g-recaptcha-response' => 'required|captcha',
             'uploadfile.*' => 'required|mimes:doc,docx,xls,xlsx,pdf|max:2048',
         ], [
             'uploadfile.*.mimes' => 'File must be a type: doc, docx, xls, xlsx, pdf.',

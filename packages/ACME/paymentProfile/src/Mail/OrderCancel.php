@@ -28,6 +28,7 @@ class OrderCancel extends Mailable
      */
     public function build()
     {
-        return $this->subject('Order Cancel')->view('paymentprofile::admin.sales.orders.mail.orderCancel');
+  $increment_id = $this->order->increment_id;
+        return $this->subject('Order Cancel'. ' #' . $increment_id)->view('paymentprofile::admin.sales.orders.mail.orderCancel');
     }
 }

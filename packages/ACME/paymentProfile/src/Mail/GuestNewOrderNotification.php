@@ -24,7 +24,8 @@ class GuestNewOrderNotification extends Mailable
      *
      * @var string
      */
-    public $fullName;
+    public $fboDetails;
+    public $extraData;
 
     /**
      * Create a new message instance.
@@ -32,11 +33,12 @@ class GuestNewOrderNotification extends Mailable
      * @param array $order
      * @param string $fullName
      */
-    public function __construct($order, $fullName)
+    public function __construct($order, $fboDetails, $extraData = [])
     {
 
         $this->order = $order;
-        $this->fullName = $fullName;
+        $this->fboDetails = $fboDetails;
+        $this->extraData = $extraData;
     }
 
     /**
@@ -46,18 +48,22 @@ class GuestNewOrderNotification extends Mailable
      */
     public function build()
     {
+        
         log::info('mail succesfully send');
+        $fullName = $this->fboDetails->full_name;
+        $increment_id = $this->order['increment_id'];
         // Ensure view path is correct and exists
         return $this->from(
             core()->getSenderEmailDetails()['email'],
             core()->getSenderEmailDetails()['name']
         )
-            ->to($this->order['customer_email'], $this->fullName)
-            ->subject(trans('shop::app.mail.order.subject'))
+            ->to($this->order['customer_email'], $fullName)
+            ->subject(trans('shop::app.mail.order.subject'). ' #' . $increment_id)
             ->view('mail.guest-new-order')
             ->with([
                 'order' => $this->order,
-                'fullName' => $this->fullName,
+                'fboDetails' => $this->fboDetails,
+                'extraData' => $this->extraData,
             ]);
     }
 }

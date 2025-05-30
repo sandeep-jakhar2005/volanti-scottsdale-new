@@ -1,11 +1,13 @@
 @extends('shop::layouts.master')
 @section('content-wrapper')
+@includeIf('mpauthorizenet::shop.checkout.card-script')
+
     <div class="container my-5 order_invoice_view">
         <div class="invoice_view_header d-flex justify-content-between">
             <h2>Custom Order Payment</h2>
         
-            <p class="text-secondary">Order Status: <span
-                    class="text-uppercase {{ $order->status }}">{{ $order->status }}</span></p>
+            {{-- <p class="text-secondary">Order Status: <span
+                    class="text-uppercase {{ $order->status }}">{{ $order->status }}</span></p> --}}
         </div>
 
         <section class="customer_detail">
@@ -97,7 +99,6 @@
                             <table class="table table-bordered">
                                 <thead>
                                     <tr class="order_view_table_head">
-                                        <th>Item</th>
                                         <th>Product</th>
                                         {{-- @if (isset($specialInstruction)) --}}
                                         {{-- <th>Special instructions</th> --}}
@@ -149,24 +150,22 @@
                                         @endphp
 
                                         <tr class="order_view_table_body">
-                                            <td style="
-                                        max-width: 130px;">
-                                                {{-- <div>
-                                                    <img class="product__img"
-                                                        src="/cache/medium/product/278/s09QJX1kqQwX8zLXByqS8gU836SU5oPgp47G7ov3.png"
-                                                        alt="Product" style="height: 70px;width: 80px;" />
-                                                </div> --}}
-
-                                                @if (isset($notes))
-                                                    <p class="m-0 display__notes">{{ $notes }}</p>
-                                                @endif
-                                            </td>
                                             {{-- @dd($item) --}}
-                                            <td>
+                                            <td class="product_name">
                                                 {{ $item->name }}
                                                 @if ($optionLabel)
                                                     ({{ $optionLabel }})
                                                 @endif
+                                                @if (!empty($specialInstruction))
+                                                <div class="" style="gap:4px;font-size:11px;"><span>Special Instruction:  </span>
+                                                    <p class="m-0 display__notes" style="font-weight:500;"> {{ $specialInstruction }}</p>
+                                                    </div>
+                                                @endif
+                                                @if (!empty($notes))
+                                                <div class="" style="gap:4px;font-size:11px;"><span>Notes:  </span>
+                                                <p class="m-0 display__notes" style="font-weight:500;"> {{ $notes }}</p>
+                                                </div>
+                                            @endif
                                             </td>
 
                                             {{-- @if (isset($specialInstruction))
@@ -197,7 +196,7 @@
                         <h5>Order summary</h5>
                         {{-- @dd($agent->Handling_charges); --}}
                         <div class="card order__view__payment">
-                            <div class="row p-2 order__view__total">
+                            <div class="row p-2 order__view__total fs13">
                                 <p class="col-7 cart_text">Cart Total</p>
                                 <p class="col-5 total">{{ core()->formatBasePrice($order->sub_total) }}</p>
                                 {{-- @dd(core()->formatBasePrice(isset($item->base_tax_amount))) --}}
@@ -228,7 +227,7 @@
                                 @else
                                     <p class="col-5 total">{{ core()->formatBasePrice(0.0) }} </p>
                                 @endif
-                                <p class="col-7 cart_text">
+                                <p class="col-7 cart_text fs17" style="color:#f84661 !important">
                                     @if ($order->status === 'paid')
                                         Paid amount
                                     @else
@@ -236,7 +235,7 @@
                                     @endif
                                 </p>
 
-                                <p class="col-5 total">
+                                <p class="col-5 total fs17" style="color: rgb(248, 70, 97) !important;">
                                     @if (isset($agent->Handling_charges))
                                         {{ core()->formatBasePrice($order->grand_total + $agent->Handling_charges) }}
                                     @else
@@ -257,8 +256,9 @@
                         {{-- <button class="order_view_send_button mt-3">Send Updates</button> --}}
                     </div>
                 </div>
+
             </div>
-        </section>
+        </section>  
 
         @php
         $order_status = DB::table('order_status_log')
@@ -287,116 +287,63 @@
 
             <!-- sandeep delete deliverd and shipped -->
             @if (!in_array($order->status, ['pending', 'canceled', 'rejected', 'paid']) && $paymentButtonVisible)
-                <button type="button" class="collect_payment_modal_button" data-toggle="modal"
+                {{-- <button type="button" class="collect_payment_modal_button" data-toggle="modal"
                     data-target="#collectPaymentModal">
                     Make Payment
-                </button>
-            @endif
-            <!-- Modal -->
-            <div class="modal fade" id="collectPaymentModal" tabindex="-1" role="dialog"
-                aria-labelledby="collectPaymentTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="collectPaymentTitle">Collect Payment</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body text-dark">
-                            <div class="add_new_card">
-                                <button type="button" id="open-mpauthorizenet-modal"
-                                    class="order_view_add_card_button mr-2">Add card</button>
-                                <input type="hidden" id="order_order_id" value="{{ $order->increment_id }}">
-                                <input type="hidden" id="order_customer_id" value="{{ $order->customer_id }}">
-                                {{-- mpauthorizenet --}}
-                            </div>
+                </button> --}}
 
-                     {{-- sandeep add card error message --}}
+                <div class="payment_section w-50" style="">
+                    <div class="">
+
+                    <div class="fs19 pb-4">
+                        <span><strong>Debit or Credit Card</strong></span>
+                    </div>
+                    <div class="" style="background: rgb(251 251 251);">
+                    <div class="payment ml-3 mr-3 pt-2" style="border-bottom: 2px solid #a9a9a9;">    
+                    <div>
+                            <img src="{{ asset('themes/volantijetcatering/assets/images/visa.png') }}" alt="Authorize.net Logo" width="35px" class="mr-2" id="AuthorizeNet_image">
+                            <img src="{{ asset('themes/volantijetcatering/assets/images/shopping.png') }}" alt="Authorize.net Logo" width="35px" class="mr-2" id="AuthorizeNet_image">
+                            <img src="{{ asset('themes/volantijetcatering/assets/images/discover.png') }}" alt="Authorize.net Logo" width="35px" class="mr-2" id="AuthorizeNet_image">
+                            <img src="{{ asset('themes/volantijetcatering/assets/images/american-express.png') }}" alt="Authorize.net Logo" width="35px" id="AuthorizeNet_image">
+                    </div>
+                   
+                    @if (isset($cards) && count($cards) > 0)
+                    <div class="existing_card pt-2">
+                        @include(
+                            'mpauthorizenet::shop.volantijetcatering.components.saved-cards',
+                            [
+                                'customerId' => $order->customer_id,
+                            ]
+                        )
+                    </div>
+          
+                    @endif
+                </div>
+                <div id="customAcceptUIContainer" class="p-3 mr-2 mr-lg-0 mr-md-0"></div>
+                    </div>
+
+                    </div>
                         <div class="card_erorr_message p-2 d-none" style="color:red;">
                           <span class="payment_error_message"></span>
                         </div>
-
-                            @if (isset($cards) && count($cards) > 0)
-                                <div class="strike-through text-center my-2">
-                                    <span>or use existing card</span>
-                                </div>
-
-                                <div class="existing_card">
-                                    @include(
-                                        'mpauthorizenet::shop.volantijetcatering.components.saved-cards',
-                                        [
-                                            'customerId' => $order->customer_id,
-                                        ]
-                                    )
-                                    {{-- delete payment modal --}}
-                                    {{-- <button class="payment-delete-model-btn d-none" data-toggle="modal"
-                                        data-target="#payment_delete_model">delete
-                                        model</button>
-                                    <div class="modal fade p-0 " id="payment_delete_model"
-                                        tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header fbo-header">
-                                                    <h1 class="fs24 fw6 mt-1">
-                                                        Delete Card
-                                                    </h1>
-                                                    <button type="button" class="close save-payment-close"
-                                                        data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body popup-content">
-                                                    <div class="body col-12 border-0 p-0">
-                                                        <form action="" method="POST" @submit.prevent="onSubmit">
-                                                            {{ csrf_field() }}
-                                                            <div class="row mb-3">
-                                                                <p class="px-3">Are you sure you want
-                                                                    to delete this card?
-                                                                    Confirming will permanently remove
-                                                                    the card from your account.
-                                                                </p>
-                                                                <div class="row w-100 mt-4">
-                                                                    <div class="col"><button type="button"
-                                                                            class="btn btn-primary accept">Ok</button>
-                                                                    </div>
-                                                                    <div class="col"><button type="button"
-                                                                            class="btn btn-primary cancel">Cancel</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> --}}
-
-                                    {{-- end delete payment modal --}}
-
-                                </div>
-                            @endif
-                        </div>
-
-                        <div class="modal-footer p-2">
-                            <button type="button" class="collect_payment_close_button" data-dismiss="modal">Close</button>
-                            <button type="button" class="invoice_view_pay_button pay_disable" id="collect_payment"
-                                disabled>Charge 
-                            
-                                @if (isset($agent->Handling_charges))
-                                {{ core()->formatBasePrice($order->grand_total + $agent->Handling_charges) }}
-                            @else
-                                {{ core()->formatBasePrice($order->grand_total) }}
-                            @endif
-                            
-                            </button>
-                        </div>
-
-                    </div>
+                        <input type="hidden" id="order_order_id" value="{{ $order->increment_id }}">
+                        <input type="hidden" id="order_customer_id" value="{{ $order->customer_id }}">
+                <div class="pt-4">
+                    <button type="button" class="invoice_view_pay_button pay_disable" id="collect_payment"
+                        disabled>Place Order 
+{{--                     
+                        @if (isset($agent->Handling_charges))
+                        {{ core()->formatBasePrice($order->grand_total + $agent->Handling_charges) }}
+                    @else
+                        {{ core()->formatBasePrice($order->grand_total) }}
+                    @endif --}}
+                    
+                    </button>
                 </div>
-            </div>
+                </div>
+            @endif
+            <!-- Modal -->
+
         </div>
     </div>
 @stop

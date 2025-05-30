@@ -27,11 +27,12 @@ class CustomerProfileRequest extends FormRequest
         $id = auth()->guard('customer')->user()->id;
 
         return [
-            'first_name'            => ['required', new AlphaNumericSpace],
-            'last_name'             => ['required', new AlphaNumericSpace],
+            'fullname'            => ['required', new AlphaNumericSpace],
+//            'last_name'             => ['required', new AlphaNumericSpace],
             'gender'                => 'required|in:Other,Male,Female',
-            'date_of_birth'         => 'date|before:today',
-            'email'                 => 'email|unique:customers,email,' . $id,
+//            'date_of_birth'         => 'date|before:today',
+'date_of_birth' => 'date|before_or_equal:today',  
+          'email'                 => 'email|unique:customers,email,' . $id,
             'password'              => 'confirmed|min:6|required_with:oldpassword',
             'oldpassword'           => 'required_with:password',
             'password_confirmation' => 'required_with:password',

@@ -29,6 +29,7 @@ class OrderDeliver extends Mailable
      */
     public function build()
     {
-        return $this->subject('Order Delivered')->view('paymentprofile::admin.sales.shipments.mail.order_deliver');
+        $increment_id = $this->order->increment_id;
+        return $this->subject('Order Delivered'. ' #' . $increment_id)->view('paymentprofile::admin.sales.shipments.mail.order_deliver');
     }
 }

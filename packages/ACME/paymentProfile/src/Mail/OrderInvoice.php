@@ -33,7 +33,8 @@ class OrderInvoice extends Mailable
      */
     public function build()
     {
-        return $this->subject('Invoice')
+        $increment_id = $this->order->increment_id;
+        return $this->subject('Invoice'. ' #' . $increment_id)
         ->view('paymentprofile::shop.volantijetcatering.invoices.mail.create')
         ->attach($this->pdfPath, [
             'as' => 'invoice.pdf', // Name of the attachment

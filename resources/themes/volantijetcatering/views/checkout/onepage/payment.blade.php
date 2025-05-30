@@ -26,9 +26,9 @@
                 {!! view_render_event('bagisto.shop.checkout.payment-method.before', ['payment' => $payment]) !!}
 
                 
-                <div class="row col-12 {{ $payment['method'] === 'mpauthorizenet' ? 'authorze_payment_row' : '' }}" style="justify-content: space-between">
+                <div class="row col-12 mb-0 {{ $payment['method'] === 'mpauthorizenet' ? 'authorze_payment_row' : '' }}" style="justify-content: space-between">
                 {{-- sandeep add code --}}
-                <div class="radio d-none {{ isset($cards) && !$cards->isEmpty() ? 'payment-saved' : 'payment-unsave' }}">
+                <div class="radio d-none payment-saved">
                         @if($payment['method'] != 'mpauthorizenet')
                         <input type="radio" name="payment[method]" v-validate="'required'"
                             v-model="payment.method" checked @change="methodSelected()"  id="{{ $payment['method'] }}"
@@ -55,12 +55,19 @@
                                 @else
                                 <b>{{ $payment['method_title'] }}</b>                                
                                 @endif  
-                                <span class="authorizedotnet-image d-inline-flex align-items-center">
+                                {{-- <span class="authorizedotnet-image d-inline-flex align-items-center">
                                     <label for="mpauthorizenet">
                                     <img src="{{ asset('themes/volantijetcatering/assets/images/authorize.net-logo.png') }}" alt="Authorize.net Logo" id="AuthorizeNet_image">
                                 </label>
-                                </span>   
+                                </span>    --}}
                             </span>
+                            <div>
+                                <img src="{{ asset('themes/volantijetcatering/assets/images/visa.png') }}" alt="Authorize.net Logo" width="35px" class="mr-2" id="AuthorizeNet_image">
+                                <img src="{{ asset('themes/volantijetcatering/assets/images/shopping.png') }}" alt="Authorize.net Logo" width="35px" class="mr-2" id="AuthorizeNet_image">
+                                <img src="{{ asset('themes/volantijetcatering/assets/images/discover.png') }}" alt="Authorize.net Logo" width="35px" class="mr-2" id="AuthorizeNet_image">
+                                <img src="{{ asset('themes/volantijetcatering/assets/images/american-express.png') }}" alt="Authorize.net Logo" width="35px" id="AuthorizeNet_image">
+                            </div>
+
                         </div>
 
                         <div class="row">
@@ -86,6 +93,11 @@
             <span class="control-error" v-if="errors.has('payment-form.payment[method]')"
                 v-text="errors.first('payment-form.payment[method]')"></span>
         </div>
+{{-- sandeep add credit card success message --}}
+<span class="d-none card_success_message text-success"></span>
+
+
+
         {{-- <accordian :title="'{{ __('shop::app.checkout.payment-methods') }}'" :active="true"> --}}
             {{-- <div class="form-header mb-30" slot="header">
 

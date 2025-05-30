@@ -75,7 +75,6 @@ class ShipmentsController extends Controller
     {
         $order = $this->orderRepository->findOrFail($orderId);
         $delivery_partners = Admin::where('role_id', 2)->get();
-// dd($order);
         if (!$order->channel || !$order->canShip()) {
             session()->flash('error', trans('admin::app.sales.shipments.creation-error'));
 
@@ -113,6 +112,14 @@ class ShipmentsController extends Controller
 
             return redirect()->back();
         }
+
+
+        $appNotifications = DB::table('app_notifications')->insert([
+            'customer_id' => $order->customer_id,
+            'order_id' => $orderId,
+            'message' => "Order Shipped",
+            'is_read' => 0
+        ]);
 
 
         $admin_id = Auth::guard('admin')->user()->id;
@@ -276,6 +283,13 @@ class ShipmentsController extends Controller
                 'status_id' => 9 // Assuming you have a constant defined
             ]);
 
+
+        $appNotifications = DB::table('app_notifications')->insert([
+            'customer_id' => $order->customer_id,
+            'order_id' => $order->id,
+            'message' => "Order Delivered",
+            'is_read' => 0
+        ]);
 
             $admin_id = Auth::guard('admin')->user()->id;
 

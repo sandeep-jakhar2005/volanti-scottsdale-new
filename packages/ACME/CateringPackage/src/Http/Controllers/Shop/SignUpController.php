@@ -72,7 +72,16 @@ class SignUpController extends Controller
     {
         $request->validated();
 
+        
+         $fullName = trim($request->input('fullname'));
+        $nameParts = explode(' ', $fullName);
+        
+        $lastName = count($nameParts) > 1 ? array_pop($nameParts) : '';
+        $firstName = implode(' ', $nameParts) ?: $fullName;
+
         $data = array_merge(request()->input(), [
+            'first_name' => $firstName,
+            'last_name' => $lastName,
             'password' => bcrypt(request()->input('password')),
             'api_token' => Str::random(80),
             'is_verified' => !core()->getConfigData('customer.settings.email.verification'),
@@ -85,6 +94,7 @@ class SignUpController extends Controller
         if (!session()->has('customer_id')) {
             
             log::info('customer create succesfully',['sessuin customer id'=>session()->get('customer_id')]);
+            log::info('data',['data'=>$data]);
             $customer = $this->customerRepository->create($data);
             log::info('customer data',['customer data'=>$customer]);
 
@@ -95,8 +105,8 @@ class SignUpController extends Controller
                 ->where('id', session('customer_id'))
                 ->update([
                     'email' => $request->email,
-                    'first_name' => $request->first_name,
-                    'last_name' => $request->last_name,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
                     'phone' => $request->phone,
                     'password' => bcrypt($request->password),
                     'is_verified' => !core()->getConfigData('customer.settings.email.verification'),
@@ -279,7 +289,6 @@ class SignUpController extends Controller
 
     public function add_fbo_details(Request $request)
     {
-
         $validate = $request->validate([
             'fullname' => 'required|max:30'
         ]);
@@ -423,8 +432,6 @@ class SignUpController extends Controller
 
     public function update_fbo_detail(Request $request)
     {
-
-
         $dateString = $request->delivery_date;
         // dd($dateString);
         // Check if the requested date is "Today" or "Tomorrow"

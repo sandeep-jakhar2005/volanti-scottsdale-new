@@ -10,6 +10,8 @@ use Webkul\Customer\Http\Requests\CustomerProfileRequest;
 use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Product\Repositories\ProductReviewRepository;
 use Webkul\Shop\Mail\SubscriptionEmail;
+use Illuminate\Support\Facades\Log;
+
 
 class CustomerController extends Controller
 {
@@ -71,6 +73,18 @@ class CustomerController extends Controller
         $isPasswordChanged = false;
 
         $data = $customerProfileRequest->validated();
+        
+        if (!empty($data['fullname'])) {
+
+            $fullName = trim($data['fullname']);
+ $nameParts = explode(' ', $fullName);
+            
+            $lastName = count($nameParts) > 1 ? array_pop($nameParts) : '';
+            $firstName = implode(' ', $nameParts) ?: $fullName;
+
+            $data['first_name'] = $firstName; 
+            $data['last_name'] = $lastName; 
+        }
 
         if (empty($data['date_of_birth'])) {
             unset($data['date_of_birth']);
@@ -101,7 +115,9 @@ class CustomerController extends Controller
 
         Event::dispatch('customer.update.before');
 
+        log::info('data',['data'=>$data]);
         if ($customer = $this->customerRepository->update($data, auth()->guard('customer')->user()->id)) {
+            log::info('customer update data',['customer-update-data'=>$customer]);
             if ($isPasswordChanged) {
                 Event::dispatch('user.admin.update-password', $customer);
             }

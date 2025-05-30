@@ -100,6 +100,10 @@ Route::group(['middleware' => ['web', 'theme', 'locale', 'currency']], function 
         'redirect' => 'shop.checkout.cart.index',
     ])->name('shop.cart.add');
 
+    // sandeep add route for update mini cart quantity
+    Route::post('checkout/update/mini_cart/{id}', [CartsController::class, 'update_miniCart_item'])->defaults('_config', [
+        'redirect' => 'shop.checkout.cart.index',
+    ])->name('shop.update.mini_cart_item');
 
     /**
     * single product routes.

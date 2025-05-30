@@ -7,19 +7,19 @@
 @endphp
 
 @if (isset($cards) && !$cards->isEmpty())
-<div class="mpauthorizenet-add-card" style="padding-left:50px; padding-right:10px; margin-top:-15px; margin-bottom:8px; display:none" id="saved-card-heading">
-    <span class="control-info mb-5 mt-5"> Choose a saved card or 
-        <a id="open-mpauthorizenet-modal" style="color: #0041FF !important; cursor: pointer;">
+<div class="mpauthorizenet-add-card" style="padding-left:15px;padding-top:25px; padding-right:10px; margin-top:-15px; margin-bottom:8px;" id="saved-card-heading">
+    <span class="control-info mb-5 mt-5"> Choose a saved card 
+        {{-- <a id="open-mpauthorizenet-modal" style="color: #0041FF !important; cursor: pointer;">
             {{ __('mpauthorizenet::app.add-card') }}
-        </a>
+        </a> --}}
         to proceed.
     </span>
 </div>
-@else
+{{-- @else
 <div class="mpauthorizenet-add-card" style="padding-left:50px; padding-right:10px; margin-top:-15px; margin-bottom:8px; display:none" id="unsave-card-heading">
     <span class="control-info mb-5 mt-5">Please
         <a id="open-mpauthorizenet-modal" style="color: #0041FF !important; cursor: pointer;">
             {{ __('mpauthorizenet::app.add-card') }}</a> to proceed.
     </span>
-</div>
+</div> --}}
 @endif

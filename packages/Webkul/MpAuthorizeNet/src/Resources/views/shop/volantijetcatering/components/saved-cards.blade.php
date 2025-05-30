@@ -11,7 +11,7 @@
 @endphp
 
 @if (auth()->guard('customer')->check() || isset($customerId) && $customerId)
-    <div class="mpauthorizenet-cards-block" id="saved-cards" style="padding-left: 50px; padding-bottom: 10px; margin-bottom:10px; display:none;">
+    <div class="mpauthorizenet-cards-block" id="saved-cards" style="padding-left: 15px; padding-bottom: 10px; margin-bottom:10px;">
         <div class="control-info mt-10 mb-10">
             @foreach ($cards as $card)
                 <div class="authroizenet-card-info" id="{{ $card->id }}">

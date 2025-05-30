@@ -163,6 +163,8 @@ null,
                 <input id="tnb-google-search-input" class="search_product" type="text" placeholder="Search for dishes" name = "product_search">
             </div> 
 
+
+                   <div class="search_not_found_message pt-5"></div>
                <div class='col-md-12' id="products_header">
 
 
@@ -225,7 +227,7 @@ null,
 
                 @php
                 $products = collect($getCategorydetail['products']);
-
+                
                 $categories = collect($getCategorydetail['product_category']);
                 $desiredCategoryId = $category->id; // Keep as object property access
             
@@ -240,7 +242,7 @@ null,
                 // Filter products based on the product IDs from the filtered categories
                 $categoryproducts = $products->filter(function ($product) use ($filteredProductIds) {
                     return $filteredProductIds->contains($product['id']); // Use object property access
-                  
+                
                 });
                 
             @endphp
@@ -263,6 +265,8 @@ null,
 
                                     {{-- sandeep send data  --}}
                                     @include ('shop::products.category-products.category-product-list',['categoryproducts'=>$categoryproducts,'cate_id' => $category->id])   
+                            
+
                                 </div>
                             @else
                                 <div class="product-list">
@@ -273,12 +277,12 @@ null,
                                         v-for="(product, index) in products">
                                     </custom-product-card>
                                 </div>
-                            @endif  
+                            @endif
         
                             {!! view_render_event('bagisto.shop.productOrCategory.index.pagination.before', ['category' => $category]) !!}
         
                                 <div class="bottom-toolbar" v-html="paginationHTML"></div>
-           
+        
                             {!! view_render_event('bagisto.shop.productOrCategory.index.pagination.after', ['category' => $category]) !!}
                         </template> 
 
@@ -355,7 +359,12 @@ null,
                             </custom-product-card> --}}
 
                             {{-- sandeep send data --}}
-                            @include ('shop::products.category-products.category-product-list',['categoryproducts'=>$categoryproducts,'cate_id' => $childSubCategory->id])     
+                            @include ('shop::products.category-products.category-product-list',['categoryproducts'=>$categoryproducts,'cate_id' => $childSubCategory->id])    
+                            @if (!empty($getCategorydetail['paginationHTML']))
+                            <div class="pagination-wrapper">
+                                {!! $getCategorydetail['paginationHTML'] !!}
+                            </div>
+                            @endif
                         </div>
                     @else
                         <div class="product-list">
@@ -414,7 +423,7 @@ null,
                                 `${this.$root.baseUrl}/category-products/{{ $category_ids }}${window.location.search}`
                             )
                             .then(response => {
-                                console.log(window.location.search);
+                                
                                 this.isLoading = false;
                                 this.products = response.data.products;
                                 // this.paginationHTML = response.data.paginationHTML;
@@ -423,7 +432,7 @@ null,
                             })
                             .catch(error => {
                                 this.isLoading = false;
-                                console.log(this.__('error.something_went_wrong'));
+                                
                             })
                     },
    
@@ -518,7 +527,7 @@ null,
 @endif
 @push('scripts')
 <script>
-    console.log('sdhgdf');
+    
     Vue.component('category-component', {
         template: '#category-template'
         , data: function() {
@@ -540,8 +549,7 @@ null,
             'getCategoryProducts': function() {
                 this.$http.get(`${this.$root.baseUrl}/category-products/{{$category->id}}?limit=48${window.location.search}`)
                     .then(response => {
-                        console.log(response, 'else');
-                        this.isLoading = false;
+                       this.isLoading = false;
                         this.products = response.data.products;
 
                         // this.paginationHTML = response.data.paginationHTML;

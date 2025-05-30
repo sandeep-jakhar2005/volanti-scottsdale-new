@@ -58,7 +58,17 @@
 </head>
 <body>
     <div class="container order_view_status">
-        <img src="https://images.squarespace-cdn.com/content/v1/6171dbc44e102724f1ce58cf/eda39336-24c7-499b-9336-c9cee87db776/VolantiStickers-11.jpg?format=1500w" alt="Volantijet Catering" />
+ <div style="text-align: center;">
+            <a href="{{ route('shop.home.index') }}">
+                {{-- @include ('shop::emails.layouts.logo') --}}
+                <img style="width: 100%;
+                max-width: 300px;
+                display: block;
+                margin: 0 auto;"
+                    src="https://images.squarespace-cdn.com/content/v1/6171dbc44e102724f1ce58cf/eda39336-24c7-499b-9336-c9cee87db776/VolantiStickers-11.jpg?format=1500w"
+                    alt="Volantijet Catering" />
+            </a>
+        </div>
         {{-- <h3>Order Rejected</h3> --}}
         <p>Dear {{ $order->customer_first_name !== '' ? $order->customer_first_name : $order->fbo_full_name  }},</p>
         <p>We regret to inform you that your order #<span class="order-id">{{ $order->increment_id }}</span>, has been rejected.</p>

@@ -96,16 +96,24 @@
                     <h5 class="my-2 fs23 fw6">{{__('shop::app.fbo-detail.aircraft-info')}}</h5>
                     <p class="m-0"> {{ $orderDetails[0]->fbo_tail_number }} </p>
                     <p class="m-0"> {{ $orderDetails[0]->fbo_packaging }} </p>
-                    <p> {{ $orderDetails[0]->fbo_service_packaging }} </p>
+                    <p class="m-0"> {{ $orderDetails[0]->fbo_service_packaging }} </p>
+               @if(isset($fboDetails))
+                    @if(!empty($fboDetails->delivery_date) || !empty($fboDetails->delivery_time))
+                    <p class="m-0">
+                        {{ date('m-d-Y', strtotime($fboDetails->delivery_date)) ?? '' }} {{ $fboDetails->delivery_time ?? '' }}
+                    </p>
+                @endif
+                    @endif
                     <h5 class="my-2 fs23 fw6">Airport Fbo Detail</h5>
                     <p class="m-0"> {{ $orderDetails[0]->fbo_airport_name }} </p>
                     <p class="m-0"> {{ $orderDetails[0]->fbo_airport_address }} </p>
                 </div>
                 @if (!auth()->guard('customer')->check())
                     <div class="col-12 border my-3 thank__create p-3 thank__order">
-
-                        <p>Make an account so you can view your order history, save fbo details and payment info, and more
+  <h5 class="fw-bold text-dark">Unlock Exclusive Benefits!</h5>
+                        <p>Create an account to track your orders, save FBO details, securely manage payments, and enjoy a seamless checkout experience.
                         </p>
+
                         <a href="{{ route('shop.customer.session.create') }}?form=register">
                             <button class="btn-lg  bg-light">Create account</button>
                         </a>

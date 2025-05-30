@@ -52,6 +52,10 @@ Route::group(['middleware' => ['locale', 'theme', 'currency']], function () {
         'view' => 'shop::home.index',
     ])->name('shop.home.index');
 
+
+    // sandeep add logs page route
+    Route::get('/logs', [HomeController::class, 'logs'])->name('error.logs');
+
     /**
      * customer Enquiry.
      */

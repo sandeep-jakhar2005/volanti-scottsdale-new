@@ -63,7 +63,7 @@ class RegistrationEmail extends Mailable
     {
         return $this->from(core()->getSenderEmailDetails()['email'], core()->getSenderEmailDetails()['name'])
             ->to($this->data['email'])
-            ->subject(trans('shop::app.mail.customer.registration.customer-registration'))
+            ->subject(trans('Account Created Successfully – Get Started Now!'))
             ->view('shop::emails.customer.registration')->with('data', $this->data);
     }
 

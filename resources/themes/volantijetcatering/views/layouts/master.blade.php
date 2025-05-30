@@ -5,6 +5,7 @@
     {{-- title --}}
     <title>@yield('page_title')</title>
 
+
     {{-- meta data --}}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,7 +27,13 @@
     <link rel="preload" href="{{ asset('themes/volantijetcatering/assets/fonts/font-awesome/Fino-Sans-Regular.otf') }}" as="font" type="font/otf" 
       crossorigin="anonymous">
 
-    
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P73CFJV8');</script>
+<!-- End Google Tag Manager -->    
 
     <!---------end by umesh 14-07-2023--------->
 
@@ -105,6 +112,12 @@
 </head>
 
 <body class="not-loaded">
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P73CFJV8"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
     {{-- Loader HTML --}}
     <div class="loader-wrapper">
         <div class="loader"></div>
@@ -204,13 +217,34 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap-daterangepicker@3.1.0/daterangepicker.js">
     </script>
     <script src="{{ asset('themes/volantijetcatering/assets/js/custom.js') }}"></script>
-
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V97ZCHMNE3"></script>
     {{-- Custom loader script --}}
     <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V97ZCHMNE3');
+
         window.addEventListener('load', function() {
             document.body.classList.remove('not-loaded');
             document.body.classList.add('loaded');
         });
+
+// JavaScript code to listen for input changes
+document.querySelectorAll('input[type="text"], input[type="email"], input[type="number"], textarea').forEach(function(input) {
+    input.addEventListener('input', function() {
+        // Fire Custom Event
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'inputChange',  // Custom event name (same as in GTM Trigger)
+            'inputValue': input.value,  // Capturing the value of the input field
+            'inputId': input.id,  // If you want to capture the input field's ID
+            'inputName': input.name  // Optionally, you can track the input's name attribute
+        });
+    });
+});
+
     </script>
 </body>
 

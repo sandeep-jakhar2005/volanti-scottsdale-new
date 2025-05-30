@@ -33,6 +33,7 @@ class QuickBookController extends Controller
 
 public function checkInvoiceStatus(Request $request)
 {
+log::info('check invoice');
     $data = $request->all();
     $statusId = "4"; 
     $status = "paid";
@@ -159,7 +160,7 @@ public function checkInvoiceStatus(Request $request)
 
     private function getPaymentDetails($paymentId, $companyId, $accessToken)
     {
-        $url = "https://sandbox-quickbooks.api.intuit.com/v3/company/{$companyId}/payment/{$paymentId}";
+        $url = "https://quickbooks.api.intuit.com/v3/company/{$companyId}/payment/{$paymentId}";
 
         $response = Http::withToken($accessToken)
             ->withHeaders(['Content-Type' => 'application/json'])
@@ -179,7 +180,7 @@ public function checkInvoiceStatus(Request $request)
 
     private function getInvoiceDetails($invoiceId, $companyId, $accessToken){
 
-        $url = "https://sandbox-quickbooks.api.intuit.com/v3/company/{$companyId}/invoice/{$invoiceId}";
+        $url = "https://quickbooks.api.intuit.com/v3/company/{$companyId}/invoice/{$invoiceId}";
 
         
         $response = Http::withToken($accessToken)
@@ -245,9 +246,8 @@ public function updatePaymentInQuickBooks($orderId)
         }
 
       
-        $url = "https://sandbox-quickbooks.api.intuit.com/v3/company/{$companyId}/payment";
+        $url = "https://quickbooks.api.intuit.com/v3/company/{$companyId}/payment";
 
-        
             $response = Http::withToken($accessToken)
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->post($url, [
@@ -318,75 +318,10 @@ public function updatePaymentInQuickBooks($orderId)
     }
 
 
-
-
-
-    // public function connect()
-    // {
-    //     log::info('connnect');
-
-    //     $configData = $this->getQuickBooksConfig();
-        
-    //     $dataService = DataService::Configure([
-    //         'auth_mode'     => 'oauth2',
-    //         'ClientID'      => $configData['client_id'],
-    //         'ClientSecret'  => $configData['client_secret'],
-    //         'RedirectURI'   => $configData['redirect_uri'],
-    //         'scope'         => $configData['scope'],
-    //         'baseUrl'       => $configData['baseUrl'],
-    //     ]);
-
-    //     $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
-    //     $authUrl = $OAuth2LoginHelper->getAuthorizationCodeURL();
-
-    //     return redirect($authUrl);
-    // }
-
-
-    // public function callback(Request $request)
-    // {
-    //     log::info('callback funtion');
-    //     $configData = $this->getQuickBooksConfig();
-    //     $dataService = DataService::Configure([
-    //         'auth_mode'     => 'oauth2',
-    //         'ClientID'      => $configData['client_id'],
-    //         'ClientSecret'  => $configData['client_secret'],
-    //         'RedirectURI'   => $configData['redirect_uri'],
-    //         'scope'         => $configData['scope'],
-    //         'baseUrl'       => $configData['baseUrl'],
-    //     ]);
-        
-    //     $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
-    //     $accessToken = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($request->code, $request->realmId);
-
-    //     log::info('access_token',['accessToken'=>$accessToken]);
-
-    //     // Store the tokens in the database
-    //     DB::table('quickbook_tokens')->updateOrInsert(
-    //         ['client_id' => $configData['client_id']],
-    //         [ 
-    //             'access_token' => $accessToken->getAccessToken(),
-    //             'refresh_token' => $accessToken->getRefreshToken(), 
-    //             'company_id'   => $request->realmId,
-    //             'access_token_expires_at' => $accessToken->getAccessTokenExpiresAt(),
-    //             'refresh_token_expires_at' => $accessToken->getRefreshTokenExpiresAt(),
-    //         ]
-    //     );
-
-    //     return redirect()->json([
-    //         'accessToken' =>$accessToken,
-    //     ]);
-
-    //     // return redirect()->route('quickbooks.invoice.create');
-        
-    // }
-
-
         // Step 1: Redirect to QuickBooks OAuth Login
         public function connect()
     {
         Log::info('connect');
-
         // Fetch configuration data for QuickBooks integration
         $configData = $this->getQuickBooksConfig();
 
@@ -403,6 +338,7 @@ public function updatePaymentInQuickBooks($orderId)
         // Create OAuth2 login helper and get the authorization URL
         $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
         $authUrl = $OAuth2LoginHelper->getAuthorizationCodeURL();
+
 
         // Redirect to QuickBooks authorization page
         return redirect($authUrl);
@@ -450,18 +386,6 @@ public function updatePaymentInQuickBooks($orderId)
             'accessToken' => $accessToken,
         ]);
     }
-
-    // Helper function to fetch QuickBooks config data (can be extended based on needs)
-    // private function getQuickBooksConfig()
-    // {
-    //     return [
-    //         'client_id'     => env('QUICKBOOKS_CLIENT_ID'),
-    //         'client_secret' => env('QUICKBOOKS_CLIENT_SECRET'),
-    //         'redirect_uri'  => env('QUICKBOOKS_REDIRECT_URI'),
-    //         'scope'         => env('SCOPE'),
-    //         'baseUrl'       => env('QUICKBOOKS_ENVIRONMENT'),
-    //     ];
-    // }
 
 }
 

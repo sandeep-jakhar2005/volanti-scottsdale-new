@@ -62,6 +62,17 @@
                     </div>
                 </tab>
 
+                <tab name="Carts" :selected="false">
+                    <div class="page-content">
+
+                    {!! view_render_event('bagisto.admin.customer.orders.list.before') !!}
+
+                        <datagrid-plus src="{{ route('admin.customer.carts.data', $customer->id) }}"></datagrid-plus>
+
+                    {!! view_render_event('bagisto.admin.customer.orders.list.after') !!}
+                    </div>
+                </tab>
+
             {!! view_render_event('bagisto.admin.customer.edit.after', ['customer' => $customer]) !!}
         </tabs>
     </div>

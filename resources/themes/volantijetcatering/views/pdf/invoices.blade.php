@@ -356,12 +356,11 @@ use Carbon\Carbon;
     $carbonDate = Carbon::parse($order->created_at );
     $delivery_dates = Carbon::parse($order->delivery_date );
 
-
-// Separate date and time
-$Order_date = $carbonDate->isoFormat('DD MMMM YYYY'); // "2024-03-15"
-$delivery_dates_format=$delivery_dates->isoFormat('DD MMMM YYYY');
-$delivery_date=$delivery_dates->toDateString();
-$delivery_time=$delivery_dates->format('H:i');
+    // Separate date and time
+    $Order_date = $carbonDate->isoFormat('DD MMMM YYYY'); // "2024-03-15"
+    $delivery_dates_format=$delivery_dates->isoFormat('DD MMMM YYYY');
+    $delivery_date=$delivery_dates->toDateString();
+    $delivery_time=$delivery_dates->format('H:i');
 
 
 
@@ -391,8 +390,7 @@ $delivery_time=$delivery_dates->format('H:i');
                     <h1>Invoice No.</h1>
                     <h1>{{ $order->id }}</h1>
                     @endif
-                   <P>15000 N. Airport Dr. Scottsdale, Arizona 85260, United States</P>
-                  
+                <P>15000 N. Airport Dr. Scottsdale, Arizona 85260, United States</P>
                     <hr>
                 </td>
             </tr>
@@ -404,8 +402,7 @@ $delivery_time=$delivery_dates->format('H:i');
         <p>Volanti Jet Catering, 15000 N. Airport Dr. Scottsdale, Arizona 85260, United States</p>
         <p>Company Registration Number: {{config('app.company_reference_no')}} | VAT number: {{config('app.company_vat_no')}} | +480.657.2426 |  jetcatering@volantiscottsdale.com
         </p>
-       
-       
+    
     </footer>
     <!-- Wrap the content of your PDF inside a main tag -->
     <main>
@@ -435,6 +432,11 @@ $delivery_time=$delivery_dates->format('H:i');
                     <a href="{{ route('order-invoice-view', ['orderid' => $order->id, 'customerid' => $order->customer_id]) }}"
                         class="button-pay">pay Now</a>
 
+                    @if(!empty($order->quickbook_invoice_link))
+                        <span style="padding: 9px;">OR</span>
+                        <a href="{{ $order->quickbook_invoice_link }}"
+                        class="button-pay">Pay with QuickBooks</a>
+                    @endif
                 </td>
             </tr>
         </table>

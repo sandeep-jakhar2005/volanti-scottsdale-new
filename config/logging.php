@@ -35,7 +35,8 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['single', 'db_errors'],
+            'ignore_exceptions' => false,
         ],
 
         'single' => [
@@ -76,6 +77,12 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
+
+        'db_errors' => [
+        'driver' => 'custom',
+         'via' => App\Logging\DatabaseErrorLogger::class,
+        ],
+        
     ],
 
 ];

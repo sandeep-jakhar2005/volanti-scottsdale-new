@@ -100,10 +100,10 @@ class QuickBookController extends Controller
 
 
 
-    // function to update invoice status
+// function to update invoice status
 public function checkInvoiceStatus(Request $request)
 {
-
+  log::info('check invoice status function');
     $data = $request->all();
     $statusId = "4"; 
     $status = "paid";
@@ -247,7 +247,7 @@ public function checkInvoiceStatus(Request $request)
 //   function to get paymnent detail
     private function getPaymentDetails($paymentId, $companyId, $accessToken)
     {
-        $url = "https://sandbox-quickbooks.api.intuit.com/v3/company/{$companyId}/payment/{$paymentId}";
+        $url = "https://quickbooks.api.intuit.com/v3/company/{$companyId}/payment/{$paymentId}";
 
         $response = Http::withToken($accessToken)
             ->withHeaders(['Content-Type' => 'application/json'])
@@ -268,7 +268,7 @@ public function checkInvoiceStatus(Request $request)
     // funtion to get invoice detail
     private function getInvoiceDetails($invoiceId, $companyId, $accessToken){
 
-        $url = "https://sandbox-quickbooks.api.intuit.com/v3/company/{$companyId}/invoice/{$invoiceId}";
+        $url = "https://quickbooks.api.intuit.com/v3/company/{$companyId}/invoice/{$invoiceId}";
         
         $response = Http::withToken($accessToken)
             ->withHeaders(['Content-Type' => 'application/json'])
@@ -284,9 +284,9 @@ public function checkInvoiceStatus(Request $request)
             }
 
     }
-            
-            
-            
+
+
+
     // function to update paymnet status in quickbook
 public function updatePaymentInQuickBooks($orderId)
     {
@@ -335,7 +335,7 @@ public function updatePaymentInQuickBooks($orderId)
 
         log::info('total amount',$totalAmount);
 
-        $url = "https://sandbox-quickbooks.api.intuit.com/v3/company/{$companyId}/payment";
+        $url = "https://quickbooks.api.intuit.com/v3/company/{$companyId}/payment";
 
         
             $response = Http::withToken($accessToken)

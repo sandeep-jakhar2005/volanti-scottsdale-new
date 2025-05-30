@@ -70,8 +70,8 @@ class OrdersDataGrid extends DataGrid
         $this->addFilter('shipped_to', DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_shipping.first_name, " ", ' . DB::getTablePrefix() . 'order_address_shipping.last_name)'));
         $this->addFilter('increment_id', 'orders.increment_id');
         $this->addFilter('created_at', 'orders.created_at');
-        $this->addFilter('customer_email', 'orders.customer_email');
-
+//        $this->addFilter('customer_email', 'orders.customer_email');
+        $this->addFilter('customer_email', DB::raw("IFNULL(orders.customer_email, orders.fbo_email_address)"));
         $this->setQueryBuilder($queryBuilder);
     }
 

@@ -15,6 +15,7 @@ use Webkul\Admin\Mail\NewRefundNotification;
 use Webkul\Admin\Mail\NewShipmentNotification;
 use Webkul\Admin\Mail\OrderCommentNotification;
 
+
 trait Mails
 {
     /**
@@ -32,13 +33,17 @@ trait Mails
              * Email to customer.
              */
 
-        if($order->customer_email){
-            $configKey = 'emails.general.notifications.emails.general.notifications.new-order';
+            //  sandeep comment code
 
-            if (core()->getConfigData($configKey)) {
-                $this->prepareMail($customerLocale, new NewOrderNotification($order));
-            }
-        }
+        // if($order->customer_email){
+        //     $configKey = 'emails.general.notifications.emails.general.notifications.new-order';
+
+        //     log::info('order',['order data',$order]);
+        //     if (core()->getConfigData($configKey)) {
+        //         $this->prepareMail($customerLocale, new NewOrderNotification($order));
+        //     }
+        // }
+
 
             /**
              * Email to admin.

@@ -37,19 +37,20 @@
 
             {!! view_render_event('bagisto.shop.customers.account.profile.edit_form_controls.before', ['customer' => $customer]) !!}
             <div class="col-6 mt-3 user-profile-input">
-                <div :class="`row ${errors.has('first_name') ? 'has-error' : ''}`">
+                <div :class="`row ${errors.has('fullname') ? 'has-error' : ''}`">
                     <label class="col-12 mandatory">
-                        {{ __('shop::app.customer.account.profile.fname') }}
+                        {{-- {{ __('shop::app.customer.account.profile.fname') }} --}}
+                        Full Name
                     </label>
 
                     <div class="col-12">
-                        <input value="{{ $customer->first_name }}" name="first_name" type="text" class="control" v-validate="'required'" data-vv-as="&quot;{{ __('shop::app.customer.account.profile.fname') }}&quot;" />
-                        <span class="control-error" v-if="errors.has('first_name')" v-text="errors.first('first_name')"></span>
+                        <input value="{{ $customer->first_name }} {{ $customer->last_name }}" name="fullname" type="text" class="control" v-validate="'required'" data-vv-as="&quot;{{ __('shop::app.customer.account.profile.fname') }}&quot;" />
+                        <span class="control-error" v-if="errors.has('fullname')" v-text="errors.first('fullname')"></span>
                     </div>
                 </div>
             </div>
             {!! view_render_event('bagisto.shop.customers.account.profile.edit.first_name.after', ['customer' => $customer]) !!}
-            <div class="col-6 mt-3 user-profile-input">
+            {{-- <div class="col-6 mt-3 user-profile-input">
                 <div :class="`row ${errors.has('last_name') ? 'has-error' : ''}`">
                     <label class="col-12 mandatory">
                         {{ __('shop::app.customer.account.profile.lname') }}
@@ -61,7 +62,7 @@
                     </div>
                 </div>
             </div>
-            {!! view_render_event('bagisto.shop.customers.account.profile.edit.last_name.after', ['customer' => $customer]) !!}
+            {!! view_render_event('bagisto.shop.customers.account.profile.edit.last_name.after', ['customer' => $customer]) !!} --}}
             <div class="col-6 mt-3 user-profile-input">
                 <div :class="`row ${errors.has('gender') ? 'has-error' : ''}`">
                     <label class="col-12 mandatory">
@@ -76,14 +77,14 @@
                             data-vv-as="&quot;{{ __('shop::app.customer.account.profile.gender') }}&quot;">
 
                             <option value=""
-                                @if ($customer->gender == "")
+                                @if (old('gender',$customer->gender) == "")
                                     selected="selected"
                                 @endif>
                                 {{ __('admin::app.customers.customers.select-gender') }}
                             </option>
 
                             <option value="Other"
-                                @if ($customer->gender == "Other")
+                                @if (old('gender', $customer->gender) == "Other")
                                     selected="selected"
                                 @endif>
                                 {{ __('velocity::app.shop.gender.other') }}
@@ -91,7 +92,7 @@
 
                             <option
                                 value="Male"
-                                @if ($customer->gender == "Male")
+                                @if (old('gender', $customer->gender) == "Male")
                                     selected="selected"
                                 @endif>
                                 {{ __('velocity::app.shop.gender.male') }}
@@ -99,7 +100,7 @@
 
                             <option
                                 value="Female"
-                                @if ($customer->gender == "Female")
+                                @if (old('gender', $customer->gender) == "Female")
                                     selected="selected"
                                 @endif>
                                 {{ __('velocity::app.shop.gender.female') }}
@@ -127,6 +128,7 @@
                             <input
                                 type="date"
                                 name="date_of_birth"
+                                id="date-of-birth" 
                                 placeholder="yyyy/mm/dd"
                                 value="{{ old('date_of_birth') ?? $customer->date_of_birth }}"
                                 v-validate="" data-vv-as="&quot;{{ __('shop::app.customer.account.profile.dob') }}&quot;" />
@@ -252,3 +254,109 @@
 
     {!! view_render_event('bagisto.shop.customers.account.profile.edit.after', ['customer' => $customer]) !!}
 @endsection
+
+
+@push('scripts')
+<script>
+// $(document).ready(function() {
+//     // Optional: When a user selects a date, update the hidden input
+//     $("body").on("click","#date-of-birth", function() {
+//         console.log('sandeep jakhar');
+//         var selectedDate = $(this).attr("aria-label");
+//         $('.flatpickr-calendar').hide();
+//         if (selectedDate) {
+//             $("#date-of-birth input").val(selectedDate);
+//         }
+//     });
+// });
+
+
+
+$(document).ready(function() {
+    function disableFutureDates() {
+        console.log('call disableFutureDates function');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth();
+
+        // Disable future days
+        $(".flatpickr-day").each(function() {
+            const dayDate = new Date($(this).attr("aria-label"));
+            console.log('dayDate',dayDate);
+            if (dayDate > today) {
+                console.log('disbled days');
+                $(this).addClass('disabled').css({ "pointer-events": "none", "opacity": "0.3" });
+            }
+        });
+
+        // Disable future months
+        $(".flatpickr-monthDropdown-month").each(function() {
+            var inputYear = $('.numInput').val();
+            if(inputYear >= currentYear){
+            if (parseInt($(this).val()) > currentMonth) $(this).prop('disabled', true);
+            }
+        });
+
+
+        $(".numInput.cur-year").on('input', function() {
+            const inputYear = parseInt($(this).val());
+            console.log('inputYear',inputYear);
+            if (inputYear > currentYear) $(this).val(currentYear);
+        });
+
+        // Show/hide arrow based on year input
+        const currentInputYear = parseInt($('.numInput').val());
+        if (currentInputYear < currentYear) $('.arrowUp').show();
+        else $('.arrowUp').hide();
+    }
+
+    $("body").on("click keyup input", "#date-of-birth", function() {
+        var today = new Date();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth() + 1;
+        const currentDay = today.getDate();
+
+        var inputDate = $(this).val().trim();
+
+        if (inputDate.match(/^(\d{4})-(\d{2})-(\d{2})$/)) {
+            var [inputYear, inputMonth, inputDay] = inputDate.split('-').map(Number);
+
+            if (inputYear > currentYear) {
+                inputYear = currentYear;
+            }
+
+            if (inputYear === currentYear && inputMonth > currentMonth) {
+                inputMonth = currentMonth;
+            }
+
+            if (inputYear === currentYear && inputMonth === currentMonth && inputDay > currentDay) {
+                inputDay = currentDay;
+            }
+
+            $(this).val(
+                `${inputYear}-${String(inputMonth).padStart(2, '0')}-${String(inputDay).padStart(2, '0')}`
+            );
+        }
+        $('.flatpickr-next-month').hide();
+        disableFutureDates();
+});
+
+
+$("body").on("click", ".arrowUp, .flatpickr-monthDropdown-month, .flatpickr-prev-month, .arrowDown", function() {
+    console.log('Clicked on arrowUp, monthDropdown, or prev-month');
+    disableFutureDates();
+});
+
+
+$("body").on("change input", ".flatpickr-monthDropdown-months, .numInput", function() {
+    console.log('Month changed');
+    disableFutureDates();
+});
+
+
+    // Initialize on page load
+    disableFutureDates();
+});
+</script>
+@endpush

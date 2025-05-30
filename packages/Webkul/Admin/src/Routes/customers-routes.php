@@ -55,6 +55,11 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         'view' => 'admin::customers.orders.index',
     ])->name('admin.customer.orders.data');
 
+    Route::get('customers/{id}/carts', [CustomerController::class, 'carts'])->defaults('_config', [
+        'view' => 'admin::customers.carts.index',
+    ])->name('admin.customer.carts.data');
+
+
     /**
      * Customer's addresses routes.
      */

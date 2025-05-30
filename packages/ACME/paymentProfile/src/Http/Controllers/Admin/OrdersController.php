@@ -89,6 +89,7 @@ class OrdersController extends Controller
      */
     public function index()
     {
+
         // dd(auth()->guard('admin')->user()->id);
         if (request()->ajax()) {
             // if (auth()->guard('admin') && auth()->guard('admin')->user()->role_id == 2) {
@@ -136,9 +137,7 @@ class OrdersController extends Controller
      */
     public function cancel($id)
     {
-
         $result = $this->orderRepository->cancel($id);
-        // dd($result);
         if ($result) {
             session()->flash('success', trans('admin::app.sales.orders.cancel-error'));
         } else {
@@ -147,6 +146,7 @@ class OrdersController extends Controller
 
         return redirect()->back();
     }
+
 
     // /**
     //  * Add comment to the order
@@ -422,13 +422,13 @@ class OrdersController extends Controller
 
                 // sandeep update quickbook invoice
                 $quickbookInvoiceId = DB::table('orders')->where('id',$order_id)->select('quickbook_invoice_id')->first();
-               if($quickbookInvoiceId->quickbook_invoice_id){
-                 ProcessQuickBooksInvoice::dispatch($order_id);
-               }
+            if($quickbookInvoiceId->quickbook_invoice_id){
+            ProcessQuickBooksInvoice::dispatch($order_id);
+            }
 
 
-               return redirect()->back();
-      }
+            return redirect()->back();
+    }
 
     /**
      * Search address
@@ -646,10 +646,10 @@ class OrdersController extends Controller
 
 
                 // sandeep update quickbook invoice
-               if($order->quickbook_invoice_id){
+            if($order->quickbook_invoice_id){
                 ProcessQuickBooksInvoice::dispatch($request->order_id);
-               }
             }
+        }
 
     public function add_orders(Request $request)
     {
@@ -947,11 +947,13 @@ class OrdersController extends Controller
 
                 // sandeep add code for send order accept mail
                 try{
-                     OrderAcceptJob::dispatch($order);
+                    OrderAcceptJob::dispatch($order);
                 }catch (QueryException $e) {
 
                 }
 
+            // sandeep add notification
+            $this->AppNotification($id, "Order Accept");
 
 
             session()->flash('success', 'Order accepted Successfully!');
@@ -1038,8 +1040,12 @@ class OrdersController extends Controller
 
             // sandeep send mail order accept and reject ussing queue
             if ($data['action'] === 'reject') {
+            // sandeep add app notification
+            $this->AppNotification($data['orderId'], "Order Reject");
                 OrderRejectJob::dispatch($order, $recipientEmail);
             } else {
+            // sandeep add app notification
+            $this->AppNotification($data['orderId'], "Order Cancel");
                 OrderCancelJob::dispatch($order, $recipientEmail);
             }
 
@@ -1084,6 +1090,8 @@ class OrdersController extends Controller
                 'additional_notes' => $data['note'],
             ]);
         // dd($note);
+
+
 
 
         return redirect()->back();
@@ -1858,8 +1866,18 @@ class OrdersController extends Controller
         session()->flash('success', 'Order created succesfully!');
         // return view($this->_config['redirect']);
         return redirect()->route('admin.sale.order.view', $order->id);
+    }
 
 
+    // sandeep add code for app notification
+    private function AppNotification($id,$message){
+        $order = DB::table('orders')->where('id',$id)->select('customer_id')->first();
+        $appNotifications = DB::table('app_notifications')->insert([
+            'customer_id' => $order->customer_id,
+            'order_id' => $id,
+            'message' => $message,
+            'is_read' => 0
+        ]);
     }
 
 }

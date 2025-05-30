@@ -60,8 +60,17 @@
 
 <body>
     <div class="container order_view_status">
-        <img src="https://images.squarespace-cdn.com/content/v1/6171dbc44e102724f1ce58cf/eda39336-24c7-499b-9336-c9cee87db776/VolantiStickers-11.jpg?format=1500w"
-            alt="Volantijet Catering" />
+        <div style="text-align: center;">
+            <a href="{{ route('shop.home.index') }}">
+                {{-- @include ('shop::emails.layouts.logo') --}}
+                <img style="width: 100%;
+                max-width: 300px;
+                display: block;
+                margin: 0 auto;"
+                    src="https://images.squarespace-cdn.com/content/v1/6171dbc44e102724f1ce58cf/eda39336-24c7-499b-9336-c9cee87db776/VolantiStickers-11.jpg?format=1500w"
+                    alt="Volantijet Catering" />
+            </a>
+        </div>
             <table style="width: 100%">
                 <tr>
                     <td>
@@ -70,7 +79,6 @@
                     background: #f6f6f6;
                     width: 100%;
                     float: left;
-                    padding: 20px 0 20px 0;
                     display: block;
                     vertical-align: text-top;
                     border-top: 1px dotted black;
@@ -78,6 +86,21 @@
                     margin-top: 20px;">
                             <div class="table-responsive">
                                 <table style="width: -webkit-fill-available ;">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: left;padding: 8px">
+                                                Notes
+                                            </th>
+                                            <th style="text-align: left;padding: 8px">
+                                                {{ __('shop::app.customer.account.order.view.product-name') }}</th>
+                                            <th style="text-align: left;padding: 8px">{{ __('shop::app.customer.account.order.view.qty') }}
+                                            </th>
+                                            <th style="text-align: left;padding: 8px">
+                                                Price
+                                            </th>
+                                        </tr>
+                                    </thead>
+                
                                     <tbody>
                                         @foreach ($order->items as $item)
                                             @php
@@ -104,23 +127,24 @@
                                                         ->value('additional_notes');
                                             @endphp
                                             <tr class="order_view_table_body" style="height: 110px;">
+                                                {{-- @dd($item) --}}
                                                 <td
                                                     style="
-                                                max-width: 130px;">
-                                                    <div>
-                                                        <img class="product__img"
-                                                            src="https://volantiscottsdale.mindwebtree.com/cache/large/product/118/LXDS3Ev1pMyGKEHvrBdRXM2856om0XaBPwnFOdb3.png"
-                                                            alt="Product" style="height: 70px;width: 80px;" />
-                                                    </div>
+                                                max-width: 130px;font-size:11px;">
                                                     @if (isset($notes))
                                                     <p class="m-0">{{ $notes }}</p>
                                                     @endif
                                                 </td>
-                                                {{-- @dd($item) --}}
-                                                <td>
+                                                <td style="
+                                                max-width: 200px;overflow: auto;">
                                                     {{ $item->name }}
                                                     @if ($optionLabel)
                                                         ({{ $optionLabel }})
+                                                    @endif
+                                                    @if (!empty($specialInstruction))
+                                                    <div class="d-flex" style="gap:4px;font-size:11px;max-height: 100px;"><span>Special Instruction:  </span>
+                                                        <p class="m-0 display__notes" style="font-weight:500;margin:0 !important;"> {{ $specialInstruction }}</p>
+                                                        </div>
                                                     @endif
                                                 </td>
 
@@ -162,12 +186,13 @@
         <P>order date: {{ date('m-d-Y h:i:s A', strtotime($order->created_at)) }}</P>
         <span style="font-weight: 600;">Comments: {{ $comment->notes }}</span>
         <div style="margin-top: 20px;">
-            <strong>Notes:</strong>
-            <span>if you have any queries please contact us </span>
-            <div style="margin-top: 10px;">
-                <a href="mailto:jetcatering@volantiscottsdale.com">Email Us</a>
-                <a href="tel:480.657.2426">contact us</a>
-            </div>
+                    <p style="font-size: 16px;color: #5E5E5E;line-height: 24px;">
+                        {!!
+                            __('shop::app.mail.order.help', [
+                                'support_email' => '<a style="color:#0041FF" href="mailto:' . core()->getSenderEmailDetails()['email'] . '">' . core()->getSenderEmailDetails()['email']. '</a>'
+                                ])
+                        !!}
+                    </p>
         </div>
     </div>
 </body>

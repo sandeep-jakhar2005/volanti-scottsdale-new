@@ -3,6 +3,7 @@
 namespace Webkul\Sales\Generators;
 
 use Webkul\Sales\Contracts\Sequencer as SequencerContract;
+use Illuminate\Support\Facades\Log;
 
 class Sequencer implements SequencerContract
 {
@@ -123,6 +124,8 @@ class Sequencer implements SequencerContract
         } else {
             $number = $this->lastId + 1;
         }
+
+log::info('return number',['return number'=>$number]);
 
         return $number;
     }

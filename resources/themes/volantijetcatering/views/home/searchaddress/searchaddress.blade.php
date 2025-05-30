@@ -5,7 +5,7 @@
     use Illuminate\Support\Facades\Request;
     use Webkul\Checkout\Repositories\CartRepository;
     use Carbon\Carbon;
-
+    
     $guestToken = Session::token();
     // dd($guestToken);
     $airportArr = Db::table('delivery_location_airports')->pluck('name')->toArray();
@@ -102,6 +102,8 @@
 
 @endphp
 
+
+
 <div class="col-md-10 m-auto search-section-1">
     <div class="input-group d-block">
         <div class="row home__airport__search">
@@ -135,9 +137,8 @@
                     FBO
                 </p>
             </div>
-
             <div class="search-content col-lg-9 col-md-9 col-12 pr-0 pl-0 padding ">
-                <div class="searchbar home_border_left">
+                <div class="searchbar home_border_left airport_fbo_name">
                     <!-- <i class="home_border_left px-lg-2"></i> -->
                     <input type="text" id="airport-fbo-input" class="form-control w-100 pr-2 pl-1 ml-3 pointer home_border_left"
                         placeholder="Airport Fbo Detail" readonly
@@ -206,12 +207,13 @@
             </div>
         </div>
         <div class="w-100 my-3">
-            <button class="btn start-order" disabled type="button" id="address_btn">START ORDER</button>
+            <button class="btn start-order" type="button" id="address_btn">START ORDER</button>
         </div>
     </div>
 </div>
 
 @push('scripts')
+
     <script>
         $(document).on('click', function(event) {
 
@@ -271,8 +273,6 @@
                 $('#airport-fbo-list').hide();
                 if ($('#daySelect').val() != '' && $('#timeSlots').val() !=
                     '' && $('#selected-fbo-id').val() != '' && $('#selected-fbo-id').val() != '0') {
-                    jQuery('#address_btn').prop('disabled', false);
-                    jQuery('.search-button').prop('disabled', false);
                 }
             });
             //21-05-2024 || airport fbo detail dropdown show and hide end//
@@ -289,8 +289,6 @@
             //alert(customerArray);
             var al_name = jQuery('#auto_search').val();
             if (al_name != '' && $('#daySelect').val() != '' && $('#timeSlots').val() != '' && ($('#selected-fbo-id').val() != '' && $('#selected-fbo-id').val() != '0')) {
-                jQuery('#address_btn').prop('disabled', false);
-                jQuery('.search-button').prop('disabled', false);
 
             }
 
@@ -335,13 +333,6 @@
 
             jQuery('body').on('click', ' #address-list li', function() {
                 $('#selected-fbo-id').val('');
-                if ($('#daySelect').val() != '' && $('#timeSlots').val() != '' && $('#selected-fbo-id').val() != '') {
-                    jQuery('#address_btn').prop('disabled', false);
-                    jQuery('.search-button').prop('disabled', false);
-                }else{
-                    jQuery('#address_btn').prop('disabled', true);
-                    jQuery('.search-button').prop('disabled', true);    
-                }
                 $('#airport-fbo-input').val('');
                 var name = jQuery(this).attr('data-attr');
 
@@ -379,14 +370,14 @@
             });
 
             jQuery('body').on('click', '#add-fbo-button', function() {
-
+                let fboName = $('#fbo-name').val().trim();
+                let fboaddress = $('#fbo-address').val().trim();
+                let fboNotes = $('#fbo-notes').val().trim();
                 let originalContent = $(this).html();
+                if(fboName && fboaddress){
                 $(this).html('<span class="btn-ring"></span>');
                 $(this).find(".btn-ring").show();
-
-                let fboName = $('#fbo-name').val();
-                let fboaddress = $('#fbo-address').val();
-                let fboNotes = $('#fbo-notes').val();
+                }
                 if (airport_id) {
                     $.ajax({
                         url: "{{ route('shop.home.fbo-details.store') }}",
@@ -402,11 +393,6 @@
                         success: function(response) {
                             if (response.response) {
                                 $('.fboClose').click();
-                                if ($('#daySelect').val() != '' && $('#timeSlots').val() !=
-                                    '') {
-                                    jQuery('#address_btn').prop('disabled', false);
-                                    jQuery('.search-button').prop('disabled', false);
-                                }
                                 resetFormFields();
                                 updateFboDetails(response.data);
                                 if (airport_id) {
@@ -419,9 +405,8 @@
 
                         error: function(xhr,status,error) {
                             if (xhr.status === 422) {
-                                $('#add-fbo-button').prop('disabled',true);
                                 $.each(xhr.responseJSON.errors, function(key, value) {
-                                    $('#' + key + '-error').text(value[0]);
+                                    $('#' + key + '-error').text(value[0]).show();
                                 });
                             }
                             $('#add-fbo-button').html(originalContent);
@@ -474,10 +459,56 @@
                 });
             }
             jQuery('body').on('click', '#address_btn', function() {
+                let selected_fbo_id = jQuery('#selected-fbo-id').val();
+                let date = jQuery("#daySelect").val();
+                let time = jQuery("#timeSlots").val();
                 var delivery_address = jQuery("#auto_search").val();
 
                 var csrfToken = jQuery('meta[name="csrf-token"]').attr('content');
 
+               
+                if(!airport_id){
+                    let element = $('#airport_select_searchbar');
+                    element.addClass('homepage_error_focus');
+                    $('html, body').animate({ scrollTop: element.offset().top - 150 }, 500);
+                    setTimeout(() => {
+                        element.removeClass('homepage_error_focus');
+                    }, 3000);
+                    return;
+                }
+
+                if(!selected_fbo_id){
+                    let element = $('.airport_fbo_name');
+                    element.addClass('homepage_error_focus');
+                    $('html, body').animate({ scrollTop: element.offset().top - 150 }, 500);
+                    setTimeout(() => {
+                        element.removeClass('homepage_error_focus');
+                    }, 3000);
+                    return;
+                }
+
+                if(!date){
+                    let element = $('#time_search_label');
+                    element.addClass('homepage_error_focus');
+                    $('html, body').animate({ scrollTop: element.offset().top - 150 }, 500);
+                    setTimeout(() => {
+                        element.removeClass('homepage_error_focus');
+                    }, 3000);
+                    return;
+                }
+
+                if(!time){
+                    let element = $('.delivery_time_slot');
+                    element.addClass('homepage_error_focus');
+                    $('html, body').animate({ scrollTop: element.offset().top - 150 }, 500);
+                    setTimeout(() => {
+                        element.removeClass('homepage_error_focus');
+                    }, 3000);
+                    return;
+                }
+
+
+                if(airport_id && selected_fbo_id && date && time){
                 let originalContent = $(this).html();
                 $(this).html('<span class="btn-ring"></span>');
                 $(this).find(".btn-ring").show();
@@ -486,6 +517,7 @@
                 'justify-content': 'center',
                 'align-items': 'center'
             });
+        }
 
                 // $.ajaxSetup({
                 //     headers: {
@@ -505,15 +537,14 @@
                         'delivery_address': delivery_address,
                         'airport_id': airport_id,
                         'customer_token': customer_token,
-                        'date': jQuery("#daySelect").val(),
-                        'time': jQuery("#timeSlots").val(),
+                        'date': date,
+                        'time': time,
                         'address_id': jQuery('#auto_search').attr('data'),
-                        'selected_fbo_id': jQuery('#selected-fbo-id').val(),
-
+                        'selected_fbo_id': selected_fbo_id,
                     },
                     success: function(result) {
 
-                         console.log(result);
+                        console.log(result);
                         window.location = "/menu";
                         // window.flashMessages = [{
                         //     'type': 'alert-success',
