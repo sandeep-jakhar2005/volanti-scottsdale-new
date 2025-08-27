@@ -59,7 +59,7 @@
             </div>
             <div class="order-detail second-section text-left ">
                 <div class="discription p-3 my-4">
-                    <p class="m-0 ">You will receive an email confirmation shortly at volantijetcatering@gmail.com</p>
+                    <!-- <p class="m-0 ">You will receive an email confirmation shortly at volantijetcatering@gmail.com</p> -->
                     {{-- {{ route('shop.customer.orders.print', $order->invoices[0]->id) }} --}}
                     {{-- <p class="m-0">You can <a href="#">Print</a> or <a href="">PDF</a> Invoice order
                     receipt.
