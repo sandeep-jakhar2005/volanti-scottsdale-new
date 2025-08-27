@@ -211,7 +211,7 @@
                                             <br>
                         
                                             @if (isset($order->delivery_date) && $order->delivery_date != '')
-                                                @php
+                                                <!-- @php
                                                     $date = $order->delivery_date;
 
                                                     // Create a DateTime object from the date string
@@ -258,7 +258,16 @@ $today = new DateTime('today');
                                                         // Format the date string
                                                         $formattedDate = $dayName . ' ' . $month . '/' . $dayOfMonth;
                                                     }
-                                                @endphp
+                                                @endphp -->
+                                                @php
+    $date = $order->delivery_date;
+    $dateObj = new DateTime($date);
+    // Format as mm/dd/yyyy
+    $formattedDate = $dateObj->format('m/d/Y');
+@endphp
+
+{{ $formattedDate }}
+
                                                 <span class="fbo-tail-no fbo-data">Delivery Date: {{ $formattedDate }}</span>
                                             @endif
                                             <br>
