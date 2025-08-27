@@ -61,12 +61,42 @@ class SitemapRepository extends Repository
      * @param  \Webkul\Sitemap\Contracts\Sitemap  $sitemap
      * @return void
      */
+    // public function generateSitemap($sitemap)
+    // {
+    //     Sitemap::create()
+    //         ->add(Url::create('/'))
+    //         ->add(Category::all())
+    //         ->add(CmsPage::all())
+    //         ->writeToDisk('public', $sitemap->path . '/' . $sitemap->file_name);
+    // }
+
     public function generateSitemap($sitemap)
     {
-        Sitemap::create()
-            ->add(Url::create('/'))
-            ->add(Category::all())
-            ->add(CmsPage::all())
-            ->writeToDisk('public', $sitemap->path . '/' . $sitemap->file_name);
+        $sitemapInstance = Sitemap::create()
+            ->add(Url::create('/')); // Add homepage
+
+        // Fetch all top-level categories (no parent)
+        $topCategories = Category::whereNull('parent_id')->get();
+
+        foreach ($topCategories as $category) {
+            // Add the top-level category URL
+            $categoryUrl = url($category->url_path ?? $category->slug);
+            $sitemapInstance->add(Url::create($categoryUrl));
+
+            // Add subcategories URLs nested under category
+            $subcategories = $category->children; // Assuming you have a 'children' relation set up
+
+            foreach ($subcategories as $subcategory) {
+                // Build full path: category + subcategory slug
+                $subcatUrl = url($category->url_path . '/' . $subcategory->slug);
+                $sitemapInstance->add(Url::create($subcatUrl));
+            }
+        }
+
+        // Add other pages
+        $sitemapInstance->add(CmsPage::all());
+
+        // Write to disk
+        $sitemapInstance->writeToDisk('public', $sitemap->path . '/' . $sitemap->file_name);
     }
 }
