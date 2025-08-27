@@ -66,7 +66,6 @@ class SitemapRepository extends Repository
         Sitemap::create()
             ->add(Url::create('/'))
             ->add(Category::all())
-            ->add(Product::all())
             ->add(CmsPage::all())
             ->writeToDisk('public', $sitemap->path . '/' . $sitemap->file_name);
     }
