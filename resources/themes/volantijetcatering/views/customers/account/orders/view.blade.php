@@ -266,7 +266,6 @@ $today = new DateTime('today');
     $formattedDate = $dateObj->format('m/d/Y');
 @endphp
 
-{{ $formattedDate }}
 
                                                 <span class="fbo-tail-no fbo-data">Delivery Date: {{ $formattedDate }}</span>
                                             @endif
