@@ -1,8 +1,8 @@
 @extends('shop::customers.account.index')
 
 @section('page_title')
-    {{-- {{ __('shop::app.customer.account.order.view.page-tile', ['order_id' => $order->increment_id]) }} --}}
-    Order #{{$order->increment_id}} | Volanti Jet Catering
+{{-- {{ __('shop::app.customer.account.order.view.page-tile', ['order_id' => $order->increment_id]) }} --}}
+Order #{{$order->increment_id}} | Volanti Jet Catering
 @endsection
 
 @section('seo')
@@ -12,206 +12,207 @@
 @stop
 
 @push('css')
-    <style type="text/css">
-        .account-content .account-layout .account-head {
-            margin-bottom: 0px;
-        }
+<style type="text/css">
+    .account-content .account-layout .account-head {
+        margin-bottom: 0px;
+    }
 
-        .sale-summary .dash-icon {
-            margin-right: 30px;
-            float: right;
-        }
-    </style>
+    .sale-summary .dash-icon {
+        margin-right: 30px;
+        float: right;
+    }
+</style>
 @endpush
 
 @section('page-detail-wrapper')
 @php
-    use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;
 
-    //   sandeep add code for payment button 
-            $status_log = DB::table('order_status_log')
-                        ->leftJoin('order_status', 'order_status_log.status_id', '=', 'order_status.id')
-                        ->where('order_id',$order->id)
-                        ->select('order_status.status')
-                        ->get();
+// sandeep add code for payment button
+$status_log = DB::table('order_status_log')
+->leftJoin('order_status', 'order_status_log.status_id', '=', 'order_status.id')
+->where('order_id',$order->id)
+->select('order_status.status')
+->get();
 
-            $paidExists = $status_log->contains('status', 'paid');
-            $excludedStatuses = ['pending', 'canceled', 'rejected'];
-            if ($paidExists) {
-                $excludedStatuses[] = 'paid';
-            }
+$paidExists = $status_log->contains('status', 'paid');
+$excludedStatuses = ['pending', 'canceled', 'rejected'];
+if ($paidExists) {
+$excludedStatuses[] = 'paid';
+}
 
 
 @endphp
 
-    <div class="account-head text-center">
-        <div class="head w-100">
-            <div class="back-icon text-left">
+<div class="account-head text-center">
+    <div class="head w-100">
+        <div class="back-icon text-left">
             <a href="/customer/account/orders">
                 <img src="/themes/volantijetcatering/assets/images/left-arrow.png" style="height:25px; width:25px;" alt="Left Arrow">
             </a>
 
-    </div>
-            <div class="order-detail first-section mt-3">
-                <h2 class="m-0">Thank you for your order !</h2>
-                <br>
-                <span class="order-no">Order No.(#{{ $order->id }})</span>
-            </div>
-            <div class="order-detail second-section text-left ">
-                <!-- <div class="discription p-3 my-4">
+        </div>
+        <div class="order-detail first-section mt-3">
+            <h2 class="m-0">Thank you for your order !</h2>
+            <br>
+            <span class="order-no">Order No.(#{{ $order->id }})</span>
+        </div>
+        <div class="order-detail second-section text-left ">
+            <!-- <div class="discription p-3 my-4">
                     <p class="m-0 ">You will receive an email confirmation shortly at volantijetcatering@gmail.com</p> 
                 </div> -->
 
-                {{-- <div class="container my-5">
+            {{-- <div class="container my-5">
                     <div class="row">
                         <div class="col">
                             <div class="timeline-steps aos-init aos-animate {{ $order->status_id == 10 || $order->status_id == 11 ? 'rejected' : '' }}"
-                                data-aos="fade-up">
-                                @foreach ($order_status as $index => $status)
-                                    <div class="timeline-step {{ $status->id <= $order->status_id ? 'completed' : '' }} ">
-                                        <div class="timeline-content">
-                                            <div class="inner-circle"></div>
-                                            <p style="font-size: 13px;font-weight: 600;" class="h6 mt-3 mb-1">
-                                                {{ $status->status }}</p>
-                                            <span style="font-weight: 600;font-size: 11px;">
-                                                {{ $status_update !== null ? $status_update[$index]->updated_at ?? '' : $status->created_at }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
-
-                <div class="container my-5">
-                    <div class="row">
-                        <div class="col">
-                            <div class="timeline-steps aos-init aos-animate {{ $order->status_id == 10 || $order->status_id == 11 ? 'rejected' : '' }}" data-aos="fade-up">
-                                @foreach ($result as $index => $status)
-                                
-                                    <div class="timeline-step">
-                                        <div class="timeline-content 
-                                            {{ ($order->status_id == 10 || $order->status_id == 11) ? ($status->status == 'cancel' || $status->status == 'rejected' ? '' : 'completed') : ($status->updated_at !== null ? 'completed' : '') }}">
-                                            <div class="inner-circle"></div>
-                                            <p style="font-size: 13px; font-weight: 600;" class="h6 mt-3 mb-1 capitalize-first">
-                                                @if ($status->status == 'cancel')
-                                                    Cancelled
-                                                @else
-                                                    {{ $status->status }}
-                                                @endif
-                                            </p>
-                                            <span style="font-weight: 600; font-size: 11px;">
-                                                {{-- sandeep change time formate --}}
-                                                {{ $status->updated_at ? date('m-d-Y h:i:s A', strtotime($status->updated_at)) : '' }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                            {{-- <div class="timeline-steps aos-init aos-animate {{ $order->status_id == 10 || $order->status_id == 11 ? 'rejected' : '' }}"
-                                data-aos="fade-up">
-                                @foreach ($result as $index => $status)
-                                    <div class="timeline-step">
-                                        <div class="timeline-content {{ $status->updated_at !== null ? 'completed' : '' }} {{ $status->status == 'cancel' || $status->status == 'rejected' ? '' : 'completed' }}">
-                                            <div class="inner-circle"></div>
-                                            <p style="font-size: 13px;font-weight: 600;" class="h6 mt-3 mb-1 capitalize-first">
-                                              @if ($status->status == 'cancel')
-                                                Cancelled
-                                              @else
-                                                {{ $status->status }}
-                                              @endif
-                                                </p>
-                                            <span style="font-weight: 600;font-size: 11px;"> --}}
-                                                {{-- {{ $status_update !== null ? $status_update[$index]->updated_at ?? '' : $status->created_at }} --}}
-                                                {{-- {{ $status->updated_at??''}}
-                                            </span>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div> --}}
-                        </div>
-                    </div>
+            data-aos="fade-up">
+            @foreach ($order_status as $index => $status)
+            <div class="timeline-step {{ $status->id <= $order->status_id ? 'completed' : '' }} ">
+                <div class="timeline-content">
+                    <div class="inner-circle"></div>
+                    <p style="font-size: 13px;font-weight: 600;" class="h6 mt-3 mb-1">
+                        {{ $status->status }}
+                    </p>
+                    <span style="font-weight: 600;font-size: 11px;">
+                        {{ $status_update !== null ? $status_update[$index]->updated_at ?? '' : $status->created_at }}
+                    </span>
                 </div>
-                <h3 class="m-0 text-center">order Details</h3>
             </div>
-            <div class='row w-70 order-location-section my-4 mx-0    '>
-                <div class="airport-address col-lg-5 col-md-6 col-12 p-3">
-                    <div class="row pl-2">
-                        <div class="col-12 p-0 title text-left shipping_address">
-                            <span id="shipping_address_heading" style="font-weight: bold">Shipping Address: </span>
-                        </div>
-                        {{-- @dd($order->shipping_address) --}}
-                        <div class="col-lg-9 col-md-9 col-12 mt-2 mt-lg-3 mt-md-3">
-                            @if (!is_null($order->shipping_address))
-                                <div class="order-address">
-                                    <div class="row pl-2">
-                                        <img src="/themes/volantijetcatering/assets/images/location-black.png"
-                                            class="location-icon mt-2" alt="">
+            @endforeach
+        </div>
+    </div>
+</div>
+</div> --}}
 
-                                        <div class="col-lg-10 col-md-10 col-11  text-left">
-                                            <span class="airport-name">{{ $order->shipping_address->airport_name }}</span>
-                                            <br>
-                                            <span class="airport-address">{{ $order->shipping_address->address1 }}</span>
-                                        </div>
-                                    </div>
-                                </div>
+<div class="container my-5">
+    <div class="row">
+        <div class="col">
+            <div class="timeline-steps aos-init aos-animate {{ $order->status_id == 10 || $order->status_id == 11 ? 'rejected' : '' }}" data-aos="fade-up">
+                @foreach ($result as $index => $status)
+
+                <div class="timeline-step">
+                    <div class="timeline-content 
+                                            {{ ($order->status_id == 10 || $order->status_id == 11) ? ($status->status == 'cancel' || $status->status == 'rejected' ? '' : 'completed') : ($status->updated_at !== null ? 'completed' : '') }}">
+                        <div class="inner-circle"></div>
+                        <p style="font-size: 13px; font-weight: 600;" class="h6 mt-3 mb-1 capitalize-first">
+                            @if ($status->status == 'cancel')
+                            Cancelled
+                            @else
+                            {{ $status->status }}
                             @endif
+                        </p>
+                        <span style="font-weight: 600; font-size: 11px;">
+                            {{-- sandeep change time formate --}}
+                            {{ $status->updated_at ? date('m-d-Y h:i:s A', strtotime($status->updated_at)) : '' }}
+                        </span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            {{-- <div class="timeline-steps aos-init aos-animate {{ $order->status_id == 10 || $order->status_id == 11 ? 'rejected' : '' }}"
+            data-aos="fade-up">
+            @foreach ($result as $index => $status)
+            <div class="timeline-step">
+                <div class="timeline-content {{ $status->updated_at !== null ? 'completed' : '' }} {{ $status->status == 'cancel' || $status->status == 'rejected' ? '' : 'completed' }}">
+                    <div class="inner-circle"></div>
+                    <p style="font-size: 13px;font-weight: 600;" class="h6 mt-3 mb-1 capitalize-first">
+                        @if ($status->status == 'cancel')
+                        Cancelled
+                        @else
+                        {{ $status->status }}
+                        @endif
+                    </p>
+                    <span style="font-weight: 600;font-size: 11px;"> --}}
+                        {{-- {{ $status_update !== null ? $status_update[$index]->updated_at ?? '' : $status->created_at }} --}}
+                        {{-- {{ $status->updated_at??''}}
+                    </span>
+                </div>
+            </div>
+            @endforeach
+        </div> --}}
+    </div>
+</div>
+</div>
+<h3 class="m-0 text-center">order Details</h3>
+</div>
+<div class='row w-70 order-location-section my-4 mx-0    '>
+    <div class="airport-address col-lg-5 col-md-6 col-12 p-3">
+        <div class="row pl-2">
+            <div class="col-12 p-0 title text-left shipping_address">
+                <span id="shipping_address_heading" style="font-weight: bold">Shipping Address: </span>
+            </div>
+            {{-- @dd($order->shipping_address) --}}
+            <div class="col-lg-9 col-md-9 col-12 mt-2 mt-lg-3 mt-md-3">
+                @if (!is_null($order->shipping_address))
+                <div class="order-address">
+                    <div class="row pl-2">
+                        <img src="/themes/volantijetcatering/assets/images/location-black.png"
+                            class="location-icon mt-2" alt="">
+
+                        <div class="col-lg-10 col-md-10 col-11  text-left">
+                            <span class="airport-name">{{ $order->shipping_address->airport_name }}</span>
+                            <br>
+                            <span class="airport-address">{{ $order->shipping_address->address1 }}</span>
                         </div>
                     </div>
                 </div>
-            
-                <div class="Fbo-details col-lg-5 col-md-5 p-3">
-                    <div class="row w-100">
-                        <div class="col-12 p-0 title text-left">
-                            <span id="account_information" style="font-weight: bold">{{ __('shop::app.fbo-detail.client-info') }} : </span>
-                        </div>
-                        <div class="col-lg-9 col-md-9 col-12 user_information">
-                            @if (!is_null($order->billing_address))
-                                <div class="order-address">
-                                    <div class="row">
-                                        <!-- sandeep remove image -->
-                                    <!-- <img src="/themes/volantijetcatering/assets/images/profile-user.png" style="height:20px"> -->
-                                        <div class="col-lg-10 col-md-10 col-12 mt-2 mt-lg-3 mt-md-3 text-left account_information">
-                                        
-                                           
-                                            <span class="fbo-customer-name  ">{{ $order->fbo_full_name }}</span>
-                                            <br>
-                                            <span
-                                                class="fbo-customer-email fbo-data">{{ $order->fbo_email_address }}</span>
-                                            <br>
-                                            <span
-                                                class="fbo-customer-mobile fbo-data">{{ $order->fbo_phone_number }}</span>
-                                            <br>
-                                        </div>
-                                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
 
-                                </div>
+    <div class="Fbo-details col-lg-5 col-md-5 p-3">
+        <div class="row w-100">
+            <div class="col-12 p-0 title text-left">
+                <span id="account_information" style="font-weight: bold">{{ __('shop::app.fbo-detail.client-info') }} : </span>
+            </div>
+            <div class="col-lg-9 col-md-9 col-12 user_information">
+                @if (!is_null($order->billing_address))
+                <div class="order-address">
+                    <div class="row">
+                        <!-- sandeep remove image -->
+                        <!-- <img src="/themes/volantijetcatering/assets/images/profile-user.png" style="height:20px"> -->
+                        <div class="col-lg-10 col-md-10 col-12 mt-2 mt-lg-3 mt-md-3 text-left account_information">
+
+
+                            <span class="fbo-customer-name  ">{{ $order->fbo_full_name }}</span>
+                            <br>
+                            <span
+                                class="fbo-customer-email fbo-data">{{ $order->fbo_email_address }}</span>
+                            <br>
+                            <span
+                                class="fbo-customer-mobile fbo-data">{{ $order->fbo_phone_number }}</span>
+                            <br>
+                        </div>
+                    </div>
+
+                </div>
+                @endif
+            </div>
+
+            <div class="col-12 p-0 title text-left mt-3">
+                <span id="aircraft_information" style="font-weight: bold">{{ __('shop::app.fbo-detail.aircraft-info') }} : </span>
+            </div>
+            <div class="col-lg-9 col-md-9 col-12 mt-2 mt-lg-3 mt-md-3 aircraft_info">
+                @if (!is_null($order->billing_address))
+                <div class="order-address">
+                    <div class="row">
+                        <div class="col-lg-10 col-md-10 col-12  text-left aircraft_information">
+                            <span class="fbo-tail-no fbo-data"> {{ $order->fbo_tail_number }}</span>
+                            <br>
+                            @if (isset($order->fbo_packaging) && $order->fbo_packaging != '')
+                            <span class="fbo-tail-no fbo-data"> {{ $order->fbo_packaging }}</span>
                             @endif
-                        </div>
+                            <br>
+                            {{-- sandeep add service packaging --}}
+                            @if (isset($order->fbo_service_packaging) && $order->fbo_service_packaging != '')
+                            <span class="fbo-tail-no fbo-data"> {{ $order->fbo_service_packaging }}</span>
+                            @endif
+                            <br>
 
-                        <div class="col-12 p-0 title text-left mt-3">
-                            <span id="aircraft_information" style="font-weight: bold">{{ __('shop::app.fbo-detail.aircraft-info') }} : </span>
-                        </div>
-                        <div class="col-lg-9 col-md-9 col-12 mt-2 mt-lg-3 mt-md-3 aircraft_info">
-                            @if (!is_null($order->billing_address))
-                                <div class="order-address"> 
-                                    <div class="row">
-                                        <div class="col-lg-10 col-md-10 col-12  text-left aircraft_information">
-                                            <span class="fbo-tail-no fbo-data"> {{ $order->fbo_tail_number }}</span>
-                                            <br>
-                                            @if (isset($order->fbo_packaging) && $order->fbo_packaging != '')
-                                                <span class="fbo-tail-no fbo-data"> {{ $order->fbo_packaging }}</span>
-                                            @endif
-                                            <br>
-                                            {{-- sandeep add service packaging --}}
-                                            @if (isset($order->fbo_service_packaging) && $order->fbo_service_packaging != '')
-                                                <span class="fbo-tail-no fbo-data"> {{ $order->fbo_service_packaging }}</span>
-                                            @endif
-                                            <br>
-                        
-                                            @if (isset($order->delivery_date) && $order->delivery_date != '')
-                                                @php
+                            @if (isset($order->delivery_date) && $order->delivery_date != '')
+                            <!-- @php
                                                     $date = $order->delivery_date;
 
                                                     // Create a DateTime object from the date string
@@ -258,102 +259,120 @@ $today = new DateTime('today');
                                                         // Format the date string
                                                         $formattedDate = $dayName . ' ' . $month . '/' . $dayOfMonth;
                                                     }
-                                                @endphp
-                                                <span class="fbo-tail-no fbo-data">Delivery Date: {{ $formattedDate }}</span>
-                                            @endif
-                                            <br>
-                                            @if (isset($order->delivery_time) && $order->delivery_time != '')
-                                                <span class="fbo-tail-no fbo-data">Delivery Time: {{ $order->delivery_time }}</span>
-                                            @endif
-                                            <br>
-                                            <span class="fbo-tail-no fbo-data"><b>Airport FBO:</b>
+                                                @endphp -->
+                            @php
+                            $date = $order->delivery_date;
 
-                                             <p class="m-0">
-                                                {{ DB::table('airport_fbo_details')->where('id', $order->airport_fbo_id)->value('name') }}
-                                             </p>
-                                             <p class="m-0"> 
-                                                {{ DB::table('airport_fbo_details')->where('id', $order->airport_fbo_id)->value('address') }}
-                                             </p>
-                                            </span>
+                            $dateObj = new DateTime($date);
 
-                                        </div>
-                                    </div>
+                            // Get today's and tomorrow's date
+                            $today = new DateTime('today');
+                            $tomorrow = new DateTime('tomorrow');
 
-                                </div>
+                            if ($dateObj->format('Y-m-d') == $today->format('Y-m-d')) {
+                            $formattedDate = 'Today';
+                            } elseif ($dateObj->format('Y-m-d') == $tomorrow->format('Y-m-d')) {
+                            $formattedDate = 'Tomorrow';
+                            } else {
+                            // Show in YYYY-MM-DD format
+                            $formattedDate = $dateObj->format('Y-m-d');
+                            }
+                            @endphp
+                            <span class="fbo-tail-no fbo-data">Delivery Date: {{ $formattedDate }}</span>
                             @endif
+                            <br>
+                            @if (isset($order->delivery_time) && $order->delivery_time != '')
+                            <span class="fbo-tail-no fbo-data">Delivery Time: {{ $order->delivery_time }}</span>
+                            @endif
+                            <br>
+                            <span class="fbo-tail-no fbo-data"><b>Airport FBO:</b>
+
+                                <p class="m-0">
+                                    {{ DB::table('airport_fbo_details')->where('id', $order->airport_fbo_id)->value('name') }}
+                                </p>
+                                <p class="m-0">
+                                    {{ DB::table('airport_fbo_details')->where('id', $order->airport_fbo_id)->value('address') }}
+                                </p>
+                            </span>
+
                         </div>
                     </div>
+
                 </div>
-
-                {{-- @dd($order->billing_address) --}}
-                @if ($order->billing_address->address1 !== '')
-                    <div class="airport-address col-lg-5  col-md-6 col-12 p-3">
-                        <div class="row">
-                            <div class="col-12 p-0 pl-lg-1 pl-md-2 title text-left">
-                                <span id="billing_address" style="font-weight: bold">Billing Address: </span>
-                            </div>
-                            <div class="col-lg-9 col-md-9 col-12 mt-lg-3 mt-md-3 mt-2">
-                                @if (isset($order->billing_address->address1) && $order->billing_address->address1 != '')
-                                    <div class="order-address">
-                                        <div class="row pl-lg-3 pl-md-3">
-                                            <img src="/themes/volantijetcatering/assets/images/location-black.png"
-                                                class="location-icon mt-2" alt="">
-
-                                            <div class="col-lg-10 col-md-10 col-11  text-left">
-                                                <span class="airport-name">
-                                                    {{ isset($order->billing_address->address1) ? $order->billing_address->address1 . ',' : '' }}
-                                                    {{ isset($order->billing_address->city) ? $order->billing_address->city . ',' : '' }}
-                                                    {{ isset($order->billing_address->postcode) ? $order->billing_address->postcode . ',' : '' }}
-                                                    {{ isset($order->billing_address->state) ? $order->billing_address->state : '' }}
-                                                </span>
-                                                <br>
-                                                <span class="m-0">Phone:
-                                                    {{ isset($order->billing_address->phone) ? $order->billing_address->phone : '' }}
-                                                </span>
-                                                <br>
-                                                <span class="m-0">Vat:
-                                                    {{ isset($order->billing_address->vat_id) ? $order->billing_address->vat_id : '' }}
-                                                </span>
-
-
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-
-                    </div>
                 @endif
-
             </div>
-
         </div>
-
-
-        @if ($order->canCancel())
-            <span class="account-action">
-                <form id="cancelOrderForm" action="{{ route('shop.customer.orders.cancel', $order->id) }}" method="post">
-                    @csrf
-                </form>
-
-                <a href="javascript:void(0);" class="cancel-order theme-btn light unset float-right"
-                    onclick="cancelOrder('{{ __('shop::app.customer.account.order.view.cancel-confirm-msg') }}')"
-                    style="float: right">
-                    {{ __('shop::app.customer.account.order.view.cancel-btn-title') }}
-                </a>
-            </span>
-        @endif
     </div>
 
-    {!! view_render_event('bagisto.shop.customers.account.orders.view.before', ['order' => $order]) !!}
+    {{-- @dd($order->billing_address) --}}
+    @if ($order->billing_address->address1 !== '')
+    <div class="airport-address col-lg-5  col-md-6 col-12 p-3">
+        <div class="row">
+            <div class="col-12 p-0 pl-lg-1 pl-md-2 title text-left">
+                <span id="billing_address" style="font-weight: bold">Billing Address: </span>
+            </div>
+            <div class="col-lg-9 col-md-9 col-12 mt-lg-3 mt-md-3 mt-2">
+                @if (isset($order->billing_address->address1) && $order->billing_address->address1 != '')
+                <div class="order-address">
+                    <div class="row pl-lg-3 pl-md-3">
+                        <img src="/themes/volantijetcatering/assets/images/location-black.png"
+                            class="location-icon mt-2" alt="">
+
+                        <div class="col-lg-10 col-md-10 col-11  text-left">
+                            <span class="airport-name">
+                                {{ isset($order->billing_address->address1) ? $order->billing_address->address1 . ',' : '' }}
+                                {{ isset($order->billing_address->city) ? $order->billing_address->city . ',' : '' }}
+                                {{ isset($order->billing_address->postcode) ? $order->billing_address->postcode . ',' : '' }}
+                                {{ isset($order->billing_address->state) ? $order->billing_address->state : '' }}
+                            </span>
+                            <br>
+                            <span class="m-0">Phone:
+                                {{ isset($order->billing_address->phone) ? $order->billing_address->phone : '' }}
+                            </span>
+                            <br>
+                            <span class="m-0">Vat:
+                                {{ isset($order->billing_address->vat_id) ? $order->billing_address->vat_id : '' }}
+                            </span>
 
 
-    <div class="sale-container mt10">
+                        </div>
+                    </div>
 
-        {{-- <tabs> --}}
-        {{-- <tab name="{{ __('shop::app.customer.account.order.view.info') }}">
+                </div>
+                @endif
+            </div>
+        </div>
+
+    </div>
+    @endif
+
+</div>
+
+</div>
+
+
+@if ($order->canCancel())
+<span class="account-action">
+    <form id="cancelOrderForm" action="{{ route('shop.customer.orders.cancel', $order->id) }}" method="post">
+        @csrf
+    </form>
+
+    <a href="javascript:void(0);" class="cancel-order theme-btn light unset float-right"
+        onclick="cancelOrder('{{ __('shop::app.customer.account.order.view.cancel-confirm-msg') }}')"
+        style="float: right">
+        {{ __('shop::app.customer.account.order.view.cancel-btn-title') }}
+    </a>
+</span>
+@endif
+</div>
+
+{!! view_render_event('bagisto.shop.customers.account.orders.view.before', ['order' => $order]) !!}
+
+
+<div class="sale-container mt10">
+
+    {{-- <tabs> --}}
+    {{-- <tab name="{{ __('shop::app.customer.account.order.view.info') }}">
 
     <div class="sale-section py-2">
         {{-- <div class="section-title">
@@ -365,135 +384,135 @@ $today = new DateTime('today');
         </a>
     </div> --}}
 
-        <div class="section-content">
-            <div class="table-responsive" style="max-height: 500px">
-                <div class="table order-detail-table">
-                    <table class="customer_order_view_table">
-                        <!-- sandeep add code  -->
-                        <thead>
-                                    <tr style="text-align:center">
-                                        <!-- <th>{{ __('shop::app.customer.account.order.view.SKU') }}</th> -->
-                    <th class="order_view_heading">{{ __('shop::app.customer.account.order.view.product-name') }}</th>
-                    <th class="order_view_heading">{{ __('shop::app.customer.account.order.view.price') }}</th>
-                    <th class="order_view_heading">{{ __('shop::app.customer.account.order.view.qty') }}</th>
-                    <!-- <th>{{ __('shop::app.customer.account.order.view.subtotal') }}</th> -->
-                    <!-- <th>{{ __('shop::app.customer.account.order.view.tax-amount') }}</th> -->
-                    <th class="order_view_heading">{{ __('shop::app.customer.account.order.view.total') }}</th>
-                    <th class="order_view_heading">Order Notes</th>
-                    </tr>
+    <div class="section-content">
+        <div class="table-responsive" style="max-height: 500px">
+            <div class="table order-detail-table">
+                <table class="customer_order_view_table">
+                    <!-- sandeep add code  -->
+                    <thead>
+                        <tr style="text-align:center">
+                            <!-- <th>{{ __('shop::app.customer.account.order.view.SKU') }}</th> -->
+                            <th class="order_view_heading">{{ __('shop::app.customer.account.order.view.product-name') }}</th>
+                            <th class="order_view_heading">{{ __('shop::app.customer.account.order.view.price') }}</th>
+                            <th class="order_view_heading">{{ __('shop::app.customer.account.order.view.qty') }}</th>
+                            <!-- <th>{{ __('shop::app.customer.account.order.view.subtotal') }}</th> -->
+                            <!-- <th>{{ __('shop::app.customer.account.order.view.tax-amount') }}</th> -->
+                            <th class="order_view_heading">{{ __('shop::app.customer.account.order.view.total') }}</th>
+                            <th class="order_view_heading">Order Notes</th>
+                        </tr>
                     </thead>
-                        <tbody>
-                            @foreach ($order->items as $item)
-                                {{-- @dd($item) --}}
-                                <tr style="text-align:center">
-                                    {{-- <td data-value="{{ __('shop::app.customer.account.order.view.SKU') }}">
+                    <tbody>
+                        @foreach ($order->items as $item)
+                        {{-- @dd($item) --}}
+                        <tr style="text-align:center">
+                            {{-- <td data-value="{{ __('shop::app.customer.account.order.view.SKU') }}">
                             {{ $item->getTypeInstance()->getOrderedItem($item)->sku }}
                             </td> --}}
-                                    <td class="order_view_data" style="border-right: 1px solid #cccccc !important;">
-                                        <div class="row m-0 justify-content-center">
-                                            <!-- <div class="col-lg-3 col-md-4 col-4 single_order_img" {{-- style="
+                            <td class="order_view_data" style="border-right: 1px solid #cccccc !important;">
+                                <div class="row m-0 justify-content-center">
+                                    <!-- <div class="col-lg-3 col-md-4 col-4 single_order_img" {{-- style="
                                             max-width: 310px !important;
                                             max-height: 120px !important;" --}}>
                                                  <img class="order-img"
                                                     src="/cache/medium/product/278/s09QJX1kqQwX8zLXByqS8gU836SU5oPgp47G7ov3.png"
                                                     alt=""> -->
-                                                <!-- <p>{{ $item->additional_notes }} </p> -->
-                                            <!-- </div>  -->
-                                            <!-- <div class="col-lg-8 col-md-7 col-8"> -->
-                                                {{-- @dd($item->additional['special_instruction']); --}}
-                                                <div class="customer_single_order_view">
-                                                    <span class="order-name" style="font-weight: 500;"> *{{ $item->name }}</span>
-                                                    <br><br>
-                                                  {{-- sandeep add code --}}
-                                                    @php
-                                                    $optionLabel = null;
-                                                    
-                                                    if(isset($item->additional['attributes'])){
-                                                    $attributes = $item->additional['attributes'];
-                    
-                                                      foreach ($attributes as $attribute) {
-                                                      if(isset($attribute['option_label']) && $attribute['option_label']!=''){
-                                                      $optionLabel = $attribute['option_label'];
-                                                    }
-                                                  }
-                                                }
-                                                  @endphp
+                                    <!-- <p>{{ $item->additional_notes }} </p> -->
+                                    <!-- </div>  -->
+                                    <!-- <div class="col-lg-8 col-md-7 col-8"> -->
+                                    {{-- @dd($item->additional['special_instruction']); --}}
+                                    <div class="customer_single_order_view">
+                                        <span class="order-name" style="font-weight: 500;"> *{{ $item->name }}</span>
+                                        <br><br>
+                                        {{-- sandeep add code --}}
+                                        @php
+                                        $optionLabel = null;
 
-                                                    @if (isset($optionLabel))
-                                                        <p><strong>Preference:
-                                                            </strong><span>{{ $optionLabel }}</span>
-                                                        </p>
-                                                    @endif
+                                        if(isset($item->additional['attributes'])){
+                                        $attributes = $item->additional['attributes'];
 
-                                                    @if (isset($item->additional) &&
-                                                            isset($item->additional['special_instruction']) &&
-                                                            $item->additional['special_instruction'] != '')
-                                                        <p class="m-0"><strong>Special Instruction:</strong>
-                                                        <div class="word_wrap" style="
-                                                            overflow-y: auto;">
-                                                            <span>{{ $item->additional['special_instruction'] }}</span>
-                                                        </div>
-                                                        </p>
-                                                    @endif
-                                                </div>
-                                            <!-- </div> -->
+                                        foreach ($attributes as $attribute) {
+                                        if(isset($attribute['option_label']) && $attribute['option_label']!=''){
+                                        $optionLabel = $attribute['option_label'];
+                                        }
+                                        }
+                                        }
+                                        @endphp
 
-                                        </div>
-                                    </td>
-
-                                    <td data-value="{{ __('shop::app.customer.account.order.view.price') }}"
-                                        class="order-price-col order_view_data" style="border-right: 1px solid #cccccc !important;">
-                                        @if ($order->status != 'pending')
-                                            <div class="order-price mb-2">
-                                                {{-- <span>Price: </span> --}}
-                                                {{ core()->formatPrice($item->price, $order->order_currency_code) }}
-                                            </div>
-                                            @else
-                                              <span>N/A</span>
+                                        @if (isset($optionLabel))
+                                        <p><strong>Preference:
+                                            </strong><span>{{ $optionLabel }}</span>
+                                        </p>
                                         @endif
-                                    </td>
 
-
-                                    <td data-value="{{ __('shop::app.customer.account.order.view.price') }}"
-                                        class="order-price-col order_view_data" style="border-right: 1px solid #cccccc !important;">
-                                        <div class="order-qty">
-                                            {{ $item->qty_ordered }}
+                                        @if (isset($item->additional) &&
+                                        isset($item->additional['special_instruction']) &&
+                                        $item->additional['special_instruction'] != '')
+                                        <p class="m-0"><strong>Special Instruction:</strong>
+                                        <div class="word_wrap" style="
+                                                            overflow-y: auto;">
+                                            <span>{{ $item->additional['special_instruction'] }}</span>
                                         </div>
+                                        </p>
+                                        @endif
+                                    </div>
+                                    <!-- </div> -->
 
-                                    </td>
+                                </div>
+                            </td>
+
+                            <td data-value="{{ __('shop::app.customer.account.order.view.price') }}"
+                                class="order-price-col order_view_data" style="border-right: 1px solid #cccccc !important;">
+                                @if ($order->status != 'pending')
+                                <div class="order-price mb-2">
+                                    {{-- <span>Price: </span> --}}
+                                    {{ core()->formatPrice($item->price, $order->order_currency_code) }}
+                                </div>
+                                @else
+                                <span>N/A</span>
+                                @endif
+                            </td>
 
 
-                                    <td class="total-col text-right order_view_data"
-                                        data-value="{{ __('shop::app.customer.account.order.view.grand-total') }}" style="border-right: 1px solid #cccccc !important;">
-                                        @if ($order->status != 'pending')
-                                            {{ core()->formatPrice($item->total, $order->order_currency_code) }}
-                                            {{-- <div class="order-tax">
+                            <td data-value="{{ __('shop::app.customer.account.order.view.price') }}"
+                                class="order-price-col order_view_data" style="border-right: 1px solid #cccccc !important;">
+                                <div class="order-qty">
+                                    {{ $item->qty_ordered }}
+                                </div>
+
+                            </td>
+
+
+                            <td class="total-col text-right order_view_data"
+                                data-value="{{ __('shop::app.customer.account.order.view.grand-total') }}" style="border-right: 1px solid #cccccc !important;">
+                                @if ($order->status != 'pending')
+                                {{ core()->formatPrice($item->total, $order->order_currency_code) }}
+                                {{-- <div class="order-tax">
                                                 <span class="extra-price">+</span>
                                                 <span class="extra-price">{{ $item->tax_amount }}</span>
-                                            </div> --}}
+            </div> --}}
 
 
-                                            @if ($item->discount_amount > 0)
-                                                <div class="discount">
-                                                    <span class="extra-price">-</span>
-                                                    <span
-                                                        class="discount extra-price">{{ core()->formatPrice($item->discount_amount, $order->order_currency_code) }}</span>
-                                                </div>
-                                            @endif
+            @if ($item->discount_amount > 0)
+            <div class="discount">
+                <span class="extra-price">-</span>
+                <span
+                    class="discount extra-price">{{ core()->formatPrice($item->discount_amount, $order->order_currency_code) }}</span>
+            </div>
+            @endif
 
-                                            <div class="total">
-                                                <span>Item total:
-                                                    {{ core()->formatPrice($item->tax_amount + $item->total, $order->order_currency_code) }}</span>
+            <div class="total">
+                <span>Item total:
+                    {{ core()->formatPrice($item->tax_amount + $item->total, $order->order_currency_code) }}</span>
 
-                                            </div>
-                                        @else
-                                            <div class="order-tax">
-                                                <span class="extra-price">N/A</span>
-                                            </div>
+            </div>
+            @else
+            <div class="order-tax">
+                <span class="extra-price">N/A</span>
+            </div>
 
 
 
-                                            <!-- <div class="discount">
+            <!-- <div class="discount">
                                                 <span>N/A</span>
                                             </div>
 
@@ -502,156 +521,157 @@ $today = new DateTime('today');
                                                 <span>N/A</span>
 
                                             </div> -->
-                                        @endif
-
-                                    </td>
-                                     <!-- sandeep  -->
-                                    <td class="order_view_data" style="border-right: 1px solid #cccccc !important;">
-                                        <div class="notes">
-                                                                       @if(!empty($item->additional_notes))
-                                    <p>{{ $item->additional_notes }} </p>
-                                    @else
-                                    <span>N/A</span>
-                                    @endif
-                                    </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="totals price-total-table mt-3">
-                @if (isset($admin_notes) && $admin_notes !== null)
-                    <div class="col-12 col-md-6 col-lg-6 order__view_admin_comments py-3">
-                        <h3 class="text-start mt-2" style="text-align: left;">Notes</h3>
-                        <div class="notes mb-4">
-                            <div class="table m-0 d-flex">
-                                <tbody>
-                                    <tr>
-                                        <td><strong class="" style="color: rgb(101 101 101);">Support:</strong></td>
-                                        <td><span class="pl-2" style="color: #9d9d9d;">{{ $admin_notes->notes }}</span>
-                                        </td>
-                                        <td>
-                                            {{-- sandeep change date time formate --}}
-                                            <span class="float-right"
-                                                style="color: #9d9d9d;">({{ date('m-d-Y h:i:s A', strtotime($admin_notes->created_at)) }})</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-                <div class="col-12 col-md-6 col-lg-6">
-                    <table class="sale-summary ml-auto">
-                        <tr>
-                            {{-- <td>{{ __('shop::app.customer.account.order.view.subtotal') }} --}}
-                            @if ($order->status != 'pending')
-                                <td>Sub-Total:
-                                    {{ core()->formatPrice($order->sub_total, $order->order_currency_code) }}
-                                </td>
-                            @else
-                                <td>Sub-Total: N/A</td>
-                            @endif
-                        </tr>
-
-                        {{-- <tr>
-                                    <td>{{ __('shop::app.customer.account.order.view.shipping-handling') }}
-                    <span class="dash-icon">-</span>
-                    </td>
-                    <td>{{ core()->formatPrice($invoice->shipping_amount, $order->order_currency_code)
-                                        }}</td>
-                    </tr> --}}
-
-                        @if ($order->discount_amount > 0)
-                            <tr>
-                                {{-- <td>{{ __('shop::app.customer.account.order.view.discount') }}
-                        <span class="dash-icon">-</span>
-                        </td> --}}
-                                <td class="extra-price">Offer Discount:
-                                    {{ core()->formatPrice($order->discount_amount, $order->order_currency_code) }}
-                                </td>
-
-                            </tr>
-                        @endif
-
-                        @if ($order->tax_amount > 0)
-                            <tr>
-                                @if ($order->status != 'pending')
-                                    <td class="extra-price">Tax:
-                                        {{ core()->formatPrice($order->tax_amount, $order->order_currency_code) }}</td>
-                                @else
-                                    <td>Tax: N/A</td>
-                                @endif
-                            </tr>
-                        @endif
-                        {{-- sandeep add code --}}
-                        <tr class="">
-                            {{-- <td>{{ __('shop::app.customer.account.order.view.grand-total') }}
-                        <span class="dash-icon">-</span>
-                        </td> --}}
-                            @if ($order->status != 'pending')
-                                <td class="">Agent Handling:
-                                    @if (isset($agent) && $agent->Handling_charges != null)
-                                   {{ core()->formatBasePrice($agent->Handling_charges) }}
-                                @else
-                                    {{ core()->formatBasePrice(0) }}
-                                @endif
-                                </td>
-
-                            @else
-                                <td>Agent Handling: N/A</td>
-                            @endif
-
-
-                            {{-- <td></td> --}}
-                        </tr>
-
-                        <tr class="fw6">
-                            {{-- <td>{{ __('shop::app.customer.account.order.view.grand-total') }}
-                        <span class="dash-icon">-</span>
-                        </td> --}}
-                            @if ($order->status != 'pending')
-                                <td class="total-price">Order Total:
-                                    @if (isset($agent->Handling_charges))
-                                    {{ core()->formatPrice($order->grand_total + $agent->Handling_charges, $order->order_currency_code) }}
-                                    @else
-                                    {{ core()->formatPrice($order->grand_total, $order->order_currency_code) }}
-                                    @endif
-                                    
-                            @else
-                                <td>Order Total: N/A</td>
-                            @endif
-
-
-                            {{-- <td></td> --}}
-                        </tr>
-
-                    </table>
-                </div>
-
-
-            </div>
-
-            @if (
-                !in_array($order->status, ['pending', 'canceled', 'rejected', 'paid', 'processing']) &&
-                    !in_array('paid', $excludedStatuses))
-            <div class="payment_button pt-3">
-                <form action="{{ route('order-invoice-view-detail', ['orderid'=> $order->id, 'customerid'=> $order->customer_id]) }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="email" value="{{ $order->customer_email }}">
-                    <input type="hidden" name="tail_number" value="{{ $order->fbo_tail_number }}">
-                    <button class="invoice_view_pay_button">Pay Now</button>
-                </form>
             @endif
+
+            </td>
+            <!-- sandeep  -->
+            <td class="order_view_data" style="border-right: 1px solid #cccccc !important;">
+                <div class="notes">
+                    @if(!empty($item->additional_notes))
+                    <p>{{ $item->additional_notes }} </p>
+                    @else
+                    <span>N/A</span>
+                    @endif
+                </div>
+            </td>
+            </tr>
+            @endforeach
+            </tbody>
+            </table>
         </div>
     </div>
-    {{--
+
+    <div class="totals price-total-table mt-3">
+        @if (isset($admin_notes) && $admin_notes !== null)
+        <div class="col-12 col-md-6 col-lg-6 order__view_admin_comments py-3">
+            <h3 class="text-start mt-2" style="text-align: left;">Notes</h3>
+            <div class="notes mb-4">
+                <div class="table m-0 d-flex">
+                    <tbody>
+                        <tr>
+                            <td><strong class="" style="color: rgb(101 101 101);">Support:</strong></td>
+                            <td><span class="pl-2" style="color: #9d9d9d;">{{ $admin_notes->notes }}</span>
+                            </td>
+                            <td>
+                                {{-- sandeep change date time formate --}}
+                                <span class="float-right"
+                                    style="color: #9d9d9d;">({{ date('m-d-Y h:i:s A', strtotime($admin_notes->created_at)) }})</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </div>
+            </div>
+        </div>
+        @endif
+        <div class="col-12 col-md-6 col-lg-6">
+            <table class="sale-summary ml-auto">
+                <tr>
+                    {{-- <td>{{ __('shop::app.customer.account.order.view.subtotal') }} --}}
+                    @if ($order->status != 'pending')
+                    <td>Sub-Total:
+                        {{ core()->formatPrice($order->sub_total, $order->order_currency_code) }}
+                    </td>
+                    @else
+                    <td>Sub-Total: N/A</td>
+                    @endif
+                </tr>
+
+                {{-- <tr>
+                                    <td>{{ __('shop::app.customer.account.order.view.shipping-handling') }}
+                <span class="dash-icon">-</span>
+                </td>
+                <td>{{ core()->formatPrice($invoice->shipping_amount, $order->order_currency_code)
+                                        }}</td>
+                </tr> --}}
+
+                @if ($order->discount_amount > 0)
+                <tr>
+                    {{-- <td>{{ __('shop::app.customer.account.order.view.discount') }}
+                    <span class="dash-icon">-</span>
+                    </td> --}}
+                    <td class="extra-price">Offer Discount:
+                        {{ core()->formatPrice($order->discount_amount, $order->order_currency_code) }}
+                    </td>
+
+                </tr>
+                @endif
+
+                @if ($order->tax_amount > 0)
+                <tr>
+                    @if ($order->status != 'pending')
+                    <td class="extra-price">Tax:
+                        {{ core()->formatPrice($order->tax_amount, $order->order_currency_code) }}
+                    </td>
+                    @else
+                    <td>Tax: N/A</td>
+                    @endif
+                </tr>
+                @endif
+                {{-- sandeep add code --}}
+                <tr class="">
+                    {{-- <td>{{ __('shop::app.customer.account.order.view.grand-total') }}
+                    <span class="dash-icon">-</span>
+                    </td> --}}
+                    @if ($order->status != 'pending')
+                    <td class="">Agent Handling:
+                        @if (isset($agent) && $agent->Handling_charges != null)
+                        {{ core()->formatBasePrice($agent->Handling_charges) }}
+                        @else
+                        {{ core()->formatBasePrice(0) }}
+                        @endif
+                    </td>
+
+                    @else
+                    <td>Agent Handling: N/A</td>
+                    @endif
+
+
+                    {{-- <td></td> --}}
+                </tr>
+
+                <tr class="fw6">
+                    {{-- <td>{{ __('shop::app.customer.account.order.view.grand-total') }}
+                    <span class="dash-icon">-</span>
+                    </td> --}}
+                    @if ($order->status != 'pending')
+                    <td class="total-price">Order Total:
+                        @if (isset($agent->Handling_charges))
+                        {{ core()->formatPrice($order->grand_total + $agent->Handling_charges, $order->order_currency_code) }}
+                        @else
+                        {{ core()->formatPrice($order->grand_total, $order->order_currency_code) }}
+                        @endif
+
+                        @else
+                    <td>Order Total: N/A</td>
+                    @endif
+
+
+                    {{-- <td></td> --}}
+                </tr>
+
+            </table>
+        </div>
+
+
+    </div>
+
+    @if (
+    !in_array($order->status, ['pending', 'canceled', 'rejected', 'paid', 'processing']) &&
+    !in_array('paid', $excludedStatuses))
+    <div class="payment_button pt-3">
+        <form action="{{ route('order-invoice-view-detail', ['orderid'=> $order->id, 'customerid'=> $order->customer_id]) }}" method="POST">
+            @csrf
+            <input type="hidden" name="email" value="{{ $order->customer_email }}">
+            <input type="hidden" name="tail_number" value="{{ $order->fbo_tail_number }}">
+            <button class="invoice_view_pay_button">Pay Now</button>
+        </form>
+        @endif
+    </div>
+</div>
+{{--
         </tab> --}}
 
-    {{-- @if ($order->invoices->count())
+{{-- @if ($order->invoices->count())
 
 
         @foreach ($order->invoices as $invoice)
@@ -666,11 +686,11 @@ $today = new DateTime('today');
 </a>
 </div> --}}
 
-    {{-- <div class="section-content">
+{{-- <div class="section-content">
                 <div class="table-responsive">
                     <div class="table order-detail-table">
                         <table> --}}
-    {{-- <thead>
+{{-- <thead>
                                 <tr>
                                     <th>{{ __('shop::app.customer.account.order.view.SKU') }}</th>
 <th>{{ __('shop::app.customer.account.order.view.product-name') }}</th>
@@ -682,15 +702,15 @@ $today = new DateTime('today');
 </tr>
 </thead> --}}
 
-    {{-- <tbody>
+{{-- <tbody>
 
                                 @foreach ($invoice->items as $item)
 
                                 <tr> --}}
-    {{-- <td data-value="{{ __('shop::app.customer.account.order.view.SKU') }}">
+{{-- <td data-value="{{ __('shop::app.customer.account.order.view.SKU') }}">
 {{ $item->getTypeInstance()->getOrderedItem($item)->sku }}
 </td> --}}
-    {{-- <td>
+{{-- <td>
                                         <div class="row">
                                             <div class="col-lg-3 col-md-4 col-4">
                                                 <img class="order-img"
@@ -733,15 +753,15 @@ $today = new DateTime('today');
 </td> --}}
 
 
-    {{-- <td data-value="{{ __('shop::app.customer.account.order.view.subtotal') }}">
+{{-- <td data-value="{{ __('shop::app.customer.account.order.view.subtotal') }}">
 {{ core()->formatPrice($item->total, $order->order_currency_code) }}
 </td> --}}
-    {{--
+{{--
                                     <td data-value="{{ __('shop::app.customer.account.order.view.tax-amount') }}">
 {{ core()->formatPrice($item->tax_amount, $order->order_currency_code) }}
 </td> --}}
 
-    {{-- <td class="total-col text-right"
+{{-- <td class="total-col text-right"
                                         data-value="{{ __('shop::app.customer.account.order.view.grand-total') }}">
 {{ core()->formatPrice($item->total, $order->order_currency_code) }}
 <div class="order-tax">
@@ -774,30 +794,30 @@ $today = new DateTime('today');
 </div>
 </div> --}}
 
-    {{-- <div class="totals price-total-table mt-3">
+{{-- <div class="totals price-total-table mt-3">
                     <table class="sale-summary">
                         <tr>
                             {{-- <td>{{ __('shop::app.customer.account.order.view.subtotal') }} --}}
-    {{--
+{{--
                             <td>Sub-Total: {{ core()->formatPrice($invoice->sub_total, $order->order_currency_code) }}
 </td>
 
 
 </tr> --}}
 
-    {{-- <tr>
+{{-- <tr>
                             <td>{{ __('shop::app.customer.account.order.view.shipping-handling') }}
 <span class="dash-icon">-</span>
 </td>
 <td>{{ core()->formatPrice($invoice->shipping_amount, $order->order_currency_code) }}</td>
 </tr> --}}
 
-    {{-- @if ($invoice->base_discount_amount > 0)
+{{-- @if ($invoice->base_discount_amount > 0)
                         <tr> --}}
-    {{-- <td>{{ __('shop::app.customer.account.order.view.discount') }}
+{{-- <td>{{ __('shop::app.customer.account.order.view.discount') }}
 <span class="dash-icon">-</span>
 </td> --}}
-    {{-- <td class="extra-price">Offer Discount: {{
+{{-- <td class="extra-price">Offer Discount: {{
                                 core()->formatPrice($invoice->discount_amount, $order->order_currency_code) }}</td>
 
 </tr>
@@ -1036,7 +1056,7 @@ $today = new DateTime('today');
         </div>
         @endif --}}
 
-                {{-- @if ($order->shipping_address)
+        {{-- @if ($order->shipping_address)
                 <div class="box">
                     <div class="box-title">
                         {{ __('shop::app.customer.account.order.view.shipping-address') }}
@@ -1064,7 +1084,7 @@ $today = new DateTime('today');
     </div>
     @endif --}}
 
-                {{-- <div class="box">
+    {{-- <div class="box">
                     <div class="box-title">
                         {{ __('shop::app.customer.account.order.view.payment-method') }}
     </div>
@@ -1086,15 +1106,15 @@ $today = new DateTime('today');
         ['order' => $order]) !!}
     </div>
     </div> --}}
-            </div>
-        </div>
+    </div>
+    </div>
     </div>
     </div>
 
     {!! view_render_event('bagisto.shop.customers.account.orders.view.after', ['order' => $order]) !!}
-@endsection
+    @endsection
 
-@push('scripts')
+    @push('scripts')
     <script>
         function cancelOrder(message) {
             if (!confirm(message)) {
@@ -1104,4 +1124,4 @@ $today = new DateTime('today');
             $('#cancelOrderForm').submit();
         }
     </script>
-@endpush
+    @endpush
