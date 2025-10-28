@@ -1,1 +1,0 @@
-<link rel="stylesheet" href="<?php echo e(asset('themes/velocity/assets/css/velocity-admin.css')); ?>"><?php /**PATH C:\xampp\htdocs\VolantiJetCateringGit\packages\Webkul\Velocity\src/resources/views/admin/layouts/style.blade.php ENDPATH**/ ?>

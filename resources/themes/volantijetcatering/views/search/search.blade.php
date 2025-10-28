@@ -52,7 +52,27 @@
         }
     </style>
 @endpush
+@php
+    
+// dd($categorySlugsString);
+if (Auth::check()) {
+    $date_of_birth = auth()->user()->date_of_birth;
+} else {
+    $guestToken = Session::token();
+    $guestDob = DB::table('customers')
+        ->where('token', $guestToken)
+        ->value('date_of_birth');
 
+    $date_of_birth = $guestDob;
+}
+       
+@endphp 
+
+<input type="hidden" 
+    id="userAge"    
+        value="{{ $date_of_birth ? \Carbon\Carbon::parse($date_of_birth)->age : '' }}"
+   
+>
 @section('content-wrapper')
     <div class="container category-page-wrapper">
         <search-component></search-component>

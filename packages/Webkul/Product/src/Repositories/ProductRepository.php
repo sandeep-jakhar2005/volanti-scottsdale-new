@@ -224,32 +224,62 @@ class ProductRepository extends Repository
             
         }
 
-        $query = $this->with([
-            'images',
-            'videos',
-            'attribute_values',
-            'price_indices',
-            'inventory_indices',
-            'reviews',
-        ])->scopeQuery(function ($query) use ($params, $categoryId) {
-            $prefix = DB::getTablePrefix();
+        $customerGroup = $this->customerRepository->getCurrentGroup(); // Move outside closure
 
-            $qb = $query->distinct()
-                ->select('products.*','pf.url_key','pc.category_id')
-                ->leftJoin('products as variants', DB::raw('COALESCE(' . $prefix . 'variants.parent_id, ' . $prefix . 'variants.id)'), '=', 'products.id')
-                ->leftJoin('product_flat as pf','pf.product_id','variants.id')
-                ->leftJoin('product_categories as pc','pc.product_id','variants.id')
-                ->leftJoin('product_price_indices', function ($join) {
-                    $customerGroup = $this->customerRepository->getCurrentGroup();
+            $query = $this->with([
+                    'images',
+                    'videos',
+                    'attribute_values',
+                    'price_indices',
+                    'inventory_indices',
+                    'reviews',
+                ])->scopeQuery(function ($query) use ($params, $categoryId, $customerGroup) {
 
-                    $join->on('products.id', '=', 'product_price_indices.product_id')
-                        ->where('product_price_indices.customer_group_id', $customerGroup->id);
-                });
+                    $prefix = DB::getTablePrefix();
+                    $locale = app()->getLocale(); 
 
-            if ($categoryId) {
-                $qb->leftJoin('product_categories', 'product_categories.product_id', '=', 'products.id')
-                    ->whereIn('product_categories.category_id', explode(',', $categoryId));
-            }
+                    $qb = $query->select(
+                        'products.*',
+                        'pf.url_key',
+                        DB::raw('GROUP_CONCAT(DISTINCT 
+                            CASE 
+                                WHEN parent_ct.name IS NOT NULL AND parent_ct.name != "" 
+                                THEN CONCAT(parent_ct.name, " > ", ct.name)
+                                ELSE ct.name 
+                            END 
+                            SEPARATOR ", ") as category_names')
+                    )
+                    ->leftJoin('product_flat as pf', 'pf.product_id', '=', 'products.id')
+                    ->leftJoin('product_categories as pc', 'pc.product_id', '=', 'products.id')
+                    // Join to get the child category name WITH LOCALE FILTER
+                    ->leftJoin('category_translations as ct', function($join) use ($locale) {
+                        $join->on('ct.category_id', '=', 'pc.category_id')
+                            ->where('ct.locale', '=', $locale);
+                    })
+                    // Join to categories table to get parent_id
+                    ->leftJoin('categories as cat', 'cat.id', '=', 'pc.category_id')
+                    // Join to get the PARENT category name WITH LOCALE FILTER
+                    ->leftJoin('category_translations as parent_ct', function($join) use ($locale) {
+                        $join->on('parent_ct.category_id', '=', 'cat.parent_id')
+                            ->where('parent_ct.locale', '=', $locale);
+                    })
+                    ->leftJoin('product_price_indices', function ($join) use ($customerGroup) {
+                        $join->on('products.id', '=', 'product_price_indices.product_id')
+                            ->where('product_price_indices.customer_group_id', $customerGroup->id);
+                    })
+                    ->groupBy('products.id', 'pf.url_key');
+
+                    // Filter by category IDs if provided
+                    if ($categoryId) {
+                        $categoryIds = explode(',', $categoryId);
+                        $qb->whereIn('pc.category_id', $categoryIds)
+                        ->orderByRaw('FIELD(pc.category_id, ' . implode(',', $categoryIds) . ')');
+                    }
+
+                    // Filter by product type if provided
+                    if (!empty($params['type'])) {
+                        $qb->where('products.type', $params['type']);
+        }
 
             if (!empty($params['type'])) {
                 $qb->where('products.type', $params['type']);

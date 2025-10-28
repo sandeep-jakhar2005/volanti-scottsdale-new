@@ -995,7 +995,86 @@ $(document).ready(function () {
     
     
 });
+var ProductId1=0;
+$(document).ready(function () {
 
+
+
+jQuery('body').on('click', '.checkAgeBtn', function () {
+    
+    let dobVal = jQuery('#dobInput').val();
+    let today = new Date();
+    let dobDate = new Date(dobVal);
+
+    if (dobDate > today) {
+        $("#dobMessage").text("Please enter a valid date.");
+        return;
+    }
+        if (!dobVal) {
+            jQuery('#dobMessage').text('Please enter your date of birth.');
+            return;
+        }
+        $(this).append('<span class="spinner-border spinner-border-sm ml-2" role="status" aria-hidden="true"></span>');
+        let diffMs = Date.now() - new Date(dobVal).getTime();
+        let ageDate = new Date(diffMs);
+        let age = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+        
+         $.ajax({
+            url: '/user/save-dob',
+            type: 'POST',
+            data: {
+                dob: dobVal, 
+                age: age,  // send actual date string
+                _token: $('meta[name="csrf-token"]').attr('content') // add CSRF token
+            },
+            success: function(response) {
+                
+                $('#userAge').val(age);
+                // debugger;
+                $('body').removeClass('modal-open');
+                 $('#ProductId[value="' + ProductId1 + '"]')
+                    .closest('.AddToCartButton')
+                    .find('.add_button')
+                    .trigger('click');
+
+                $('input[name="product_id"][value="' + ProductId1 + '"]')
+                    .closest('.AddToCartButton')
+                    .find('#AddToCartButtonpopup')
+                    .trigger('click');
+
+
+
+                 $('.modal-backdrop').remove();
+                           if(age >= 21){
+                            if ($('#ageModal').hasClass('show')) {
+                        $('#ageModal').css('background', '#0000009e');
+                    } else {
+                        $('#ageModal').css('background', '');
+                    }
+                jQuery('#ageModal').hide();
+                
+                // alert('DOB & Age saved successfully. You are eligible.');
+            } else {
+                // Age < 21 → show restriction section
+                
+            jQuery('#ageModal').addClass('show');
+            jQuery('#ageModal .verify-section').hide();
+            jQuery('#ageModal .modal-footer').hide();
+            jQuery('#ageModal .restriction-section').show();
+          jQuery('#ageModal').modal('show');
+
+            }
+            },
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText); // for debugging
+                alert('Failed to save DOB information.');
+            }
+        });
+
+        
+
+});
 
 
 
@@ -1004,6 +1083,52 @@ $(document).ready(function () {
 //sandeep || this add the product to cart before adding it check the type of the product and make the data accordingly
 jQuery('body').on('click', '.add_button', function () {
     // check options
+   
+    $('.modal-backdrop').remove();
+ jQuery('body').removeClass('modal-open');
+
+ ProductId1 = jQuery(this).parents('.AddToCartButton').first().find('input[name="product_id"]').val();
+ 
+    // check options
+    var categorySlug = $(this).data('category-slug');
+
+    // var finalcategorySlug = categorySlug.toLowerCase().includes('wine');
+
+    let userAge = $('#userAge').val();
+
+    if(userAge == '' && categorySlug && categorySlug.toLowerCase().includes('wine')){
+
+        console.log('age is empty insert' );
+
+        jQuery('#ageModal .verify-section').show();
+        jQuery('#ageModal').addClass('show');
+        jQuery('#ageModal .restriction-section').hide();
+        if ($('#ageModal').hasClass('show')) {
+            $('.modal-backdrop').remove();
+            $('#ageModal').css('background', '#0000009e');
+        } else {
+            $('#ageModal').css('background', '');
+        }
+        jQuery('#ageModal').modal('show');
+        return false;
+    }
+
+       if(userAge < 21 && categorySlug && categorySlug.toLowerCase().includes('wine')){  
+
+        console.log('age is less than 21');
+        jQuery('#ageModal').addClass('show');
+        jQuery('#ageModal .verify-section').hide();
+        jQuery('#ageModal .modal-footer').hide();
+        jQuery('#ageModal .restriction-section').show();  
+        if ($('#ageModal').hasClass('show')) {
+           
+            $('#ageModal').css('background', '#0000009e');
+        } else {
+            $('#ageModal').css('background', '');
+        }      
+         jQuery('#ageModal').modal('show');
+        return false; 
+    }
 
     let addbutton = $(this);
     let cate_id = $(this).attr('attr');
@@ -1126,7 +1251,7 @@ jQuery('body').on('click', '.add_button', function () {
         }
     });
 });
-
+});
 
 // sandeep add code for select option value 
 
@@ -1139,6 +1264,41 @@ $('body').on('click', '.product_variant', function () {
 // sandeep add code for open popop for a particular configurable product and insert the option
 
 jQuery('body').on('click', '#AddToCartButtonpopup', function () {
+    ProductId1 = jQuery(this).parents('.AddToCartButton').first().find('input[name="product_id"]').val();
+ 
+    // check options
+    var categorySlug = $(this).data('category-slug');
+
+
+    let userAge = $('#userAge').val();
+    if(userAge == '' && categorySlug && categorySlug.toLowerCase().includes('wine')){
+        jQuery('#ageModal .verify-section').show();
+        jQuery('#ageModal').addClass('show');
+        jQuery('#ageModal .restriction-section').hide();
+        if ($('#ageModal').hasClass('show')) {
+    $('#ageModal').css('background', '#0000009e');
+} else {
+    $('#ageModal').css('background', '');
+}
+        jQuery('#ageModal').modal('show');
+        return false;
+    }
+
+       if(userAge < 21 && categorySlug && categorySlug.toLowerCase().includes('wine')){  
+        console.log('age is less than 21');
+        jQuery('#ageModal').addClass('show');
+        jQuery('#ageModal .verify-section').hide();
+        jQuery('#ageModal .modal-footer').hide();
+        jQuery('#ageModal .restriction-section').show();  
+        if ($('#ageModal').hasClass('show')) {
+    $('#ageModal').css('background', '#0000009e');
+} else {
+    $('#ageModal').css('background', '');
+}      
+         jQuery('#ageModal').modal('show');
+        return false; 
+    }
+
 
     let cate_id = $(this).closest('.configurable_product').find('#Add_Button_Popop').attr('attr');
     let slug = $(this).closest('.AddButton').find('#slug').val();

@@ -3,6 +3,8 @@
 use ACME\paymentProfile\Http\Controllers\Admin\InvoicesController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\QuickBookController;
+use Webkul\Shop\Http\Controllers\AgeVerificationController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,3 +20,6 @@ use App\Http\Controllers\QuickBookController;
 Route::get('/quickbook-connect',[QuickBookController::class,'connect'])->name('quickbook.connect');
 
 Route::get('/callback', [QuickBookController::class, 'callback'])->name('quickbooks.callback');
+
+
+Route::post('/user/save-dob', [AgeVerificationController::class, 'save_user_dob']);

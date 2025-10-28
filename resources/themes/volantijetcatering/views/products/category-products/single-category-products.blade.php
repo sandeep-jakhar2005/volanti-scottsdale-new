@@ -5,8 +5,33 @@
     $isDesktop = $agent->isDesktop();
     $isTablet = $agent->isTablet();
     
+   
+ $categoryId = $getCategorydetail['product_category'][0]->category_id ?? null;
+ $categorySlug = $categoryId 
+        ? DB::table('category_translations')
+            ->where('category_id', $categoryId)
+            ->where('locale', app()->getLocale()) // 'en', 'es', etc.
+            ->value('name') 
+        : 'not-available';
+
+if (Auth::check()) {
+    $date_of_birth = auth()->user()->date_of_birth;
+} else {
+    $guestToken = Session::token();
+    $guestDob = DB::table('customers')
+        ->where('token', $guestToken)
+        ->value('date_of_birth');
+
+    $date_of_birth = $guestDob;
+}
+        
 @endphp
 
+<input type="hidden" 
+    id="userAge"    
+        value="{{ $date_of_birth ? \Carbon\Carbon::parse($date_of_birth)->age : '' }}"
+   
+>
 
 @foreach ($getCategorydetail['products'] as $product)
 
@@ -51,8 +76,15 @@
                             style="color: red"></div>
 
                         <div class="AddButton text-center">
-                            <button type="submit" class="add_button" id="AddToCartButton"
-                                data="{{ $product['type'] }}" attr="{{ $cate_id }}">Add</button>
+                            <button type="submit"
+                                    class="add_button AddToCartButton"
+                                    id="AddToCartButton"
+                                    data="{{ $product['type'] }}"
+                                    attr="{{ $cate_id }}"
+                                    data-category-slug="{{ $product['product_categories']  }}"
+                                   
+                                   
+                                >Add</button>
                             <span id="successMessage_{{ $product['id'] }}_{{ $cate_id }}"
                                 class="text-success successMessage"></span>
                         </div>
@@ -62,7 +94,7 @@
                                 <input type="hidden" id="slug" value="{{ $product['slug'] }}">
                                 <button type="button" data-toggle="modal"
                                     data-target="#exampleModal{{ $product['id'] }}_{{ $cate_id }}"
-                                    class="OptionsAddButton" id="AddToCartButtonpopup">Add</button>
+                                    class="OptionsAddButton" id="AddToCartButtonpopup" data-category-slug="{{ $product['product_categories']  }}" >Add</button>
                                 <span class="customisable">Customizable</span>
                                 <br>
                                 <span id="successMessage_{{ $product['id'] }}_{{ $cate_id }}"
@@ -136,7 +168,7 @@
 
     </div>
 @endforeach
-
+@include ('shop::search.agemodel')
 <div class="pagination-wrapper">
     {!! $getCategorydetail['paginationHTML'] !!}
 </div>

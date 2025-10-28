@@ -86,6 +86,15 @@
                     $formattedDate = $dayName . ' ' . $month . '/' . $dayOfMonth;
                 }
             }
+             $customerId = $order->customer_id;
+
+                    $customer = DB::table('customers')
+
+                        ->where('id', $customerId)
+
+                        ->first();                 
+
+                    $dateOfBirth = $customer->date_of_birth ?? null;                
 
         ?>
 
@@ -126,6 +135,7 @@
                                         <p class="m-0"><?php echo e($order->fbo_full_name); ?></p>
                                         <p class="m-0"><?php echo e($order->fbo_email_address); ?></p>
                                         <p class="m-0"><?php echo e($order->fbo_phone_number); ?></p>
+                                        <p class="m-0"> Date of birth : <?php echo e($dateOfBirth ?  $dateOfBirth : 'Not found'); ?></p>
                                         <h5 class="mt-3"><?php echo e(__('shop::app.fbo-detail.aircraft-info')); ?></h5>
                                         <p class="m-0"><?php echo e($order->fbo_tail_number); ?></p>
                                         <p class="m-0">Packaging: <?php echo e($order->fbo_packaging); ?></p>
@@ -133,6 +143,7 @@
                                         <h5 class="mt-3">Delivery Time</h5>
                                         <p class="m-0">Delivery Date: <?php echo e(date('m-d-Y', strtotime($order->delivery_date))); ?></p>
                                         <p>Delivery Time: <?php echo e($order->delivery_time); ?></p>
+                                        
                                     </div>
                                     <div class='col-3 fbo-edit text-right p-3'>
                                         <?php if(

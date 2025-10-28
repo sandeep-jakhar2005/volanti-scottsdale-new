@@ -1,2 +1,0 @@
-<link rel="stylesheet" href="<?php echo e(asset('themes/default/assets/css/admin.css')); ?>">
-<?php /**PATH C:\xampp\htdocs\VolantiJetCateringGit\packages\ACME\paymentProfile\src\Providers/../Resources/views/admin/layouts/style.blade.php ENDPATH**/ ?>

@@ -200,7 +200,16 @@
                      <span id="quantityError_{{ $product['id'] }}_{{$product['category_id']}}" class="text-danger" style="color: red"></span>
 
                         <div class="AddButton text-center mt-2">
-                            <button type="submit" class="add_button" id="AddToCartButton" data="{{$product['type']}}" attr="{{$product['category_id']}}">Add</button>
+                             <button 
+                                type="submit" 
+                                class="add_button" 
+                                id="AddToCartButton" 
+                                data-category-slug="{{ $product->category_names }}" 
+                                data="{{ $product['type'] }}" 
+                                attr="{{ $product['category_id'] }}"
+                            >
+                                Add
+                            </button>
                             <span id="successMessage_{{ $product['id'] }}_{{$product['category_id']}}" class="text-success successMessage"></span>
                         </div>
                     @else
@@ -208,7 +217,7 @@
                             <div class="AddButton text-center">
                                 <input type="hidden" id="slug" value="{{$product['url_key']}}">
                                 <button type="button" data-toggle="modal" data-target="#exampleModal{{ $product['id']}}_{{$product['category_id']}}" class="OptionsAddButton"
-                                    id="AddToCartButtonpopup">Add</button>
+                                    id="AddToCartButtonpopup" data-category-slug="{{ $product->category_names }}" >Add</button>
                                 <span class="customisable">Customisable</span>
                                 <br>
                                 {{-- @dd($cate_id); --}}

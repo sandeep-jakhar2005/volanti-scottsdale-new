@@ -4,8 +4,28 @@
     $agent = new Agent();
     $isDesktop = $agent->isDesktop();
     $isTablet = $agent->isTablet();
+
+   
+
+// dd($categorySlugsString);
+if (Auth::check()) {
+    $date_of_birth = auth()->user()->date_of_birth;
+} else {
+    $guestToken = Session::token();
+    $guestDob = DB::table('customers')
+        ->where('token', $guestToken)
+        ->value('date_of_birth');
+
+    $date_of_birth = $guestDob;
+}
 ?>
 
+
+<input type="hidden" 
+    id="userAge"    
+        value="<?php echo e($date_of_birth ? \Carbon\Carbon::parse($date_of_birth)->age : ''); ?>"
+   
+>
 
 <div id="product-list">
 <?php $__currentLoopData = $categoryproducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $categoryproduct): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -52,7 +72,7 @@
                      <div id="quantityError_<?php echo e($categoryproduct['id']); ?>_<?php echo e($cate_id); ?>" class="text-danger quantityError_message" style="color: red"></div>
 
                         <div class="AddButton text-center">
-                            <button type="submit" class="add_button" id="AddToCartButton" data="<?php echo e($categoryproduct['type']); ?>" attr="<?php echo e($cate_id); ?>">Add</button>
+                            <button type="submit" class="add_button" id="AddToCartButton" data="<?php echo e($categoryproduct['type']); ?>" attr="<?php echo e($cate_id); ?>" data-category-slug="<?php echo e($categoryproduct['product_categories']); ?>">Add</button>
                             <span id="successMessage_<?php echo e($categoryproduct['id']); ?>_<?php echo e($cate_id); ?>" class="text-success successMessage"></span>
                         </div>
                     <?php else: ?>
@@ -94,7 +114,7 @@
                                         </div>
 
                                         
-                                            <button type="submit" class="add_button OptionsAddButton mx-auto" data="<?php echo e($categoryproduct['type']); ?>" id="Add_Button_Popop" attr="<?php echo e($cate_id); ?>">Add</button>
+                                            <button type="submit" class="add_button OptionsAddButton mx-auto" data="<?php echo e($categoryproduct['type']); ?>" id="Add_Button_Popop" attr="<?php echo e($cate_id); ?>" data-category="<?php echo e($categoryproduct['product_categories']); ?>">Add</button>
                                             
 
                                     </div>
@@ -132,7 +152,7 @@
         
     </div>
 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
+<?php echo $__env->make('shop::search.agemodel', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 </div>
 
 

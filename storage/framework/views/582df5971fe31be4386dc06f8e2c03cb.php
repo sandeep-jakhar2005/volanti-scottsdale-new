@@ -151,7 +151,16 @@
                      <span id="quantityError_<?php echo e($product['id']); ?>_<?php echo e($product['category_id']); ?>" class="text-danger" style="color: red"></span>
 
                         <div class="AddButton text-center mt-2">
-                            <button type="submit" class="add_button" id="AddToCartButton" data="<?php echo e($product['type']); ?>" attr="<?php echo e($product['category_id']); ?>">Add</button>
+                             <button 
+                                type="submit" 
+                                class="add_button" 
+                                id="AddToCartButton" 
+                                data-category-slug="<?php echo e($product->category_names); ?>" 
+                                data="<?php echo e($product['type']); ?>" 
+                                attr="<?php echo e($product['category_id']); ?>"
+                            >
+                                Add
+                            </button>
                             <span id="successMessage_<?php echo e($product['id']); ?>_<?php echo e($product['category_id']); ?>" class="text-success successMessage"></span>
                         </div>
                     <?php else: ?>
@@ -159,7 +168,7 @@
                             <div class="AddButton text-center">
                                 <input type="hidden" id="slug" value="<?php echo e($product['url_key']); ?>">
                                 <button type="button" data-toggle="modal" data-target="#exampleModal<?php echo e($product['id']); ?>_<?php echo e($product['category_id']); ?>" class="OptionsAddButton"
-                                    id="AddToCartButtonpopup">Add</button>
+                                    id="AddToCartButtonpopup" data-category-slug="<?php echo e($product->category_names); ?>" >Add</button>
                                 <span class="customisable">Customisable</span>
                                 <br>
                                 

@@ -121,8 +121,8 @@ class CateringPackageController extends Controller
                                             <img class='suggestion-icon m-0' src='/themes/volantijetcatering/assets/images/home/pin-2-map.svg' style='position: relative; top: 0;'>
                                         </div>
                                         <div class='text-start' style='flex:1'>
-                                            <strong class='airport-name'>{$airport_fbo_detail->name}</strong><br>
-                                            {$airport_fbo_detail->address}
+                                            <strong class='airport-name'>{$airport_fbo_detail->name}</strong>
+                                            
                                         </div>
                                     </div>
                                 </div>";

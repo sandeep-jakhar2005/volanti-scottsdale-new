@@ -87,6 +87,15 @@
                     $formattedDate = $dayName . ' ' . $month . '/' . $dayOfMonth;
                 }
             }
+             $customerId = $order->customer_id;
+
+                    $customer = DB::table('customers')
+
+                        ->where('id', $customerId)
+
+                        ->first();                 
+
+                    $dateOfBirth = $customer->date_of_birth ?? null;                
 
         @endphp
 
@@ -124,6 +133,7 @@
                                         <p class="m-0">{{ $order->fbo_full_name }}</p>
                                         <p class="m-0">{{ $order->fbo_email_address }}</p>
                                         <p class="m-0">{{ $order->fbo_phone_number }}</p>
+                                        <p class="m-0"> Date of birth : {{ $dateOfBirth ?  $dateOfBirth : 'Not found'}}</p>
                                         <h5 class="mt-3">{{ __('shop::app.fbo-detail.aircraft-info') }}</h5>
                                         <p class="m-0">{{ $order->fbo_tail_number }}</p>
                                         <p class="m-0">Packaging: {{ $order->fbo_packaging }}</p>
@@ -131,6 +141,7 @@
                                         <h5 class="mt-3">Delivery Time</h5>
                                         <p class="m-0">Delivery Date: {{ date('m-d-Y', strtotime($order->delivery_date)) }}</p>
                                         <p>Delivery Time: {{ $order->delivery_time }}</p>
+                                        
                                     </div>
                                     <div class='col-3 fbo-edit text-right p-3'>
                                         @if (

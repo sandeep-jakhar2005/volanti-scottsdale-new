@@ -523,12 +523,24 @@ class MpAuthorizeNetConnectController extends Controller
                         if(!auth()->guard('customer')->check()){
                         if (!session()->has('customer_id')) {
                             //creating guest as customer for customer ID if doesn't exist
-                            $customer_id = DB::table('customers')->insertGetId([
-                                'first_name' => '',
-                                'last_name' => '',
-                                'password' => '',
-                                'token' => $token,
-                            ]);
+                            // $customer_id = DB::table('customers')->insertGetId([
+                            //     'first_name' => '',
+                            //     'last_name' => '',
+                            //     'password' => '',
+                            //     'token' => $token,
+                            // ]);
+                            $customer = DB::table('customers')->where('token', $token)->first();
+                            if ($customer) {
+                                $customer_id = $customer->id;
+                            } else {
+                                // Record not found, create new and get inserted ID
+                                $customer_id = DB::table('customers')->insertGetId([
+                                    'first_name' => '',
+                                    'last_name' => '',
+                                    'password' => '',
+                                    'token' => $token,
+                                ]);
+                            }
                             session(['customer_id' => $customer_id]);
                             log::info('guest customer id',['customer_id'=>$customer_id]);
 

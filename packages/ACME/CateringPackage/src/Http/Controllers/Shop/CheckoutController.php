@@ -583,14 +583,23 @@ class CheckoutController extends Controller
                 'email' => $fboDetails->email_address,
             ]);
          
-            CustomerProfileLog::where('customer_id', $customer->id)
-                ->orderBy('id', 'DESC')
-                ->first()
-                ->update([
-                    'order_id' => $orderId,
-                    'airport' => $billing_address->airport_name,
-                    'billing_address' => $billing_address->address1,
-                ]);
+            // CustomerProfileLog::where('customer_id', $customer->id)
+            //     ->orderBy('id', 'DESC')
+            //     ->first()
+            //     ->update([
+            //         'order_id' => $orderId,
+            //         'airport' => $billing_address->airport_name,
+            //         'billing_address' => $billing_address->address1,
+            //     ]);
+            CustomerProfileLog::updateOrCreate(
+            ['customer_id' => $customer->id], // find criteria
+            [
+                'order_id' => $orderId,
+                'airport' => $billing_address->airport_name,
+                'billing_address' => $billing_address->address1,
+            ]
+);
+
         }
 
 

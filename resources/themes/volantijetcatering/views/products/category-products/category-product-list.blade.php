@@ -4,8 +4,28 @@
     $agent = new Agent();
     $isDesktop = $agent->isDesktop();
     $isTablet = $agent->isTablet();
+
+   
+
+// dd($categorySlugsString);
+if (Auth::check()) {
+    $date_of_birth = auth()->user()->date_of_birth;
+} else {
+    $guestToken = Session::token();
+    $guestDob = DB::table('customers')
+        ->where('token', $guestToken)
+        ->value('date_of_birth');
+
+    $date_of_birth = $guestDob;
+}
 @endphp
 
+
+<input type="hidden" 
+    id="userAge"    
+        value="{{ $date_of_birth ? \Carbon\Carbon::parse($date_of_birth)->age : '' }}"
+   
+>
 
 <div id="product-list">
 @foreach ($categoryproducts as $categoryproduct)
@@ -52,7 +72,7 @@
                      <div id="quantityError_{{ $categoryproduct['id'] }}_{{$cate_id}}" class="text-danger quantityError_message" style="color: red"></div>
 
                         <div class="AddButton text-center">
-                            <button type="submit" class="add_button" id="AddToCartButton" data="{{$categoryproduct['type']}}" attr="{{$cate_id}}">Add</button>
+                            <button type="submit" class="add_button" id="AddToCartButton" data="{{$categoryproduct['type']}}" attr="{{$cate_id}}" data-category-slug="{{ $categoryproduct['product_categories'] }}">Add</button>
                             <span id="successMessage_{{ $categoryproduct['id'] }}_{{$cate_id}}" class="text-success successMessage"></span>
                         </div>
                     @else
@@ -94,7 +114,7 @@
                                         </div>
 
                                         
-                                            <button type="submit" class="add_button OptionsAddButton mx-auto" data="{{$categoryproduct['type']}}" id="Add_Button_Popop" attr="{{$cate_id}}">Add</button>
+                                            <button type="submit" class="add_button OptionsAddButton mx-auto" data="{{$categoryproduct['type']}}" id="Add_Button_Popop" attr="{{$cate_id}}" data-category="{{$categoryproduct['product_categories']}}">Add</button>
                                             {{-- <span id="successMessage" class="text-success" style="display: none;"></span> --}}
 
                                     </div>
@@ -132,7 +152,7 @@
         {{-- </form> --}}
     </div>
 @endforeach
-
+@include ('shop::search.agemodel')
 </div>
 
 {{-- @push('scripts')

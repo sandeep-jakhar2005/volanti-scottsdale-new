@@ -1,1 +1,0 @@
-<?php /**PATH /home/ubuntu/volantiScottsdale/packages/Webkul/Velocity/src/Resources/views/shop/layouts/top-nav/font-size.blade.php ENDPATH**/ ?>

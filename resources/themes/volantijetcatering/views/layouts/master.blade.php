@@ -27,6 +27,9 @@
     <link rel="preload" href="{{ asset('themes/volantijetcatering/assets/fonts/font-awesome/Fino-Sans-Regular.otf') }}" as="font" type="font/otf" 
       crossorigin="anonymous">
 
+<script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/8f45c4fd62f9f44ea4e7a1e6/script.js"></script>
+
+
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -55,7 +58,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     @if ($favicon = core()->getCurrentChannel()->favicon_url)
         <link rel="icon" sizes="16x16" href="{{ $favicon }}" />
     @else
-        <link rel="icon" sizes="16x16" href="{{ asset('/themes/velocity/assets/images/static/v-icon.png') }}" />
+        <link rel="icon" sizes="16x16" href="{{ asset('/themes/volantijetcatering/assets/images/logo-only.png') }}" />
     @endif
 
     {{-- all styles --}}

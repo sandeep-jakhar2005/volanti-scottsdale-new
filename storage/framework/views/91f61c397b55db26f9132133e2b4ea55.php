@@ -1,2 +1,0 @@
-<link rel="stylesheet" href="<?php echo e(asset('themes/default/assets/css/admin.css')); ?>">
-<?php /**PATH /home/ubuntu/volantiScottsdale/packages/ACME/paymentProfile/src/Resources/views/admin/layouts/style.blade.php ENDPATH**/ ?>

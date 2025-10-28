@@ -284,6 +284,7 @@ class Helper extends Review
             'galleryImages' => $galleryImages,
             'name' => $product->name,
             'slug' => $product->url_key,
+            'product_categories'=>$product->category_names,
             'description' => $product->description,
             'shortDescription' => $product->short_description,
             'firstReviewText' => trans('velocity::app.products.be-first-review'),

@@ -177,7 +177,62 @@
             border-top: 1px dotted black;
               border-bottom: 1px dotted black;
               padding: 0;
-              text-align: center;
+            ">
+                <h3 style="padding: 15px 0px;font-weight: bold;margin: 0px;font-size: 20px;">
+                    Billing Address
+                </h3>
+            </div>
+        </td>
+    </tr>
+    <tr style="background: #f6f6f6;padding: 20px;display: block;vertical-align: text-top;">
+        <td style="padding: 20px;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <td style="font-weight: 600; font-size: 14px;" colspan="3">
+                        Order No: <?php echo e($order['increment_id']); ?>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="padding-bottom: 15px;">
+                        Order Date & Time: <?php echo e(date('m-d-Y h:i:s A', strtotime($order['created_at'] ))); ?>
+
+                    </td>
+                </tr>
+                <tr>
+                    <!-- Account Information -->
+                    <td width="30%" valign="top" style="padding-right: 10px;">
+                        <p style="font-size: 15px; font-weight: bold; margin: 0 0 5px;"><?php echo e(__('shop::app.fbo-detail.client-info')); ?></p>
+                        <p style="margin: 0;"><?php echo e($order['fbo_full_name'] ?? 'N/A'); ?></p>
+                        <p style="margin: 0;"><?php echo e($order['fbo_email_address'] ?? 'N/A'); ?></p>
+                        <p style="margin: 0;"><?php echo e($order['fbo_phone_number'] ?? 'N/A'); ?></p>
+                    </td>
+
+                    <!-- Address -->
+                    <td width="30%" valign="top" style="padding: 0 10px;">
+                        <p style="font-size: 15px; font-weight: bold; margin: 0 0 5px;">Address</p>
+                        <p style="margin: 0;"><?php echo e($order['shipping_address']['airport_name'] ?? 'N/A'); ?></p>
+                        <p style="margin: 0;"><?php echo e($order['shipping_address']['address1'] ?? 'N/A'); ?></p>
+                    </td>
+
+                    <!-- Aircraft Information -->
+                    <td width="30%" valign="top" style="padding-left: 10px;">
+                        <p style="font-size: 15px; font-weight: bold; margin: 0 0 5px;"><?php echo e(__('shop::app.fbo-detail.aircraft-info')); ?></p>
+                        <p style="margin: 0;"><?php echo e($order['fbo_tail_number'] ?? 'N/A'); ?></p>
+                        <p style="margin: 0;"><?php echo e($order['fbo_packaging'] ?? 'N/A'); ?></p>
+                        <p style="margin: 0;"><?php echo e($order['fbo_service_packaging'] ?? 'N/A'); ?></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+        <tr>
+        <td colspan="3" style="width: 100%">
+            <div
+                style="
+            border-top: 1px dotted black;
+              border-bottom: 1px dotted black;
+              padding: 0;
             ">
                 <h3 style="padding: 15px 0px;font-weight: bold;margin: 0px;font-size: 20px;">
                     Order Details
@@ -185,48 +240,6 @@
             </div>
         </td>
     </tr>
-<tr style="background: #f6f6f6;padding: 20px;display: block;vertical-align: text-top;">
-    <td style="padding: 20px;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0">
-            <tr>
-                <td style="font-weight: 600; font-size: 14px;" colspan="3">
-                    Order No: <?php echo e($order['increment_id']); ?>
-
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3" style="padding-bottom: 15px;">
-                    Order Date & Time: <?php echo e(date('m-d-Y h:i:s A', strtotime($order['created_at'] ))); ?>
-
-                </td>
-            </tr>
-            <tr>
-                <!-- Account Information -->
-                <td width="30%" valign="top" style="padding-right: 10px;">
-                    <p style="font-size: 15px; font-weight: bold; margin: 0 0 5px;"><?php echo e(__('shop::app.fbo-detail.client-info')); ?></p>
-                    <p style="margin: 0;"><?php echo e($order['fbo_full_name'] ?? 'N/A'); ?></p>
-                    <p style="margin: 0;"><?php echo e($order['fbo_email_address'] ?? 'N/A'); ?></p>
-                    <p style="margin: 0;"><?php echo e($order['fbo_phone_number'] ?? 'N/A'); ?></p>
-                </td>
-
-                <!-- Address -->
-                <td width="30%" valign="top" style="padding: 0 10px;">
-                    <p style="font-size: 15px; font-weight: bold; margin: 0 0 5px;">Address</p>
-                    <p style="margin: 0;"><?php echo e($order['shipping_address']['airport_name'] ?? 'N/A'); ?></p>
-                    <p style="margin: 0;"><?php echo e($order['shipping_address']['address1'] ?? 'N/A'); ?></p>
-                </td>
-
-                <!-- Aircraft Information -->
-                <td width="30%" valign="top" style="padding-left: 10px;">
-                    <p style="font-size: 15px; font-weight: bold; margin: 0 0 5px;"><?php echo e(__('shop::app.fbo-detail.aircraft-info')); ?></p>
-                    <p style="margin: 0;"><?php echo e($order['fbo_tail_number'] ?? 'N/A'); ?></p>
-                    <p style="margin: 0;"><?php echo e($order['fbo_packaging'] ?? 'N/A'); ?></p>
-                    <p style="margin: 0;"><?php echo e($order['fbo_service_packaging'] ?? 'N/A'); ?></p>
-                </td>
-            </tr>
-        </table>
-    </td>
-</tr>
     <tr>
         <td>
             <table style="width: 100%">
