@@ -72,6 +72,7 @@ Customization Services | Volanti Jet Catering
             <div class="row justify-content-center inquery-files mt-4">
                 <div class="col-12 col-md-8 col-lg-6 custom-width-desktop">
                     <div class="row justify-content-center">
+                        {{-- @dd($selectFiles) --}}
                         @foreach ($selectFiles as $file)
                             @php
                           

@@ -2,6 +2,7 @@
 
 namespace Webkul\RKREZA\Contact\Http\Controllers;
 
+use App\Jobs\SendContactUsMail;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
@@ -88,6 +89,7 @@ class ContactController extends Controller
             ]);
 
             if ($contact) {
+                SendContactUsMail::dispatch($data['message_body'], $data['name'],$data['email']);
                 session()->flash('success', trans('Thank you for reaching out to us! We’ve received your message and will get back to you as soon as possible'));
                 return redirect()->route($this->_config['redirect']);
             }

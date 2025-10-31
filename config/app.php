@@ -26,6 +26,7 @@ return [
     'scope' => env('SCOPE', 'com.intuit.quickbooks.accounting com.intuit.quickbooks.payment'),
     'baseUrl' => env('QUICKBOOKS_ENVIRONMENT', 'production'),
     'company_id' => env('QUICKBOOKS_REALM_ID', '123146565838279'),
+    'App_Name' => env('APP_NAME', 'Volanti Jetcatering'),
 
 
 

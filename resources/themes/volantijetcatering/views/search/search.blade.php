@@ -238,7 +238,7 @@ if (Auth::check()) {
                             ])
                         @endif
                     @endforeach
-                   @include ('shop::search.agemodel')
+                    @include ('shop::search.agemodel')
                     @include('ui::datagrid.pagination')
                     </div>
                     

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Webkul\Sales\Models\Order;
 use Illuminate\Support\Facades\View;
 use ACME\paymentProfile\Models\{agentHandler, CustomerInquery};
+use App\Jobs\SendCustomerEnquieyMail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 
@@ -60,7 +61,7 @@ class paymentProfileController extends Controller
 
         return view($this->_config['view'], compact('order_detail'));
     }
-    
+
 
     public function invoice_detail(Request $request)
     {
@@ -83,12 +84,10 @@ class paymentProfileController extends Controller
             Session::put('invoice-customer-id', $customerid);
 
             return redirect()->route('invoice.detail', ['orderid' => $orderid, 'customerid' => $customerid]);
-
         } else {
             session()->flash('warning', 'Wrong email or tail number');
             return redirect()->back();
         }
-
     }
 
     public function success_message()
@@ -121,7 +120,6 @@ class paymentProfileController extends Controller
         $agent = agentHandler::where('order_id', $request->orderid)->first();
 
         return view('shop::sales.invoice-detail', compact('order', 'agent'));
-
     }
 
 
@@ -137,7 +135,7 @@ class paymentProfileController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'fname' => 'required|string|max:25',
-            'lname' => 'required|string|max:25',    
+            'lname' => 'required|string|max:25',
             'email' => 'required|email',
             'mobile_number' => 'required|regex:/^\(\d{3}\) \d{3}-\d{4}$/',
             'message' => 'required',
@@ -166,12 +164,13 @@ class paymentProfileController extends Controller
         $id = $customers->id;
 
 
-
+        $fileUrls = [];
         if ($request->hasFile('uploadfile')) {
             foreach ($request->file('uploadfile') as $key => $file) {
                 if ($file->isValid()) {
                     $fileName = $id . '_' . ($key + 1) . '.' . $file->getClientOriginalExtension();
                     $filePath = $file->storeAs('customerinquery', $fileName);
+                    $fileUrls[] = asset($fileName);
                 } else {
                     return redirect()->back()->with('error', 'One or more files could not be uploaded.');
                 }
@@ -180,6 +179,18 @@ class paymentProfileController extends Controller
             return redirect()->back()->with('error', 'No files uploaded.');
         }
 
+        // Prepare data for the mail
+        $data = [
+            'first_name' => $request->fname,
+            'last_name' => $request->lname,
+            'email' => $request->email,
+            'phone' => $request->mobile_number,
+            'message' => $request->message,
+            'file_urls' => $fileUrls,
+        ];
+
+        // Dispatch job with data
+        SendCustomerEnquieyMail::dispatch($data);
         // Return  thankyou page
         return redirect(url('/thankyou?' . $id));
         // return redirect()->route('inquery.thankyou_page', ['id' => $id]);
@@ -230,6 +241,4 @@ class paymentProfileController extends Controller
         // Generate download response
         return response()->download($filePath);
     }
-
-
 }
