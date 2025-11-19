@@ -1,1 +1,0 @@
-<script src="<?php echo e($clientEndPoint); ?>" async defer></script><?php /**PATH /home/ubuntu/volantiScottsdale/packages/Webkul/Customer/src/Providers/../Resources/views/captcha/scripts.blade.php ENDPATH**/ ?>

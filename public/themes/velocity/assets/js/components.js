@@ -58513,7 +58513,7 @@ if (true) {
             config.warnHandler.call(null, msg, vm, trace);
         }
         else if (hasConsole_1 && !config.silent) {
-            console.error("[Vue warn]: ".concat(msg).concat(trace));
+            //console.error("[Vue warn]: ".concat(msg).concat(trace));
         }
     };
     tip = function (msg, vm) {
@@ -62724,28 +62724,28 @@ Vue.prototype.$mount = function (el, hydrating) {
 };
 // devtools global hook
 /* istanbul ignore next */
-if (inBrowser) {
-    setTimeout(function () {
-        if (config.devtools) {
-            if (devtools) {
-                devtools.emit('init', Vue);
-            }
-            else if (true) {
-                // @ts-expect-error
-                console[console.info ? 'info' : 'log']('Download the Vue Devtools extension for a better development experience:\n' +
-                    'https://github.com/vuejs/vue-devtools');
-            }
-        }
-        if ( true &&
-            config.productionTip !== false &&
-            typeof console !== 'undefined') {
-            // @ts-expect-error
-            console[console.info ? 'info' : 'log']("You are running Vue in development mode.\n" +
-                "Make sure to turn on production mode when deploying for production.\n" +
-                "See more tips at https://vuejs.org/guide/deployment.html");
-        }
-    }, 0);
-}
+// if (inBrowser) {
+//     setTimeout(function () {
+//         if (config.devtools) {
+//             if (devtools) {
+//                 devtools.emit('init', Vue);
+//             }
+//             else if (true) {
+//                 // @ts-expect-error
+//                 console[console.info ? 'info' : 'log']('Download the Vue Devtools extension for a better development experience:\n' +
+//                     'https://github.com/vuejs/vue-devtools');
+//             }
+//         }
+//         if ( true &&
+//             config.productionTip !== false &&
+//             typeof console !== 'undefined') {
+//             // @ts-expect-error
+//             console[console.info ? 'info' : 'log']("You are running Vue in development mode.\n" +
+//                 "Make sure to turn on production mode when deploying for production.\n" +
+//                 "See more tips at https://vuejs.org/guide/deployment.html");
+//         }
+//     }, 0);
+// }
 
 var defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g;
 var regexEscapeRE = /[-.*+?^${}()|[\]\/\\]/g;

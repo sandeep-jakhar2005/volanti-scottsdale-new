@@ -4,6 +4,12 @@
 
 <script type="text/javascript" src="{{ asset(mix('/js/components.js', 'themes/velocity/assets')) }}"></script>
 
+{{-- @vite([
+    'packages/Webkul/Shop/publishable/assets/js/vue-global.js',
+    'packages/Webkul/volantijetcatering/publishable/assets/js/velocity.js',
+    'packages/Webkul/volantijetcatering/publishable/assets/css/velocity.css'
+]) --}}
+
 <script type="text/javascript">
     (() => {
         /* activate session messages */

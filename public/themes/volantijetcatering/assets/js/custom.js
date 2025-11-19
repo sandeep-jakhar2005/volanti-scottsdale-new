@@ -149,7 +149,7 @@ $(document).ready(function () {
     $('body').on('change', '#acknowledge_checkbox', function () {
         // sandeep add code
         var fbo_name = $('#airport_fbo_details').find('#AirportFbo_Name').text();
-        //console.log('fbo_name',fbo_name);
+        ////console.log('fbo_name',fbo_name);
         if ($(this).is(':checked') && address_checkbox && fbo_name !== "") {
             // $('#checkout-place-order-button').prop('disabled', false);
         } else {
@@ -167,7 +167,7 @@ $(document).ready(function () {
         $('.delivery_select_date').toggle();
     })
     $('body').on('click', '#dayList li', function () {
-        //console.log($(this).text());
+        ////console.log($(this).text());
         $('#daySelect').val($(this).text());
         $('.delivery_select_date').hide();
         // sandeep || add code for remove erorr from delivery date input 
@@ -192,7 +192,7 @@ $(document).ready(function () {
 
 
         var val = $('#selected-fbo-id').val();
-        //console.log(val);
+        ////console.log(val);
     });
 
 
@@ -200,7 +200,7 @@ $(document).ready(function () {
         $('.delivery_select_time').toggle();
     })
     $('body').on('click', '#timeSlotsList li', function () {
-        //console.log($(this).text());
+        ////console.log($(this).text());
         $('#timeSlots').val($(this).text());
         $('.delivery_select_time').hide();
 
@@ -239,7 +239,7 @@ $(document).ready(function () {
     // Format the date
 
     var formattedDate = year + '-' + month + '-' + day;
-    //console.log(formattedDate);
+    ////console.log(formattedDate);
     for (var i = 0; i < 14; i++) {
         if (i == 0) {
             days.push({
@@ -270,10 +270,10 @@ $(document).ready(function () {
         });
     }, 2000)
 
-    //console.log($('#dayList').length, 'check');
+    ////console.log($('#dayList').length, 'check');
 
     $('body').on('click', '#dayList li', function () {
-        //console.log('dddd111');
+        ////console.log('dddd111');
         showTimeSlots();
     })
 
@@ -373,26 +373,26 @@ function showTimeSlots() {
 
     // Adjust time for Today or Tomorrow logic
     if (selectedDayPST.toDateString() === newDatePST.toDateString()) {
-        console.log('1');
+        // //console.log('1');
         var currentHour = startDate.getHours();
         var currentMinute = startDate.getMinutes();
         var currentSlotTime = Math.ceil(currentMinute / 15) * 15; // Round to the nearest 15 minutes
         startDate.setHours(currentHour, currentSlotTime, 0, 0);
     } else {
-        console.log('2');
+        //console.log('2');
 
         startDate.setHours(0, 0, 0, 0); // Midnight for selected day
     }
 
     var currentDate = new Date(startDate);
-    console.log('Current Date:', currentDate);
+    //console.log('Current Date:', currentDate);
 
     var endDate = new Date(startDate);
-    console.log('End Date:', endDate);
+    //console.log('End Date:', endDate);
 
     // Set end date to the end of the day
     endDate.setHours(23, 59, 59, 999);
-    console.log('End Date Final:', endDate);
+    //console.log('End Date Final:', endDate);
 
     // Clear existing time slots and create new ones
     $('#timeSlotsList li').remove();
@@ -1067,7 +1067,7 @@ jQuery('body').on('click', '.checkAgeBtn', function () {
             }
             },
             error: function(xhr, status, error) {
-                console.log(xhr.responseText); // for debugging
+                //console.log(xhr.responseText); // for debugging
                 alert('Failed to save DOB information.');
             }
         });
@@ -1098,7 +1098,7 @@ jQuery('body').on('click', '.add_button', function () {
 
     if(userAge == '' && categorySlug && categorySlug.toLowerCase().includes('wine')){
 
-        console.log('age is empty insert' );
+        //console.log('age is empty insert' );
 
         jQuery('#ageModal .verify-section').show();
         jQuery('#ageModal').addClass('show');
@@ -1115,7 +1115,7 @@ jQuery('body').on('click', '.add_button', function () {
 
        if(userAge < 21 && categorySlug && categorySlug.toLowerCase().includes('wine')){  
 
-        console.log('age is less than 21');
+        //console.log('age is less than 21');
         jQuery('#ageModal').addClass('show');
         jQuery('#ageModal .verify-section').hide();
         jQuery('#ageModal .modal-footer').hide();
@@ -1257,7 +1257,7 @@ jQuery('body').on('click', '.add_button', function () {
 
 $('body').on('click', '.product_variant', function () {
     let variant_id = $(this).attr('attr');
-    //console.log(variant_id)
+    ////console.log(variant_id)
     $('#selected_configurable_option').val(variant_id)
 });
 
@@ -1285,7 +1285,7 @@ jQuery('body').on('click', '#AddToCartButtonpopup', function () {
     }
 
        if(userAge < 21 && categorySlug && categorySlug.toLowerCase().includes('wine')){  
-        console.log('age is less than 21');
+        //console.log('age is less than 21');
         jQuery('#ageModal').addClass('show');
         jQuery('#ageModal .verify-section').hide();
         jQuery('#ageModal .modal-footer').hide();
@@ -1407,7 +1407,7 @@ $('body').on('click', '.custom-remove-item', function () {
 
 // Sandeep || 15-08-2024 || create function to  uopdate sidebar cart content 
 function update_mini_cart(response, type = null) {
-    //console.log(response);
+    ////console.log(response);
     // let cartItem =response.cartDetail.original.mini_cart.cart_items;
 
     let cartItem = response.cartDetail?.original?.mini_cart?.cart_items;
@@ -1421,7 +1421,7 @@ function update_mini_cart(response, type = null) {
         $("#cart-modal-content").removeClass("slide-cart-modal");
         $("#cart-modal-content").addClass("hide");
         if (type === null) {
-            //console.log('Cart is empty, type is null');
+            ////console.log('Cart is empty, type is null');
         }
         return;
     }
@@ -1429,7 +1429,7 @@ function update_mini_cart(response, type = null) {
     let totalQuantity = 0;
 
     for (const item of cartItem) {
-        //console.log(item.name);
+        ////console.log(item.name);
         totalQuantity += parseInt(item.quantity, 10) || 0;
         if (totalQuantity > 0) {
             $('.dropdown').removeClass('disable-active');
@@ -1487,11 +1487,11 @@ function update_mini_cart(response, type = null) {
                     }
                 });
             }
-            //console.log(attributesHtml);
+            ////console.log(attributesHtml);
 
             // append html in side mini cart
 
-            //console.log(itemId, 'item');
+            ////console.log(itemId, 'item');
             const newItemHtml =
             '<div class="row small-card-container col-12 pt-2 pb-2" style="border-bottom: 1px solid rgb(222, 226, 230);">' +
             '  <div class="col-8 no-padding card-body align-vertical-top" style="padding-right:10px !important">' +
@@ -1600,7 +1600,7 @@ jQuery('body').on('click', '.UpdateQuantityButton', function () {
         type: 'POST',
         data: data,
         success: function (response) {
-            console.log(response.total_quantity);
+            //console.log(response.total_quantity);
             updateQuantityButton.html($originalButtonHtml); 
             // Update the badge quantity if necessary
             const badge = document.querySelector('.badge-container .badge');
@@ -1704,13 +1704,13 @@ $('body').on('click', '.checkout__button, .fbo_button, .fbo_detail_button, .prof
             // errorText = $('.row').find('.control-error').text();
             firstErrorElement = $('.user-profile-input .control-error:visible').first();
             errorText = firstErrorElement.text();
-            console.log('errorText',errorText);
+            //console.log('errorText',errorText);
         } else if ($(self).hasClass('.checkout__button')) {
             errorText = "";
         }
         
         if (errorText.trim() == '') {
-            console.log('no error');
+            //console.log('no error');
             $(self).prop('disabled', false);
             $(self).html('<span class="btn-ring"></span>');
             $(self).find(".btn-ring").show();
@@ -1720,7 +1720,7 @@ $('body').on('click', '.checkout__button, .fbo_button, .fbo_detail_button, .prof
                 'align-items': 'center'
             });
         } else {
-            console.log('sandeep checkout page');
+            //console.log('sandeep checkout page');
             // $(self).prop('disabled', true);
             if (firstErrorElement.length) {
                 let modalBody = firstErrorElement.closest('.modal-body');
@@ -1861,7 +1861,7 @@ $('body').on('click', '#category_instructions', function() {
     let divId = href.replace('#', '');
     let toggleIcon = $(this).find('.toggle-icon');
 
-    console.log(toggleIcon);
+    //console.log(toggleIcon);
     if (toggleIcon.text().trim() === '+') {
         toggleIcon.text('-');
     } else {
@@ -1906,24 +1906,24 @@ document.addEventListener("DOMContentLoaded", function () {
 // $(document).ready(function() {
 //     function checkMobileAndAddClass() {
 //     var isMobile = $(window).width() <= 767;
-// console.log('isMobile',isMobile);
+// //console.log('isMobile',isMobile);
 //     if (isMobile) {
-// console.log('inside mobile function');
+// //console.log('inside mobile function');
 //         var isCheckoutPage = window.location.href.indexOf("checkout") > -1;
-// console.log('isCheckoutPage',isCheckoutPage);
+// //console.log('isCheckoutPage',isCheckoutPage);
         
 //         if (isCheckoutPage) {
 //             var buttonExists = $("#checkout-place-order-button").length > 0;
 //             if(buttonExists){
-//             console.log('place order butoon is visible');
+//             //console.log('place order butoon is visible');
 //             $(".footer").addClass("placeOrder");
 //         } else {
-//             console.log('place order butoon is not visible');
+//             //console.log('place order butoon is not visible');
 //             $(".footer").removeClass("placeOrder");
 //         }
 //         }
 //     } else {
-//         console.log('not mobile screen');
+//         //console.log('not mobile screen');
 //         $(".footer").removeClass("placeOrder");
 //     }
 // }

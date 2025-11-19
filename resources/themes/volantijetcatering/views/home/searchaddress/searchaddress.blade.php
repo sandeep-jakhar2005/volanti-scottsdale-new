@@ -299,7 +299,7 @@
             jQuery('body').on('keyup click', '#auto_search', function() {
                 $('#airport-fbo-list').hide();
                 clearTimeout(typingTimer); 
-                // console.log('hfggh');
+                // //console.log('hfggh');
                 var name = jQuery(this).val();
                 // here when ajax hit then show airport  
 
@@ -322,7 +322,7 @@
                         'type': 'address_search'
                     },
                     success: function(result) {
-                        console.log(result);
+                        //console.log(result);
                         jQuery("#address-list").html(result);
                     }
                 });
@@ -337,7 +337,7 @@
                 var name = jQuery(this).attr('data-attr');
 
                 airport_id = jQuery(this).attr('attr');
-                console.log(airport_id);
+                //console.log(airport_id);
                 var input_val = jQuery("#auto_search").val(name);
 
                 jQuery("#address-list").html("");
@@ -425,7 +425,7 @@
             $(document).click('body, .fboClose',function(){
                 $('#exampleModalCenter').on('hidden.bs.modal', function() {
                       $('body').addClass('pr-0');
-                      console.log('modal hide');
+                      //console.log('modal hide');
                });
             });
 
@@ -454,7 +454,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('AJAX Error:', status, error);
+                        //console.error('AJAX Error:', status, error);
                     }
                 });
             }
@@ -544,7 +544,7 @@
                     },
                     success: function(result) {
 
-                        console.log(result);
+                        //console.log(result);
                         window.location = "/menu";
                         // window.flashMessages = [{
                         //     'type': 'alert-success',
@@ -557,7 +557,7 @@
                     // Error par original state restore karein
                     $('#address_btn').html(originalContent);
                     $(this).find('.btn-ring').hide();
-                     console.log("Error:", error);
+                     //console.log("Error:", error);
                      }
                 });
             });
