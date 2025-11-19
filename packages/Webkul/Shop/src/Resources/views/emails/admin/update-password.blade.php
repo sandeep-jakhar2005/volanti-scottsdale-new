@@ -1,11 +1,11 @@
 @component('shop::emails.layouts.master')
     <div style="text-align: center;">
         <a href="{{ config('app.url') }}">
-            @if (core()->getConfigData('general.design.admin_logo.logo_image'))
+            {{-- @if (core()->getConfigData('general.design.admin_logo.logo_image'))
                 <img src="{{ \Illuminate\Support\Facades\Storage::url(core()->getConfigData('general.design.admin_logo.logo_image')) }}" alt="{{ config('app.name') }}" style="height: 40px; width: 110px;"/>
-            @else
+            @else --}}
                 <img src="https://images.squarespace-cdn.com/content/v1/6171dbc44e102724f1ce58cf/eda39336-24c7-499b-9336-c9cee87db776/VolantiStickers-11.jpg?format=1500w" alt="{{ config('app.name') }}"/>
-            @endif
+            {{-- @endif --}}
         </a>
     </div>
 
