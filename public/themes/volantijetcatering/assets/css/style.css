@@ -1458,9 +1458,9 @@ body .custom-dropdown select option:hover {
 }
 
 
-.phpdebugbar {
+/* .phpdebugbar {
     display: none;
-}
+} */
 
 body {
     margin-bottom: 0 !important;

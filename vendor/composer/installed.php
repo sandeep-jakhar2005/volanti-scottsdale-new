@@ -3,7 +3,7 @@
         'name' => 'bagisto/bagisto',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'e418e9dfcb7f7562a4d0e0137ed96105b9e176de',
+        'reference' => 'b4c883f342a8d72f8e8e6a36d5d62f20737460b3',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -31,7 +31,7 @@
         'bagisto/bagisto' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'e418e9dfcb7f7562a4d0e0137ed96105b9e176de',
+            'reference' => 'b4c883f342a8d72f8e8e6a36d5d62f20737460b3',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -192,9 +192,9 @@
             'dev_requirement' => false,
         ),
         'barryvdh/laravel-debugbar' => array(
-            'pretty_version' => 'v3.15.2',
-            'version' => '3.15.2.0',
-            'reference' => '0bc1e1361e7fffc2be156f46ad1fba6927c01729',
+            'pretty_version' => 'v3.15.4',
+            'version' => '3.15.4.0',
+            'reference' => 'c0667ea91f7185f1e074402c5788195e96bf8106',
             'type' => 'library',
             'install_path' => __DIR__ . '/../barryvdh/laravel-debugbar',
             'aliases' => array(),
@@ -1592,8 +1592,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '3.0.0',
-                1 => '1.0|2.0|3.0',
+                0 => '1.0|2.0|3.0',
+                1 => '3.0.0',
             ),
         ),
         'psr/simple-cache' => array(

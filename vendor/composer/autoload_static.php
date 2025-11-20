@@ -643,8 +643,8 @@ class ComposerStaticInit7fa912f2e4143384035abf60333796de
         ),
         'Spatie\\LaravelIgnition\\' => 
         array (
-            0 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/laravel-ignition',
-            1 => __DIR__ . '/..' . '/spatie/laravel-ignition/src',
+            0 => __DIR__ . '/..' . '/spatie/laravel-ignition/src',
+            1 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/laravel-ignition',
         ),
         'Spatie\\Image\\' => 
         array (
@@ -656,8 +656,8 @@ class ComposerStaticInit7fa912f2e4143384035abf60333796de
         ),
         'Spatie\\Ignition\\' => 
         array (
-            0 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/ignition',
-            1 => __DIR__ . '/..' . '/spatie/ignition/src',
+            0 => __DIR__ . '/..' . '/spatie/ignition/src',
+            1 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/ignition',
         ),
         'Spatie\\FlareClient\\' => 
         array (
@@ -907,8 +907,8 @@ class ComposerStaticInit7fa912f2e4143384035abf60333796de
         ),
         'Intervention\\Image\\' => 
         array (
-            0 => __DIR__ . '/..' . '/intervention/image/src/Intervention/Image',
-            1 => __DIR__ . '/..' . '/intervention/imagecache/src/Intervention/Image',
+            0 => __DIR__ . '/..' . '/intervention/imagecache/src/Intervention/Image',
+            1 => __DIR__ . '/..' . '/intervention/image/src/Intervention/Image',
         ),
         'Illuminate\\Support\\' => 
         array (
@@ -1203,6 +1203,7 @@ class ComposerStaticInit7fa912f2e4143384035abf60333796de
         'ACME\\paymentProfile\\Mail\\OrderInvoice' => __DIR__ . '/../..' . '/packages/ACME/paymentProfile/src/Mail/OrderInvoice.php',
         'ACME\\paymentProfile\\Mail\\OrderNote' => __DIR__ . '/../..' . '/packages/ACME/paymentProfile/src/Mail/OrderNote.php',
         'ACME\\paymentProfile\\Mail\\OrderReject' => __DIR__ . '/../..' . '/packages/ACME/paymentProfile/src/Mail/OrderReject.php',
+        'ACME\\paymentProfile\\Mail\\adminContactUsNotification' => __DIR__ . '/../..' . '/packages/ACME/paymentProfile/src/Mail/adminContactUsNotification.php',
         'ACME\\paymentProfile\\Mail\\adminOrderNotification' => __DIR__ . '/../..' . '/packages/ACME/paymentProfile/src/Mail/adminOrderNotification.php',
         'ACME\\paymentProfile\\Models\\CustomerInquery' => __DIR__ . '/../..' . '/packages/ACME/paymentProfile/src/Models/CustomerInquery.php',
         'ACME\\paymentProfile\\Models\\CustomerInqueryProxy' => __DIR__ . '/../..' . '/packages/ACME/paymentProfile/src/Models/CustomerInqueryProxy.php',
@@ -1240,16 +1241,23 @@ class ComposerStaticInit7fa912f2e4143384035abf60333796de
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Middleware\\checkDeliveryOrderAssign' => __DIR__ . '/../..' . '/app/Http/Middleware/checkDeliveryOrderAssign.php',
         'App\\Jobs\\OrderConfirmationAdminEmailJob' => __DIR__ . '/../..' . '/app/Jobs/OrderConfirmationAdminEmailJob.php',
+        'App\\Jobs\\OrderConfirmationAuthEmailJob' => __DIR__ . '/../..' . '/app/Jobs/OrderConfirmationAuthEmailJob.php',
         'App\\Jobs\\OrderConfirmationGuestEmailJob' => __DIR__ . '/../..' . '/app/Jobs/OrderConfirmationGuestEmailJob.php',
+        'App\\Jobs\\SendContactUsMail' => __DIR__ . '/../..' . '/app/Jobs/SendContactUsMail.php',
+        'App\\Jobs\\SendCustomerEnquieyMail' => __DIR__ . '/../..' . '/app/Jobs/SendCustomerEnquieyMail.php',
+        'App\\Jobs\\SendOrderFailedEmail' => __DIR__ . '/../..' . '/app/Jobs/SendOrderFailedEmail.php',
         'App\\Jobs\\TestJob' => __DIR__ . '/../..' . '/app/Jobs/TestJob.php',
         'App\\Logging\\DatabaseErrorHandler' => __DIR__ . '/../..' . '/app/Logging/DatabaseErrorHandler.php',
         'App\\Logging\\DatabaseErrorLogger' => __DIR__ . '/../..' . '/app/Logging/DatabaseErrorLogger.php',
+        'App\\Mail\\GraphTransport' => __DIR__ . '/../..' . '/app/Mail/GraphTransport.php',
+        'App\\Mail\\OrderFailedMail' => __DIR__ . '/../..' . '/app/Mail/OrderFailedMail.php',
         'App\\Pdf\\PdfWithHeaderFooter' => __DIR__ . '/../..' . '/app/Pdf/PdfWithHeaderFooter.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
+        'App\\Services\\MicrosoftGraphMailService' => __DIR__ . '/../..' . '/app/Services/MicrosoftGraphMailService.php',
         'ArPHP\\I18N\\Arabic' => __DIR__ . '/..' . '/khaled.alshamaa/ar-php/src/Arabic.php',
         'Astrotomic\\Translatable\\Contracts\\Translatable' => __DIR__ . '/..' . '/astrotomic/laravel-translatable/src/Translatable/Contracts/Translatable.php',
         'Astrotomic\\Translatable\\Exception\\LocalesNotDefinedException' => __DIR__ . '/..' . '/astrotomic/laravel-translatable/src/Translatable/Exception/LocalesNotDefinedException.php',
@@ -10907,6 +10915,7 @@ class ComposerStaticInit7fa912f2e4143384035abf60333796de
         'Webkul\\Admin\\DataGrids\\CateringPackageDataGrid' => __DIR__ . '/../..' . '/packages/Webkul/Admin/src/DataGrids/CateringPackageDataGrid.php',
         'Webkul\\Admin\\DataGrids\\ChannelDataGrid' => __DIR__ . '/../..' . '/packages/Webkul/Admin/src/DataGrids/ChannelDataGrid.php',
         'Webkul\\Admin\\DataGrids\\CurrencyDataGrid' => __DIR__ . '/../..' . '/packages/Webkul/Admin/src/DataGrids/CurrencyDataGrid.php',
+        'Webkul\\Admin\\DataGrids\\CustomerCartDataGrid' => __DIR__ . '/../..' . '/packages/Webkul/Admin/src/DataGrids/CustomerCartDataGrid.php',
         'Webkul\\Admin\\DataGrids\\CustomerDataGrid' => __DIR__ . '/../..' . '/packages/Webkul/Admin/src/DataGrids/CustomerDataGrid.php',
         'Webkul\\Admin\\DataGrids\\CustomerGroupDataGrid' => __DIR__ . '/../..' . '/packages/Webkul/Admin/src/DataGrids/CustomerGroupDataGrid.php',
         'Webkul\\Admin\\DataGrids\\CustomerInqueryDataGrid' => __DIR__ . '/../..' . '/packages/Webkul/Admin/src/DataGrids/CustomerInqueryDataGrid.php',
@@ -12031,6 +12040,7 @@ class ComposerStaticInit7fa912f2e4143384035abf60333796de
         'Webkul\\Shipping\\Shipping' => __DIR__ . '/../..' . '/packages/Webkul/Shipping/src/Shipping.php',
         'Webkul\\Shop\\DataGrids\\DownloadableProductDataGrid' => __DIR__ . '/../..' . '/packages/Webkul/Shop/src/DataGrids/DownloadableProductDataGrid.php',
         'Webkul\\Shop\\DataGrids\\OrderDataGrid' => __DIR__ . '/../..' . '/packages/Webkul/Shop/src/DataGrids/OrderDataGrid.php',
+        'Webkul\\Shop\\Http\\Controllers\\AgeVerificationController' => __DIR__ . '/../..' . '/packages/Webkul/Shop/src/Http/Controllers/AgeVerificationController.php',
         'Webkul\\Shop\\Http\\Controllers\\CartController' => __DIR__ . '/../..' . '/packages/Webkul/Shop/src/Http/Controllers/CartController.php',
         'Webkul\\Shop\\Http\\Controllers\\CategoryController' => __DIR__ . '/../..' . '/packages/Webkul/Shop/src/Http/Controllers/CategoryController.php',
         'Webkul\\Shop\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/packages/Webkul/Shop/src/Http/Controllers/Controller.php',

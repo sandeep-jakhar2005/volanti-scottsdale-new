@@ -23,7 +23,7 @@
         "bagisto/laravel-datafaker": "^2.0@alpha",
         "bagisto/rest-api": "dev-master",
         "bagistobrasil/bagisto-product-social-share": "^0.1.2",
-        "barryvdh/laravel-debugbar": "^3.14",
+        "barryvdh/laravel-debugbar": "^3.15",
         "barryvdh/laravel-dompdf": "^2.1",
         "cviebrock/laravel-elasticsearch": "^10.0",
         "darkaonline/l5-swagger": "^8.5",
