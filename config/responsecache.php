@@ -7,32 +7,6 @@ return [
     'enabled' => env('RESPONSE_CACHE_ENABLED', true),
 
     /*
-    |--------------------------------------------------------------------------
-    | Excluded Paths (Do Not Cache)
-    |--------------------------------------------------------------------------
-    */
-    'excluded_paths' => [
-        'checkout*',
-        'cart*',
-        'wishlist*',
-        'customer/*',
-        'login',
-        'logout',
-        'register',
-        'api/*',
-        'admin/*',
-        '_debugbar*',
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Excluded Methods (POST, PUT, DELETE should NEVER be cached)
-    |--------------------------------------------------------------------------
-    */
-    'excluded_methods' => ['POST', 'PUT', 'PATCH', 'DELETE'],
-
-
-    /*
      *  The given class will determinate if a request should be cached. The
      *  default class will cache all successful GET-requests.
      *
@@ -117,4 +91,34 @@ return [
      * This class is responsible for serializing responses.
      */
     'serializer' => \Spatie\ResponseCache\Serializers\DefaultSerializer::class,
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Excluded Paths (Do Not Cache)
+    |--------------------------------------------------------------------------
+    */
+    'excluded_paths' => [
+        'checkout*',
+        'cart*',
+        'wishlist*',
+        'customer/*',
+        'login',
+        'logout',
+        'register',
+        'api/*',
+        'admin/*',
+        '_debugbar*',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Excluded Methods (POST, PUT, DELETE should NEVER be cached)
+    |--------------------------------------------------------------------------
+    */
+    'excluded_methods' => ['POST', 'PUT', 'PATCH', 'DELETE'],
+
+    // DO NOT CACHE AJAX / XHR requests
+    'excluded_ajax_requests' => true,
 ];

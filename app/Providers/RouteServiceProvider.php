@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Routing\Router;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -34,6 +35,17 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });
+
+        $this->app->resolving(Router::class, function (Router $router) {
+        $router->matched(function ($event) {
+            $route = $event->route;
+
+            // Apply cache only to GET requests
+            if (in_array('GET', $route->methods(), true)) {
+                $route->middleware('cacheResponse');
+            }
+        });
+    });
     }
 
     /**
