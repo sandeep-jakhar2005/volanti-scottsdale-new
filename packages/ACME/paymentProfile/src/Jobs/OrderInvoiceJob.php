@@ -22,7 +22,7 @@ class OrderInvoiceJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct($orderId,$agent,$pdfPath)
+    public function __construct($orderId, $agent, $pdfPath)
     {
         $this->orderId = $orderId;
         $this->pdfPath = $pdfPath;
@@ -37,14 +37,13 @@ class OrderInvoiceJob implements ShouldQueue
     {
         $order  = Order::where('id', $this->orderId)->first();
         // sandeep add code for send invoice mail
-        if($order->fbo_email_address === null){
-            $email = $order->customer_email;
-        }else{
+        if ($order->customer_email === null) {
             $email = $order->fbo_email_address;
+        } else {
+            $email = $order->customer_email;
         }
-        
-        try{ 
-            log::info('email',['email'=>$email]);
+
+        try {
             Mail::to($email)->send(new OrderInvoice($order, $this->agent, $this->pdfPath));
         } catch (\Exception $e) {
             throw $e;
