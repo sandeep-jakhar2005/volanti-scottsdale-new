@@ -26,6 +26,8 @@ $guestToken = Session::token();
 </script>
 @endif
 @stop
+ 
+
 @push('css')
 <style type="text/css">
     .product-price span:first-child,
@@ -42,6 +44,7 @@ $guestToken = Session::token();
 
 </style>
 @endpush
+
 @php
 $isProductsDisplayMode = in_array(
 $category->display_mode, [
@@ -57,53 +60,45 @@ null,
 'products_and_description'
 ]
 );
-
 @endphp
+@php
+    // API ke liye category ids (parent + child sab)
+    $categoryIdsForApi = (string) $category->id;
+
+    if (count($childCategory) > 0) {
+        foreach ($childCategory as $childSubCategory) {
+            $categoryIdsForApi .= ',' . $childSubCategory->id;
+        }
+    }
+@endphp
+
 @section('content-wrapper')
 <category-component></category-component>
 @stop
+
+
 @push('scripts')
 <script type="text/x-template" id="category-template">
     <section class="row col-12 velocity-divide-page category-page-wrapper">  
-   <div class="listing-overlay w-100 d-flex" style="min-height:190px; align-items:center">
-                   <div class="container ">
-                   @php 
-                   $customer = auth()->guard('customer')->user();                           
-                     
-                       if(Auth::check())
-                       {
-                           $islogin = 1;
-                           $address = Db::table('addresses')->where('customer_id',$customer->id)->orderBy('created_at', 'desc')->first(); 			
-                       }
-                       else{
-                           $islogin = 0;
-                           $address = Db::table('addresses')->where('customer_token',$guestToken)->first();
-                       }
-                
-                    @endphp
-                    @if($address!='')
-                    
-                       <div class=" listing-banner-contant py-3">
-                           <h2 class="listing-banner-heading">{{$address->airport_name}}</h2>
-                           <p class="listing-paragraph-1">{{$address->address1}}, </p>
-                           <p class="listing-paragraph-2">{{$address->state}} {{$address->postcode }},{{$address->country }}</p>        
-                       </div>
-                       @else
-                       <div class="listing-banner-choose-contant py-3">
-                        <h1 class="listing-banner-choose-heading"><a href="{{ route('shop.home.index') }}">Choose Location</a></h1>
-                    </div>
-                    @endif
-                       
-                       {{-- <div class="listing-searchbar">
-                           <div class="category-search-icon">
-                           <img src="/themes/volantijetcatering/assets/images/black-search-icon.png">
-                           </div>
-                           
-                           
-                           <input type="text" class="form-control" placeholder="Search the menu...">  
-                       </div> --}}
-                   </div>
-               </div>
+ 
+
+     <div class="listing-overlay w-100 d-flex" style="min-height:190px; align-items:center;">
+    <div class="container">
+
+        <div class="listing-banner-contant py-3 hidden-div" id="airport-section">
+            <h2 class="listing-banner-heading" id="airport_name"></h2>
+            <p class="listing-paragraph-1" id="airport_address1"></p>
+            <p class="listing-paragraph-2" id="airport_location"></p>
+        </div>
+
+        <div class="listing-banner-choose-contant py-3 hidden-div" id="choose-section">
+            <h1 class="listing-banner-choose-heading">
+                <a href="{{ route('shop.home.index') }}">Choose Location</a>
+            </h1>
+        </div>
+
+    </div>
+</div>
 
        {!! view_render_event('bagisto.shop.productOrCategory.index.before', ['category' => $category]) !!}
    
@@ -396,64 +391,9 @@ null,
                  
                     @endforeach
                     
-                @push('scripts')                        
-            <script>
+       
 
-   Vue.component('category-component', {
-       template: '#category-template',
-   
-       data: function () {
-           return {
-               'products': [],
-               'isLoading': true,
-               'paginationHTML': '',
-               'currentScreen': window.innerWidth,
-               'slidesPerPage': 5,
-           }
-       },
-   
-       created: function () {                 
-           this.getCategoryProducts();
-           this.setSlidesPerPage(this.currentScreen);
-       },
-   
-           methods: {                    
-            'getCategoryProducts': function() {
-                        this.$http.get(
-                                `${this.$root.baseUrl}/category-products/{{ $category_ids }}${window.location.search}`
-                            )
-                            .then(response => {
-                                
-                                this.isLoading = false;
-                                this.products = response.data.products;
-                                // this.paginationHTML = response.data.paginationHTML;
-                                this.product_category = response.data
-                                    .product_category; //category-id and product-id
-                            })
-                            .catch(error => {
-                                this.isLoading = false;
-                                
-                            })
-                    },
-   
-           setSlidesPerPage: function (width) {
-               
-               if (width >= 1200) {
-                   this.slidesPerPage = 5;
-               } else if (width < 1200 && width >= 626) {
-                   this.slidesPerPage = 3;
-               } else if (width < 626 && width >= 400) {
-                   this.slidesPerPage = 2;
-               } else {
-                   this.slidesPerPage = 1;
-               }
-           }
-       }
-   })
-   
-   
-</script>
-@endpush
+
 @endforeach
 @php
 }else{
@@ -525,57 +465,7 @@ null,
     </div>
 </div>
 @endif
-@push('scripts')
-<script>
-    
-    Vue.component('category-component', {
-        template: '#category-template'
-        , data: function() {
-            return {
-                'products': []
-                , 'isLoading': true
-                , 'paginationHTML': ''
-                , 'currentScreen': window.innerWidth
-                , 'slidesPerPage': 5
-            , }
-        },
 
-        created: function() {
-            this.getCategoryProducts();
-            this.setSlidesPerPage(this.currentScreen);
-        },
-
-        methods: {
-            'getCategoryProducts': function() {
-                this.$http.get(`${this.$root.baseUrl}/category-products/{{$category->id}}?limit=48${window.location.search}`)
-                    .then(response => {
-                       this.isLoading = false;
-                        this.products = response.data.products;
-
-                        // this.paginationHTML = response.data.paginationHTML;
-                    })
-                    .catch(error => {
-                        this.isLoading = false;
-                    })
-            },
-
-            setSlidesPerPage: function(width) {
-
-                if (width >= 1200) {
-                    this.slidesPerPage = 5;
-                } else if (width < 1200 && width >= 626) {
-                    this.slidesPerPage = 3;
-                } else if (width < 626 && width >= 400) {
-                    this.slidesPerPage = 2;
-                } else {
-                    this.slidesPerPage = 1;
-                }
-            }
-        }
-    })
-
-</script>
-@endpush
 @php
 
 }
@@ -595,9 +485,73 @@ null,
 </script>
 
 @endpush
+<style>
+  .hidden-div { display: none !important; }
+.visible-div { display: block !important; }
 
 
+</style>
 
 @push('scripts')
+<script>
+Vue.component('category-component', {
+    template: '#category-template',
 
+    data() {
+        return {
+            products: [],
+            isLoading: true,
+            paginationHTML: "",
+            product_category: [],
+            currentScreen: window.innerWidth,
+            slidesPerPage: 5,
+        };
+    },
+
+    created() {
+        this.loadAirportBanner();
+        this.getCategoryProducts();
+        this.setSlidesPerPage(this.currentScreen);
+    },
+
+    methods: {
+        loadAirportBanner() {
+            $.get("{{ url('/ajax/get-user-address') }}", (address) => {
+                if (address && Object.keys(address).length > 0) {
+                    $("#airport_name").text(address.airport_name);
+                    $("#airport_address1").text(address.address1 + ",");
+                    $("#airport_location").text(address.state + " " + address.postcode + ", " + address.country);
+
+                    $("#choose-section").addClass("hidden-div").removeClass("visible-div");
+                    $("#airport-section").addClass("visible-div").removeClass("hidden-div");
+                } else {
+                    $("#airport-section").addClass("hidden-div").removeClass("visible-div");
+                    $("#choose-section").addClass("visible-div").removeClass("hidden-div");
+                }
+            });
+        },
+
+        getCategoryProducts() {
+            this.$http
+                .get(`${this.$root.baseUrl}/category-products/{{ $categoryIdsForApi }}${window.location.search}`)
+                .then((response) => {
+                    this.isLoading = false;
+                    this.products = response.data.products || [];
+                    this.product_category = response.data.product_category || [];
+                    // this.paginationHTML = response.data.paginationHTML || '';
+                })
+                .catch(() => {
+                    this.isLoading = false;
+                });
+        },
+
+        setSlidesPerPage(width) {
+            if (width >= 1200) this.slidesPerPage = 5;
+            else if (width >= 626) this.slidesPerPage = 3;
+            else if (width >= 400) this.slidesPerPage = 2;
+            else this.slidesPerPage = 1;
+        },
+    },
+});
+</script>
 @endpush

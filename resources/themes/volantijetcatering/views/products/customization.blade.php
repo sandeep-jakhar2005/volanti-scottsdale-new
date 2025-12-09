@@ -153,7 +153,8 @@ recaptchaResponse = grecaptcha.getResponse(),
                     $('.invalid-feedback, .fname-error, .lname-error, .email-error, .phone-error, .message-error, .file-error, #fileError').empty();
 
                     var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
-                         phonePattern = /^\(\d{3}\) \d{3}-\d{4}$/;
+                        phonePattern = /^\D*?(\d\D*){9,14}$/;
+
 var firstErrorField = null;
 
                     // Validation checks
@@ -168,7 +169,7 @@ var firstErrorField = null;
  hasError = true; 
                     }
                     if (!phoneNumber || !phonePattern.test(phoneNumber)) { 
-                        $('.phone-error').text(phoneNumber ? 'Please enter a valid phone number (10 to 14 digits).' : 'Phone number is required.').fadeIn(); 
+                        $('.phone-error').text(phoneNumber ? 'Please enter a valid 10–14 digit phone number.).' : 'Phone number is required.').fadeIn(); 
   if (!firstErrorField) firstErrorField = $('.phone-error');                       
  hasError = true; 
                     }
@@ -274,8 +275,8 @@ var firstErrorField = null;
         if (value.length === 0) {
             field.siblings('.phone-error').text('Phone number is required.').fadeIn();
             isValid = false;
-        } else if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(value)) {
-            field.siblings('.phone-error').text('Please enter a valid phone number (10 to 14 digits).').fadeIn();
+        } else if (!/^[0-9()\s.-]+$/.test(value) || value.replace(/\D/g, '').length < 9 || value.replace(/\D/g, '').length > 14) {
+            field.siblings('.phone-error').text('Please enter a valid 10–14 digit phone number.').fadeIn();
             isValid = false;
         } else {
             field.siblings('.phone-error').fadeOut();

@@ -14,15 +14,27 @@
             </span> <br>
 
             <p style="font-size: 16px;color: #5E5E5E;line-height: 24px;">
-                {{ __('shop::app.mail.order.dear', ['customer_name' => $order->customer_full_name]) }},
+                {{ __('shop::app.mail.order.dear', [
+                    'customer_name' =>
+                        trim($order->customer_first_name . ' ' . $order->customer_last_name) ?: ($order->fbo_full_name ?: 'Customer'),
+                ]) }},
             </p>
 
-            <p style="font-size: 16px;color: #5E5E5E;line-height: 24px;">
-                {!! __('shop::app.mail.order.greeting', [
-                    'order_id' => '<a href="' . route('shop.customer.orders.view', $order->id) . '" style="color: #0041FF; font-weight: bold;">#' . $order->increment_id . '</a>',
-                    'created_at' => core()->formatDate($order->created_at, 'Y-m-d H:i:s')
-                    ])
-                !!}
+            {{-- <p style="font-size: 16px;color: #5E5E5E;line-height: 24px;">
+            We are pleased to inform you that
+            <a href="{{ route('shop.customer.orders.view', $order->id) }}" style="color: #0041FF; font-weight: bold;">
+                #{{ $order->increment_id }}
+            </a>&nbsp;
+            placed on {{ core()->formatDate($order->created_at, 'Y-m-d H:i:s') }}.
+        </p> --}}
+
+            <p style="font-size: 16px; color: #5E5E5E; line-height: 24px;">
+                We are pleased to inform you that <strong>Shipment #{{ $shipment->id }}</strong>
+                for <strong>Order <a href="{{ route('shop.customer.orders.view', $order->id) }}"
+                        style="color: #0041FF; font-weight: bold;">
+                        #{{ $order->increment_id }}
+                    </a>&nbsp;</strong>, placed on {{ core()->formatDate($order->created_at, 'Y-m-d H:i:s') }}, has been
+                processed successfully.
             </p>
         </div>
 
@@ -50,7 +62,7 @@
                     </div>
 
                     <div>
-                        {{ $order->shipping_address->postcode . " " . $order->shipping_address->city }}
+                        {{ $order->shipping_address->postcode . ' ' . $order->shipping_address->city }}
                     </div>
 
                     <div>
@@ -77,11 +89,13 @@
                         </div>
 
                         <div style="margin-top: 5px;">
-                            <span style="font-weight: bold;">{{ __('shop::app.mail.shipment.carrier') }} : </span>{{ $shipment->carrier_title }}
+                            <span style="font-weight: bold;">{{ __('shop::app.mail.shipment.carrier') }} :
+                            </span>{{ $shipment->carrier_title }}
                         </div>
 
                         <div style="margin-top: 5px;">
-                            <span style="font-weight: bold;">{{ __('shop::app.mail.shipment.tracking-number') }} : </span>{{ $shipment->track_number }}
+                            <span style="font-weight: bold;">{{ __('shop::app.mail.shipment.tracking-number') }} :
+                            </span>{{ $shipment->track_number }}
                         </div>
                     </div>
                 </div>
@@ -106,7 +120,7 @@
                     </div>
 
                     <div>
-                        {{ $order->billing_address->postcode . " " . $order->billing_address->city }}
+                        {{ $order->billing_address->postcode . ' ' . $order->billing_address->city }}
                     </div>
 
                     <div>
@@ -140,37 +154,46 @@
                 border-spacing: 0;width: 100%">
                     <thead>
                         <tr style="background-color: #f2f2f2">
-                            <th style="text-align: left;padding: 8px">{{ __('shop::app.customer.account.order.view.SKU') }}</th>
-                            <th style="text-align: left;padding: 8px">{{ __('shop::app.customer.account.order.view.product-name') }}</th>
-                            <th style="text-align: left;padding: 8px">{{ __('shop::app.customer.account.order.view.price') }}</th>
-                            <th style="text-align: left;padding: 8px">{{ __('shop::app.customer.account.order.view.qty') }}</th>
+                            <th style="text-align: left;padding: 8px">{{ __('shop::app.customer.account.order.view.SKU') }}
+                            </th>
+                            <th style="text-align: left;padding: 8px">
+                                {{ __('shop::app.customer.account.order.view.product-name') }}</th>
+                            <th style="text-align: left;padding: 8px">
+                                {{ __('shop::app.customer.account.order.view.price') }}</th>
+                            <th style="text-align: left;padding: 8px">{{ __('shop::app.customer.account.order.view.qty') }}
+                            </th>
                         </tr>
                     </thead>
 
                     <tbody>
                         @foreach ($shipment->items as $item)
                             <tr>
-                                <td data-value="{{ __('shop::app.customer.account.order.view.SKU') }}" style="text-align: left;padding: 8px">{{ $item->sku }}</td>
+                                <td data-value="{{ __('shop::app.customer.account.order.view.SKU') }}"
+                                    style="text-align: left;padding: 8px">{{ $item->sku }}</td>
 
-                                <td data-value="{{ __('shop::app.customer.account.order.view.product-name') }}" style="text-align: left;padding: 8px">
+                                <td data-value="{{ __('shop::app.customer.account.order.view.product-name') }}"
+                                    style="text-align: left;padding: 8px">
                                     {{ $item->name }}
 
                                     @if (isset($item->additional['attributes']))
                                         <div class="item-options">
 
                                             @foreach ($item->additional['attributes'] as $attribute)
-                                                <b>{{ $attribute['attribute_name'] }} : </b>{{ $attribute['option_label'] }}</br>
+                                                <b>{{ $attribute['attribute_name'] }} :
+                                                </b>{{ $attribute['option_label'] }}</br>
                                             @endforeach
 
                                         </div>
                                     @endif
                                 </td>
 
-                                <td data-value="{{ __('shop::app.customer.account.order.view.price') }}" style="text-align: left;padding: 8px">{{ core()->formatPrice($item->price, $order->order_currency_code) }}</td>
+                                <td data-value="{{ __('shop::app.customer.account.order.view.price') }}"
+                                    style="text-align: left;padding: 8px">
+                                    {{ core()->formatPrice($item->price, $order->order_currency_code) }}</td>
 
-                                <td data-value="{{ __('shop::app.customer.account.order.view.qty') }}" style="text-align: left;padding: 8px">{{ $item->qty }}</td>
+                                <td data-value="{{ __('shop::app.customer.account.order.view.qty') }}"
+                                    style="text-align: left;padding: 8px">{{ $item->qty }}</td>
                             </tr>
-
                         @endforeach
                     </tbody>
                 </table>
@@ -179,11 +202,14 @@
 
         <div style="margin-top: 20px;font-size: 16px;color: #5E5E5E;line-height: 24px;display: inline-block;width: 100%">
             <p style="font-size: 16px;color: #5E5E5E;line-height: 24px;">
-                {!!
-                    __('shop::app.mail.order.help', [
-                        'support_email' => '<a style="color:#0041FF" href="mailto:' . core()->getSenderEmailDetails()['email'] . '">' . core()->getSenderEmailDetails()['email']. '</a>'
-                        ])
-                !!}
+                {!! __('shop::app.mail.order.help', [
+                    'support_email' =>
+                        '<a style="color:#0041FF" href="mailto:' .
+                        core()->getSenderEmailDetails()['email'] .
+                        '">' .
+                        core()->getSenderEmailDetails()['email'] .
+                        '</a>',
+                ]) !!}
             </p>
 
             <p style="font-size: 16px;color: #5E5E5E;line-height: 24px;">

@@ -182,7 +182,7 @@
                                     value="{{ isset($fboDetails->phone_number) && $fboDetails->phone_number ? $fboDetails->phone_number : (auth('customer')->check() && auth('customer')->user()->phone ? auth('customer')->user()->phone : '') }}"
                                     name="phonenumber" v-validate="'required|min:14'" />
                                 <span class="control-error" v-if="errors.has('phonenumber')"
-                                    v-text="errors.first('phonenumber')"></span>
+                                    v-text="errors.first('phonenumber')?'Please enter a valid 10-14 digit phone number.':''"></span>
                             </div>
 
 
@@ -451,7 +451,7 @@
                                                 </label>
                                                 <input type="text" class="form-control form-control-lg" id="phone" value="{{ $fboDetails->phone_number }}"
                                                     name="phonenumber" v-validate="'required|min:14'" />
-                                                <span class="control-error" v-if="errors.has('phonenumber')" v-text="errors.first('phonenumber')"></span>
+                                                <span class="control-error" v-if="errors.has('phonenumber')" v-text="errors.first('phonenumber')?'Please enter a valid 10-14 digit phone number.':''"></span>
                                             </div>
 
                                             <div class="control-group col-sm-12 col-md-6 col-lg-6 mb-3" :class="[errors.has('email') ? 'has-error' : '']">
@@ -801,6 +801,10 @@
                     <span class="btn-ring"></span>
                     </button>
                 </div>
+            </div>
+
+            <div class="text-danger checkout-payment-notes mt-2">
+                <strong>*Note: </strong> <span>This will not charge your card. Your information is used only to securely create a payment profile for future orders.</span>
             </div>
 
 

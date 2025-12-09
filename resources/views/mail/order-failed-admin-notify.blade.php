@@ -15,6 +15,8 @@
         <li><strong>Customer Name: </strong> {{ $orderData['Name'] ?? 'N/A' }}</li>
         <li><strong>Customer Email: </strong> {{ $orderData['Email'] ?? 'N/A' }}</li>
         <li><strong>Error Message: </strong> {{ $orderData['error_message'] ?? 'N/A' }}</li>
+        <li><strong>Error File: </strong> {{ $orderData['error_file'] ?? 'N/A' }}</li>
+        <li><strong>Error Line: </strong> {{ $orderData['error_line'] ?? 'N/A' }}</li>
     </ul>
 
     <p style="font-size: 14px; color: #333; margin-top: 20px;">

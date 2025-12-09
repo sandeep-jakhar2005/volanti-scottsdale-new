@@ -22,7 +22,7 @@ return [
     // // sandeep Add code 
     'client_id' => env('QUICKBOOKS_CLIENT_ID', 'ABIqeFgZKCl7HU8Nn2R7l4H1DxKzVSTdCxA8HqmJHTmAT6i3tH'),
     'client_secret' => env('QUICKBOOKS_CLIENT_SECRET', 'CWUfVRwsC7ywFJM6bQuU84EfAgTbvAlSXEZEKkXQ'),
-    'redirect_uri' => env('QUICKBOOKS_REDIRECT_URI', 'https://catering.volantiscottsdale.com/callback'),
+        'redirect_uri' => env('QUICKBOOKS_REDIRECT_URI', 'https://www.volantijetcatering.com/callback'),
     'scope' => env('SCOPE', 'com.intuit.quickbooks.accounting com.intuit.quickbooks.payment'),
     'baseUrl' => env('QUICKBOOKS_ENVIRONMENT', 'production'),
     'company_id' => env('QUICKBOOKS_REALM_ID', '123146565838279'),

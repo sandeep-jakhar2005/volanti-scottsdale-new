@@ -17,6 +17,14 @@
 
 }
 
+.checkout-payment-notes {
+    font-size: 14px;
+}
+.checkout-payment-notes span {
+font-weight: 600;
+    font-size: 11px;
+}
+
 
 #search-item-list{
     padding-left: 15px !important;

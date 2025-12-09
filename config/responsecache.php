@@ -49,7 +49,7 @@ return [
      * debugging.
      * ONLY works when "add_cache_time_header" is also active!
      */
-    'add_cache_age_header' => env('RESPONSE_CACHE_AGE_HEADER', false),
+    'add_cache_age_header' => env('RESPONSE_CACHE_AGE_HEADER', true),
 
     /*
      * This setting determines the name of the http header that contains
@@ -91,34 +91,4 @@ return [
      * This class is responsible for serializing responses.
      */
     'serializer' => \Spatie\ResponseCache\Serializers\DefaultSerializer::class,
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Excluded Paths (Do Not Cache)
-    |--------------------------------------------------------------------------
-    */
-    'excluded_paths' => [
-        'checkout*',
-        'cart*',
-        'wishlist*',
-        'customer/*',
-        'login',
-        'logout',
-        'register',
-        'api/*',
-        'admin/*',
-        '_debugbar*',
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Excluded Methods (POST, PUT, DELETE should NEVER be cached)
-    |--------------------------------------------------------------------------
-    */
-    'excluded_methods' => ['POST', 'PUT', 'PATCH', 'DELETE'],
-
-    // DO NOT CACHE AJAX / XHR requests
-    'excluded_ajax_requests' => true,
 ];

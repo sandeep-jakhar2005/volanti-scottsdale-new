@@ -162,7 +162,7 @@
 
                     <div class="col-12">
                         <input value="{{ old('phone') ?? $customer->phone }}" name="phone"  id="phone" type="text" v-validate="'required|min:14'"/>
-                        <span class="control-error" v-if="errors.has('phone')" v-text="errors.first('phone')"></span>
+                        <span class="control-error" v-if="errors.has('phone')" v-text="errors.first('phone')?'Please enter a valid 10-14 digit phone number.':''"></span>
                     </div>
                 </div>
             </div>

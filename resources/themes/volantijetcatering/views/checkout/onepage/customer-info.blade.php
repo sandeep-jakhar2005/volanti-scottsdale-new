@@ -809,34 +809,97 @@
             // sandeep ||add timeout code for airport list search
             let typingTimer;
             const typingDelay = 500;
+            // jQuery('body').on('keyup click', '#auto_search', function() {
+            //     var name = jQuery(this).val();
+            //     clearTimeout(typingTimer);
+            //     // here when ajax hit then show airport  
+            //     jQuery('#checkout_airport-fbo-list').hide();
+            //     if ($.inArray(name, customerArray) === -1) {
+            //         // jQuery('#address_update').prop('disabled', true);
+            //     }
+
+            //     typingTimer = setTimeout(function() {
+            //         $.ajax({
+            //             url: "{{ route('shop.home.index') }}",
+
+            //             type: 'GET',
+            //             data: {
+            //                 'name': name,
+            //                 'type': 'address_search'
+            //             },
+            //             success: function(result) {
+            //                 //console.log(result);
+            //                 jQuery("#address-list").html(result);
+            //             }
+            //         });
+
+            //     }, typingDelay);
+
+            // })
+
+                        $.ajax({
+                url: "{{ route('shop.home.index') }}",
+                method: "GET",
+                data: {
+                    type: "load_all_airports"
+                },
+                success: function(response) {
+                    airportCache = response;
+                }
+            });
+
             jQuery('body').on('keyup click', '#auto_search', function() {
-                var name = jQuery(this).val();
-                clearTimeout(typingTimer);
-                // here when ajax hit then show airport  
-                jQuery('#checkout_airport-fbo-list').hide();
-                if ($.inArray(name, customerArray) === -1) {
-                    // jQuery('#address_update').prop('disabled', true);
+
+                $('#airport-fbo-list').hide();
+                let name = jQuery(this).val().toLowerCase().trim();
+
+                if (!name) {
+                    jQuery("#address-list").html("");
+                    return;
                 }
 
-                typingTimer = setTimeout(function() {
-                    $.ajax({
-                        url: "{{ route('shop.home.index') }}",
+                // SEARCH IN CLIENT CACHE
+                let filtered = airportCache.filter(function(item) {
+                    return (
+                        item.name.toLowerCase().includes(name) ||
+                        item.address.toLowerCase().includes(name)
+                    );
+                });
 
-                        type: 'GET',
-                        data: {
-                            'name': name,
-                            'type': 'address_search'
-                        },
-                        success: function(result) {
-                            //console.log(result);
-                            jQuery("#address-list").html(result);
-                        }
+                // BUILD HTML (same as your controller output)
+                let output = "";
+
+                if (filtered.length > 0) {
+                    output += '<ul class="list-group">';
+                    filtered.forEach(function(addresse) {
+                        output += `
+                <li class='list-group-item pl-2 pl-md-3 pl-lg-3' 
+                    attr='${addresse.id}' 
+                    data-attr='${addresse.name}'>
+                    <div class='row m-0'>
+                        <div class='suggestion-img-div mr-1'>
+                            <img class='suggestion-icon m-0' src='/themes/velocity/assets/images/location-pin.png'>
+                        </div>
+                        <div>
+                            <b class='airport-name'>${addresse.name}</b><br>
+                            ${addresse.address}
+                        </div>
+                    </div>
+                </li>`;
                     });
+                    output += '</ul>';
+                } else {
+                    output = `
+            <ul class="list-group" style="height:65px; overflow:hidden">
+                <li class="list-group-item font-weight-bolder m-auto">
+                    No delivery location found
+                </li>
+            </ul>`;
+                }
 
-                }, typingDelay);
+                jQuery("#address-list").html(output);
 
-            })
-
+            });
 
 
             jQuery('body').on('click', 'li', function() {

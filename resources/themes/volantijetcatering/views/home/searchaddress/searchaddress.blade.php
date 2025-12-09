@@ -5,7 +5,7 @@
     use Illuminate\Support\Facades\Request;
     use Webkul\Checkout\Repositories\CartRepository;
     use Carbon\Carbon;
-    
+
     $guestToken = Session::token();
     // dd($guestToken);
     $airportArr = Db::table('delivery_location_airports')->pluck('name')->toArray();
@@ -14,45 +14,36 @@
     $guestSessionId = Session::getId();
     $cartItems = Session::get('cart');
     //echo session()->get('cart')->id;
-    
+
     $customer = auth()->guard('customer')->user();
     if (isset($customer->id) != null) {
-        $fboDetails = DB::table('fbo_details')
-            ->where('customer_id', $customer->id)
-            ->orderBy('id', 'DESC')
-            ->first();
+        $fboDetails = DB::table('fbo_details')->where('customer_id', $customer->id)->orderBy('id', 'DESC')->first();
     } else {
         $fboDetails = DB::table('fbo_details')->Where('customer_token', $guestToken)->orderBy('id', 'DESC')->first();
     }
-    
+
     $airport_fbo = '';
     if (Auth::check()) {
         $islogin = 1;
         $address = Db::table('addresses')
             ->where('customer_id', $customer->id)
             ->where('address_type', 'customer')
-            ->orderBy('created_at', 'desc') 
+            ->orderBy('created_at', 'desc')
             ->first();
 
         if (isset($address->airport_fbo_id)) {
-            $airport_fbo = DB::table('airport_fbo_details')
-                ->where('id', $address->airport_fbo_id)
-                ->value('name');
+            $airport_fbo = DB::table('airport_fbo_details')->where('id', $address->airport_fbo_id)->value('name');
         }
     } else {
         $islogin = 0;
         $address = Db::table('addresses')->where('customer_token', $guestToken)->first();
         if (isset($address->airport_fbo_id)) {
-            $airport_fbo = DB::table('airport_fbo_details')
-                ->where('id', $address->airport_fbo_id)
-                ->value('name');
+            $airport_fbo = DB::table('airport_fbo_details')->where('id', $address->airport_fbo_id)->value('name');
         }
     }
-    
+
     if (isset($address->airport_name) && $address->airport_name != '') {
-        $airport_id = DB::table('delivery_location_airports')
-            ->where('name', $address->airport_name)
-            ->first();
+        $airport_id = DB::table('delivery_location_airports')->where('name', $address->airport_name)->first();
     }
     if (isset($fboDetails->delivery_date)) {
         $date = $fboDetails->delivery_date;
@@ -120,8 +111,8 @@
                     <img class="Navigation-image home_border_left"
                         src="{{ asset('themes/velocity/assets/images/navigation.png') }}" alt="location image" />
                     <input type="text" id="auto_search" class="form-control w-100 pr-2 pl-2"
-                        placeholder="Search Delivery Location" 
-                        @if (isset($address)) data="{{$address->id}}" value="{{ $address->airport_name }}" @endif>
+                        placeholder="Search Delivery Location"
+                        @if (isset($address)) data="{{ $address->id }}" value="{{ $address->airport_name }}" @endif>
                 </div>
                 <div id="address-list" class="suggestion-list"></div>
             </div>
@@ -132,7 +123,8 @@
         <div class="row  airport__fbo__detail">
             <div class="col-lg-3 col-md-3 col-12 mx-auto padding search_label_wrapper d-md-flex">
                 <img class="Navigation-image"
-                    src="{{ asset('themes/volantijetcatering/assets/images/home/store-label.svg') }}" alt="store image" />
+                    src="{{ asset('themes/volantijetcatering/assets/images/home/store-label.svg') }}"
+                    alt="store image" />
                 <p class="m-0 text-center fbo_name">
                     FBO
                 </p>
@@ -140,13 +132,15 @@
             <div class="search-content col-lg-9 col-md-9 col-12 pr-0 pl-0 padding ">
                 <div class="searchbar home_border_left airport_fbo_name">
                     <!-- <i class="home_border_left px-lg-2"></i> -->
-                    <input type="text" id="airport-fbo-input" class="form-control w-100 pr-2 pl-1 ml-3 pointer home_border_left"
+                    <input type="text" id="airport-fbo-input"
+                        class="form-control w-100 pr-2 pl-1 ml-3 pointer home_border_left"
                         placeholder="Airport Fbo Detail" readonly
                         @if (isset($airport_fbo)) value="{{ $airport_fbo }}" @endif>
                     <img class="Navigation-image pointer" id="airport-fbo-input"
                         src="{{ asset('themes/volantijetcatering/assets/images/home/down-arrow.svg') }}"
                         alt="home down arrow" />
-                    <input type="hidden" id="selected-fbo-id" name="selected_fbo_id" @if (isset($address)) value="{{ $address->airport_fbo_id }}" @endif>
+                    <input type="hidden" id="selected-fbo-id" name="selected_fbo_id"
+                        @if (isset($address)) value="{{ $address->airport_fbo_id }}" @endif>
                     <div id="airport-fbo-list" class="custom-dropdown-list text-justify d-none">
                         <!-- Options will be inserted here -->
                     </div>
@@ -167,7 +161,8 @@
 
             <div class="col-lg-5 col-md-5 col-6 pr-0 pl-0 padding search_label_wrapper" id="time_search_label">
                 <img class="Navigation-image pl-3"
-                    src="{{ asset('themes/volantijetcatering/assets/images/home/calendar-alt.svg') }}" alt="calender image" />
+                    src="{{ asset('themes/volantijetcatering/assets/images/home/calendar-alt.svg') }}"
+                    alt="calender image" />
                 <div class='datetime'>
                     {{-- <i class="Navigation-image home_border_left px-4"></i> --}}
                     <div class="form-group m-0">
@@ -187,13 +182,13 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-4 col-6 pr-0 pl-0 padding search_label_wrapper pl-3 d-flex delivery_time_slot">
-                <img class="Navigation-image" src="{{ asset('themes/volantijetcatering/assets/images/home/time.svg') }}"
-                    alt="time image" />
+                <img class="Navigation-image"
+                    src="{{ asset('themes/volantijetcatering/assets/images/home/time.svg') }}" alt="time image" />
                 <div class='datetime'>
                     <div class="form-group m-0">
                         <div class='input-group date time_date_picker d-block' id='datetimepicker2'>
-                            <input type="text" class="p-lg-0 p-md-0" id="timeSlots" value="{{ isset($time) ? $time : '' }}"
-                                placeholder="Select Time" readonly>
+                            <input type="text" class="p-lg-0 p-md-0" id="timeSlots"
+                                value="{{ isset($time) ? $time : '' }}" placeholder="Select Time" readonly>
 
                             <div class="delivery_select delivery_select_time" style="width: 100% !important">
                                 <ul id="timeSlotsList"></ul>
@@ -213,7 +208,6 @@
 </div>
 
 @push('scripts')
-
     <script>
         $(document).on('click', function(event) {
 
@@ -272,8 +266,7 @@
                 $('#selected-fbo-id').val(selectedId); // Store the selected ID in the hidden input
                 $('#airport-fbo-list').hide();
                 if ($('#daySelect').val() != '' && $('#timeSlots').val() !=
-                    '' && $('#selected-fbo-id').val() != '' && $('#selected-fbo-id').val() != '0') {
-                }
+                    '' && $('#selected-fbo-id').val() != '' && $('#selected-fbo-id').val() != '0') {}
             });
             //21-05-2024 || airport fbo detail dropdown show and hide end//
 
@@ -288,7 +281,8 @@
 
             //alert(customerArray);
             var al_name = jQuery('#auto_search').val();
-            if (al_name != '' && $('#daySelect').val() != '' && $('#timeSlots').val() != '' && ($('#selected-fbo-id').val() != '' && $('#selected-fbo-id').val() != '0')) {
+            if (al_name != '' && $('#daySelect').val() != '' && $('#timeSlots').val() != '' && ($(
+                    '#selected-fbo-id').val() != '' && $('#selected-fbo-id').val() != '0')) {
 
             }
 
@@ -296,39 +290,105 @@
             let typingTimer;
             const typingDelay = 500;
 
+            // jQuery('body').on('keyup click', '#auto_search', function() {
+            //     $('#airport-fbo-list').hide();
+            //     clearTimeout(typingTimer); 
+            //     // //console.log('hfggh');
+            //     var name = jQuery(this).val();
+            //     // here when ajax hit then show airport  
+
+            //     if ($.inArray(name, customerArray) === -1) {
+
+            //         // jQuery('#address_btn').prop('disabled', true);
+            //         // jQuery('.search-button').prop('disabled', true);
+
+            //     }
+
+            //     typingTimer = setTimeout(function() {
+            //     // $('#address_btn').prop('disabled', false);
+
+            //     $.ajax({
+            //         url: "{{ route('shop.home.index') }}",
+
+            //         method: 'GET',
+            //         data: {
+            //             'name': name,
+            //             'type': 'address_search'
+            //         },
+            //         success: function(result) {
+            //             //console.log(result);
+            //             jQuery("#address-list").html(result);
+            //         }
+            //     });
+            // }, typingDelay);
+            // })
+
+            let airportCache = [];
+
+
+            $.ajax({
+                url: "{{ route('shop.home.index') }}",
+                method: "GET",
+                data: {
+                    type: "load_all_airports"
+                },
+                success: function(response) {
+                    airportCache = response;
+                }
+            });
+
             jQuery('body').on('keyup click', '#auto_search', function() {
+
                 $('#airport-fbo-list').hide();
-                clearTimeout(typingTimer); 
-                // //console.log('hfggh');
-                var name = jQuery(this).val();
-                // here when ajax hit then show airport  
+                let name = jQuery(this).val().toLowerCase().trim();
 
-                if ($.inArray(name, customerArray) === -1) {
-
-                    // jQuery('#address_btn').prop('disabled', true);
-                    // jQuery('.search-button').prop('disabled', true);
-
+                if (!name) {
+                    jQuery("#address-list").html("");
+                    return;
                 }
 
-                typingTimer = setTimeout(function() {
-                // $('#address_btn').prop('disabled', false);
-
-                $.ajax({
-                    url: "{{ route('shop.home.index') }}",
-
-                    method: 'GET',
-                    data: {
-                        'name': name,
-                        'type': 'address_search'
-                    },
-                    success: function(result) {
-                        //console.log(result);
-                        jQuery("#address-list").html(result);
-                    }
+                // SEARCH IN CLIENT CACHE
+                let filtered = airportCache.filter(function(item) {
+                    return (
+                        item.name.toLowerCase().includes(name) ||
+                        item.address.toLowerCase().includes(name)
+                    );
                 });
-            }, typingDelay);
-            })
 
+                // BUILD HTML (same as your controller output)
+                let output = "";
+
+                if (filtered.length > 0) {
+                    output += '<ul class="list-group">';
+                    filtered.forEach(function(addresse) {
+                        output += `
+                <li class='list-group-item pl-2 pl-md-3 pl-lg-3' 
+                    attr='${addresse.id}' 
+                    data-attr='${addresse.name}'>
+                    <div class='row m-0'>
+                        <div class='suggestion-img-div mr-1'>
+                            <img class='suggestion-icon m-0' src='/themes/velocity/assets/images/location-pin.png'>
+                        </div>
+                        <div>
+                            <b class='airport-name'>${addresse.name}</b><br>
+                            ${addresse.address}
+                        </div>
+                    </div>
+                </li>`;
+                    });
+                    output += '</ul>';
+                } else {
+                    output = `
+            <ul class="list-group" style="height:65px; overflow:hidden">
+                <li class="list-group-item font-weight-bolder m-auto">
+                    No delivery location found
+                </li>
+            </ul>`;
+                }
+
+                jQuery("#address-list").html(output);
+
+            });
 
 
             jQuery('body').on('click', ' #address-list li', function() {
@@ -348,18 +408,18 @@
 
 
             // sandeep add code
-            jQuery('body').on('click', '#airport-fbo-input', function () {
+            jQuery('body').on('click', '#airport-fbo-input', function() {
                 if (jQuery('.custom-dropdown-list').css('display') == 'none') {
-                    $('#airport-fbo-list').toggle();  
+                    $('#airport-fbo-list').toggle();
                     if (airport_id) {
-                         airport_fbo();
-                     }
+                        airport_fbo();
+                    }
                 }
 
                 if ($('#auto_search').val().trim() === '') {
                     $('#fboerror').text('Please select delivery location.').removeClass('d-none').fadeIn();;
                     setTimeout(function() {
-                        $('#fboerror').fadeOut(function() { 
+                        $('#fboerror').fadeOut(function() {
                             $(this).addClass('d-none');
                         });
                     }, 3000);
@@ -374,9 +434,9 @@
                 let fboaddress = $('#fbo-address').val().trim();
                 let fboNotes = $('#fbo-notes').val().trim();
                 let originalContent = $(this).html();
-                if(fboName && fboaddress){
-                $(this).html('<span class="btn-ring"></span>');
-                $(this).find(".btn-ring").show();
+                if (fboName && fboaddress) {
+                    $(this).html('<span class="btn-ring"></span>');
+                    $(this).find(".btn-ring").show();
                 }
                 if (airport_id) {
                     $.ajax({
@@ -403,7 +463,7 @@
                             }
                         },
 
-                        error: function(xhr,status,error) {
+                        error: function(xhr, status, error) {
                             if (xhr.status === 422) {
                                 $.each(xhr.responseJSON.errors, function(key, value) {
                                     $('#' + key + '-error').text(value[0]).show();
@@ -422,11 +482,11 @@
             }
 
             // sandeep || add code for remove padding on body
-            $(document).click('body, .fboClose',function(){
+            $(document).click('body, .fboClose', function() {
                 $('#exampleModalCenter').on('hidden.bs.modal', function() {
-                      $('body').addClass('pr-0');
-                      //console.log('modal hide');
-               });
+                    $('body').addClass('pr-0');
+                    //console.log('modal hide');
+                });
             });
 
 
@@ -466,41 +526,49 @@
 
                 var csrfToken = jQuery('meta[name="csrf-token"]').attr('content');
 
-               
-                if(!airport_id){
+
+                if (!airport_id) {
                     let element = $('#airport_select_searchbar');
                     element.addClass('homepage_error_focus');
-                    $('html, body').animate({ scrollTop: element.offset().top - 150 }, 500);
+                    $('html, body').animate({
+                        scrollTop: element.offset().top - 150
+                    }, 500);
                     setTimeout(() => {
                         element.removeClass('homepage_error_focus');
                     }, 3000);
                     return;
                 }
 
-                if(!selected_fbo_id){
+                if (!selected_fbo_id) {
                     let element = $('.airport_fbo_name');
                     element.addClass('homepage_error_focus');
-                    $('html, body').animate({ scrollTop: element.offset().top - 150 }, 500);
+                    $('html, body').animate({
+                        scrollTop: element.offset().top - 150
+                    }, 500);
                     setTimeout(() => {
                         element.removeClass('homepage_error_focus');
                     }, 3000);
                     return;
                 }
 
-                if(!date){
+                if (!date) {
                     let element = $('#time_search_label');
                     element.addClass('homepage_error_focus');
-                    $('html, body').animate({ scrollTop: element.offset().top - 150 }, 500);
+                    $('html, body').animate({
+                        scrollTop: element.offset().top - 150
+                    }, 500);
                     setTimeout(() => {
                         element.removeClass('homepage_error_focus');
                     }, 3000);
                     return;
                 }
 
-                if(!time){
+                if (!time) {
                     let element = $('.delivery_time_slot');
                     element.addClass('homepage_error_focus');
-                    $('html, body').animate({ scrollTop: element.offset().top - 150 }, 500);
+                    $('html, body').animate({
+                        scrollTop: element.offset().top - 150
+                    }, 500);
                     setTimeout(() => {
                         element.removeClass('homepage_error_focus');
                     }, 3000);
@@ -508,16 +576,16 @@
                 }
 
 
-                if(airport_id && selected_fbo_id && date && time){
-                let originalContent = $(this).html();
-                $(this).html('<span class="btn-ring"></span>');
-                $(this).find(".btn-ring").show();
-                $(this).find('.btn-ring').css({
-                'display': 'flex',
-                'justify-content': 'center',
-                'align-items': 'center'
-            });
-        }
+                if (airport_id && selected_fbo_id && date && time) {
+                    let originalContent = $(this).html();
+                    $(this).html('<span class="btn-ring"></span>');
+                    $(this).find(".btn-ring").show();
+                    $(this).find('.btn-ring').css({
+                        'display': 'flex',
+                        'justify-content': 'center',
+                        'align-items': 'center'
+                    });
+                }
 
                 // $.ajaxSetup({
                 //     headers: {
@@ -554,11 +622,11 @@
                         //  $("#address-list").html(result);
                     },
                     error: function(xhr, status, error) {
-                    // Error par original state restore karein
-                    $('#address_btn').html(originalContent);
-                    $(this).find('.btn-ring').hide();
-                     //console.log("Error:", error);
-                     }
+                        // Error par original state restore karein
+                        $('#address_btn').html(originalContent);
+                        $(this).find('.btn-ring').hide();
+                        //console.log("Error:", error);
+                    }
                 });
             });
 

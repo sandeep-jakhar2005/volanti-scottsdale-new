@@ -72,22 +72,27 @@ class paymentProfileController extends Controller
         $detail = $request->all();
         $order = Order::where('id', $detail['orderid'])->first();
 
-        if (
-            ($order->customer_email !== null && $detail['email'] === $order->customer_email && $detail['tail_number'] === $order->fbo_tail_number) ||
-            ($order->customer_email === null && $detail['email'] === $order->fbo_email_address && $detail['tail_number'] === $order->fbo_tail_number)
-        ) {
+        // dd($order , $detail);
+
+        $emailMatch = $order->customer_email
+            ? $detail['email'] === $order->customer_email
+            : $detail['email'] === $order->fbo_email_address;
+
+        $tailMatch = $detail['tail_number'] === $order->fbo_tail_number;
+
+        if ($emailMatch && $tailMatch) {
             $agent = agentHandler::where('order_id', $detail['orderid'])->first();
 
-            // return view($this->_config['view'], compact('order','agent'));
             Session::put('invoice-form-fill', true);
             Session::put('invoice-order-id', $orderid);
             Session::put('invoice-customer-id', $customerid);
 
             return redirect()->route('invoice.detail', ['orderid' => $orderid, 'customerid' => $customerid]);
-        } else {
-            session()->flash('warning', 'Wrong email or tail number');
-            return redirect()->back();
         }
+
+        session()->flash('warning', 'Wrong email or tail number');
+        return redirect()->back();
+
     }
 
     public function success_message()
@@ -97,7 +102,7 @@ class paymentProfileController extends Controller
     }
     public function error_message()
     {
-        session()->flash('warning', 'Unsuccessful! Payment not collected');
+        session()->flash('warning', 'This transaction has been declined');
         return redirect()->back();
     }
 

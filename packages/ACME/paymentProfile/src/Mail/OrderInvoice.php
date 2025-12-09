@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class OrderInvoice extends Mailable
 {
@@ -31,14 +32,15 @@ class OrderInvoice extends Mailable
      *
      * @return $this
      */
-    public function build()
-    {
-        $increment_id = $this->order->increment_id;
-        return $this->subject('Invoice'. ' #' . $increment_id)
+public function build()
+{
+    $increment_id = $this->order->increment_id;
+    $pdfUrl = url(Storage::url('invoice/' . basename($this->pdfPath)));
+    
+    return $this->subject('Invoice #' . $increment_id)
         ->view('paymentprofile::shop.volantijetcatering.invoices.mail.create')
-        ->attach($this->pdfPath, [
-            'as' => 'invoice.pdf', // Name of the attachment
-            'mime' => 'application/pdf' // MIME type of the attachment
+        ->with([
+            'pdfUrl' => $pdfUrl,
         ]);
-    }
+}
 }

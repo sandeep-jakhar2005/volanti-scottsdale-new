@@ -813,7 +813,7 @@ return [
                 'dear-admin' => 'Dear :admin_name',
                 'greeting' => 'Welcome and thank you for registering with us!',
                 'greeting-admin' => 'You have one new customer registration.',
-                'summary' => 'Your account has now been created successfully and you can login using your email address and password credentials. Upon logging in, you will be able to access other services including reviewing past orders, wishlists and editing your account information.',
+                'summary' => 'Your account has now been created successfully and you can login using your email address and password credentials. Upon logging in, you will be able to access other services including reviewing past orders and editing your account information.',
                 'thanks' => 'Thanks!',
             ],
 

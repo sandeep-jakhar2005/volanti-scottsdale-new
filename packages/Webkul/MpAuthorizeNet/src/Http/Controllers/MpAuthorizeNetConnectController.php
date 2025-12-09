@@ -100,7 +100,7 @@ class MpAuthorizeNetConnectController extends Controller
     {
 
 
-        log::info('collectToken');
+        //log::info('collectToken');
         try {
             // sandeep add code 
             $orderId = request()->input('order_id');
@@ -118,10 +118,10 @@ class MpAuthorizeNetConnectController extends Controller
             log::info('savedCardSelectedId',['savedCardSelectedId',request()->input('savedCardSelectedId')]);
             if (request()->input('savedCardSelectedId')) {
 
-                log::info('1');
+                //log::info('1');
 
                 if (isset($orderId) && $orderId) {
-                log::info('2');
+                //log::info('2');
 
                     session()->put('ADMIN_PAYMENT', true);
                     session()->put('ADMIN_CARD', true);
@@ -139,7 +139,7 @@ class MpAuthorizeNetConnectController extends Controller
                     DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
                 } else {
-                log::info('3a');
+                //log::info('3a');
 
                     session()->forget('ADMIN_PAYMENT');
                     session()->forget('ADMIN_CARD');
@@ -164,16 +164,16 @@ class MpAuthorizeNetConnectController extends Controller
                 }
 
             } else {
-                log::info('4a');
+                //log::info('4a');
                 $misc = request()->input('response');
-                log::info('misc',['misc'=>$misc]);
+                //log::info('misc',['misc'=>$misc]);
                 log::info('result',['result',request()->input('result')]);
                 if (auth()->guard('customer')->check() && request()->input('result') == 'true') {
-                log::info('5a');
+                //log::info('5a');
 
                     log::info('misc',['misc'=>$misc]);
                     $last4 = $misc['encryptedCardData']['cardNumber'];
-                    log::info('last4',['last4',$last4]);
+                    //log::info('last4',['last4',$last4]);
 
                     $cardExist = $this->mpauthorizenetRepository->findOneWhere([
                         'last_four' => $last4,
@@ -208,7 +208,7 @@ class MpAuthorizeNetConnectController extends Controller
                         return response()->json(['success' => 'false'], 400);
                     }
                 } else {
-                    log::info('second');
+                    //log::info('second');
 
                     //payment from admin or invoice view and card is not save
                     if (request()->input('order_id')) {
@@ -244,7 +244,7 @@ class MpAuthorizeNetConnectController extends Controller
                         }
 
                     } else {
-                        log::info('set card velue');
+                        //log::info('set card velue');
                         session()->forget('ADMIN_PAYMENT');
                         session()->forget('ADMIN_CARD');
 
@@ -273,14 +273,14 @@ class MpAuthorizeNetConnectController extends Controller
 
     public function createCharge(Request $request)
     {
-        log::info('1');
+        //log::info('1');
         log::info('session_data',['session_data',session()->all()]); 
         try {
 
             $cardBoolean = session()->get('card');
             $orderId = request()->input('order_id');
 
-            log::info('2');
+            //log::info('2');
             log::info('cardBoolean',['cardBoolean'=>$cardBoolean]);
 
             // dd($orderId);
@@ -289,13 +289,13 @@ class MpAuthorizeNetConnectController extends Controller
                 log::info('3');
 
                 if (session()->has('ADMIN_PAYMENT') && $orderId) {
-                    log::info('4');
+                    //log::info('4');
                     $MpauthorizeNetCard = $this->mpauthorizenetcartRepository->findOneWhere([
                         'cart_id' => $orderId
                     ])->mpauthorizenet_token;
 
                 } else {
-                    log::info('5');
+                    //log::info('5');
                     $MpauthorizeNetCard = $this->mpauthorizenetcartRepository->findOneWhere([
                         'cart_id' => Cart::getCart()->id
                     ])->mpauthorizenet_token;
@@ -304,9 +304,9 @@ class MpAuthorizeNetConnectController extends Controller
                 $MpauthorizeNetCardDecode = json_decode($MpauthorizeNetCard);
 
                 if (isset($MpauthorizeNetCardDecode->customerResponse)) {
-                    log::info('6');
+                    //log::info('6');
                     if (session()->has('ADMIN_PAYMENT') && $orderId) {
-                        log::info('7');
+                        //log::info('7');
                         $savedCardPaymentResponse = $this->helper->chargeCustomerProfile($MpauthorizeNetCardDecode);
 
                         $this->mpauthorizenetcartRepository->deleteWhere([
@@ -316,13 +316,13 @@ class MpAuthorizeNetConnectController extends Controller
                         $customerProfileResponse = $this->helper->paymentResponse($savedCardPaymentResponse);
                         // dd($customerProfileResponse);
                         if ($customerProfileResponse == 'true') {
-                            log::info('8');
+                            //log::info('8');
                             session()->forget('ADMIN_PAYMENT');
                             session()->forget('ADMIN_CARD');
                             return $customerProfileResponse;
                         }
                     } else {
-                        log::info('9');
+                        //log::info('9');
                         $savedCardPaymentResponse = $this->helper->chargeCustomerProfile($MpauthorizeNetCardDecode);
 
                         $this->mpauthorizenetcartRepository->deleteWhere([
@@ -333,7 +333,7 @@ class MpAuthorizeNetConnectController extends Controller
 
                         if ($customerProfileResponse == 'true') {
                             $cart = Cart::getCart();
-                            log::info('10');
+                            //log::info('10');
                             CustomerProfileLog::create([
                                 'profile_id' => $MpauthorizeNetCardDecode->customerResponse->customerProfileId,
                                 'payment_profile_id' => $MpauthorizeNetCardDecode->customerResponse->paymentProfielId,
@@ -344,7 +344,7 @@ class MpAuthorizeNetConnectController extends Controller
                             return redirect()->route('shop.checkout.success');
 
                         } else {
-                            log::info('11');
+                            //log::info('11');
                             session()->flash('warning', $customerProfileResponse);
                             return redirect()->route('shop.checkout.cart.index');
                         }
@@ -404,7 +404,7 @@ class MpAuthorizeNetConnectController extends Controller
                         log::info('customerProfileResponse',['customerProfileResponse'=>$customerProfileResponse]);
 
                         if ($customerProfileResponse == 'true') {
-                            log::info('14');
+                            //log::info('14');
                             CustomerProfileLog::create([
                                 'profile_id' => $customerResponse['customerProfileId'],
                                 'payment_profile_id' => $customerResponse['paymentProfielId'],
@@ -413,14 +413,14 @@ class MpAuthorizeNetConnectController extends Controller
                             ]);
                             return redirect()->route('shop.checkout.success');
                         } else {
-                            log::info('15');
+                            //log::info('15');
                             session()->flash('warning', $customerProfileResponse);
 
                             return redirect()->route('shop.checkout.cart.index');
                         }
 
                     } else {
-                        log::info('16');
+                        //log::info('16');
                         $this->helper->deleteCart();
 
                         $errorMessages = $cutomerProfileResponse->getMessages()->getMessage();
@@ -431,9 +431,9 @@ class MpAuthorizeNetConnectController extends Controller
                     }
                 }
             } else {
-                log::info('17');
+                //log::info('17');
                 if (session()->has('ADMIN_PAYMENT')) {
-                    log::info('18');
+                    //log::info('18');
                     $MpauthorizeNetCard = $this->mpauthorizenetcartRepository->findOneWhere([
                         'cart_id' => request()->input('order_id')
                     ])->mpauthorizenet_token;
@@ -454,12 +454,12 @@ class MpAuthorizeNetConnectController extends Controller
 
                     if ($paymentResponse == 'true') {
                         
-                        log::info('19');
+                        //log::info('19');
                         session()->forget('ADMIN_PAYMENT');
                         return $paymentResponse;
 
                     } else {
-                        log::info('20');
+                        //log::info('20');
                         $this->helper->deleteCart();
 
                         return redirect()->back();
@@ -555,10 +555,10 @@ class MpAuthorizeNetConnectController extends Controller
                         $customer_id = Auth::user()->id;
                     }
 
-                    log::info('profile_id',['profile_id'=>$guestPaymentprofile->getCustomerProfileId()]);
-                    log::info('payment_profile_id',['payment_profile_id'=>$guestPaymentprofile->getCustomerPaymentProfileIdList()[0]]);
-                    log::info('profile_id',['profile_id'=>$customer_id]);
-                    log::info('email',['email'=>$fboDetails->email_address]);
+                    // log::info('profile_id',['profile_id'=>$guestPaymentprofile->getCustomerProfileId()]);
+                    // log::info('payment_profile_id',['payment_profile_id'=>$guestPaymentprofile->getCustomerPaymentProfileIdList()[0]]);
+                    // log::info('profile_id',['profile_id'=>$customer_id]);
+                    // log::info('email',['email'=>$fboDetails->email_address]);
 
 
                         CustomerProfileLog::create([
@@ -584,20 +584,23 @@ class MpAuthorizeNetConnectController extends Controller
 
         } catch (\Exception $e) {
             session()->flash('error', __('mpauthorizenet::app.error.something-went-wrong'));
-            log::info('25');
             $order = session('order');
             log::info('order',['order'=>$order]);
             log::error($e->getMessage());
+            $errorFile = $e->getFile();
+            $errorLine = $e->getLine();
             if(isset($order)){
             $orderData = [
-                'order_id' => $order['increment_id'],
-                'status' => $order['status'],
-                'Name' => $customerName ?? '',
-                'Email' => $customerEmail ?? '',
-                'Mail_Heading' => "Order Processing Failure",
-                'Mail_Subject' => "Order Failed Notification",
-                'error_message' => $e->getMessage(),
-            ];
+                    'order_id' => $order['increment_id'],
+                    'status' => $order['status'],
+                    'Name' => $customerName ?? '',
+                    'Email' => $customerEmail ?? '',
+                    'Mail_Heading' => "Order Processing Failure",
+                    'Mail_Subject' => "Order Failed Notification",
+                    'error_message' => $e->getMessage(),
+                    'error_file' => $errorFile,
+                    'error_line' => $errorLine,
+                ];
             // Dispatch the job to send email
             SendOrderFailedEmail::dispatch($orderData);
         }
@@ -606,18 +609,20 @@ class MpAuthorizeNetConnectController extends Controller
         if(isset($orderId)){
             $order = DB::table('orders')->where('id', $orderId)->first();
             $orderData = [
-                'order_id' => $order->increment_id,
-                'status' => $order->status,
-                'Name' => (!empty($order->customer_first_name) && !empty($order->customer_last_name))
-                    ? $order->customer_first_name . ' ' . $order->customer_last_name
-                    : $order->fbo_full_name,
-                'Email' => !empty($order->customer_email)
-                    ? $order->customer_email
-                    : $order->fbo_email_address,
-                'Mail_Heading' => "Payment Processing Failure",
-                'Mail_Subject' => "Payment Failed Notification",
-                'error_message' => $e->getMessage(),
-            ];
+                    'order_id' => $order->increment_id,
+                    'status' => $order->status,
+                    'Name' => (!empty($order->customer_first_name) && !empty($order->customer_last_name))
+                        ? $order->customer_first_name . ' ' . $order->customer_last_name
+                        : $order->fbo_full_name,
+                    'Email' => !empty($order->customer_email)
+                        ? $order->customer_email
+                        : $order->fbo_email_address,
+                    'Mail_Heading' => "Payment Processing Failure",
+                    'Mail_Subject' => "Payment Failed Notification",
+                    'error_message' => $e->getMessage(),
+                    'error_file' => $errorFile,
+                    'error_line' => $errorLine,
+                ];
             // Dispatch the job to send email
             SendOrderFailedEmail::dispatch($orderData);
         }

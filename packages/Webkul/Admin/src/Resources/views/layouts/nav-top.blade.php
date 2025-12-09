@@ -11,9 +11,9 @@
 @endphp
 
 <div class="navbar-top">
+
     <div class="navbar-top-left">
         @include ('admin::layouts.mobile-nav')
-
         <div class="brand-logo">
             <a href="{{ route('admin.dashboard.index') }}">
                 @if (core()->getConfigData('general.design.admin_logo.logo_image', core()->getCurrentChannelCode()))
@@ -28,7 +28,16 @@
     </div>
 
     <div class="navbar-top-right">
+
         <div class="profile">
+
+            <div class="store">
+                <a href="{{ route('admin.clear.cache') }}" class="btn" style="display: inline-block;vertical-align: middle;color: #ffffff;background: #0041FF;padding: 5px;">
+                    <span class="" data-toggle="tooltip" data-placement="bottom" title="Clear Cache">Purge
+                        Cache</span>
+                </a>
+            </div>
+
             <span class="avatar">
             </span>
 

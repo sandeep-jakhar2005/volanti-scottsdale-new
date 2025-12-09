@@ -22,7 +22,7 @@ class AgeVerificationController extends Controller
 public function save_user_dob(Request $request){
    
         $request->validate([
-        'dob' => 'required|date|before:today'
+        'dob' => 'required|date'
     ]);
 
     $dob = $request->dob;

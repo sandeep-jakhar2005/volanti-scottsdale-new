@@ -8,7 +8,7 @@
 
 @section('seo')
 <meta name="title" content="Account | Volanti Jet Catering" />
-<meta name="description" content="" />
+<meta name="description" content="Manage your Volanti Jet Catering account — view past orders, update personal details." />
 <meta name="keywords" content="" />
 @stop
 

@@ -6,7 +6,7 @@ use App\Http\Middleware\checkDeliveryOrderAssign;
 use ACME\paymentProfile\Http\Controllers\Admin\QuickBookController;
 use ACME\paymentProfile\Http\Controllers\Admin\paymentProfileController;
 use ACME\paymentProfile\Http\Controllers\Admin\InvoicesController;
-
+use Illuminate\Support\Facades\Artisan;
 
 Route::group([
     'prefix' => 'admin/paymentprofile',
@@ -16,6 +16,11 @@ Route::group([
     Route::get('', 'ACME\paymentProfile\Http\Controllers\Admin\paymentProfileController@index')->defaults('_config', [
         'view' => 'paymentprofile::admin.index',
     ])->name('admin.paymentprofile.index');
+
+    Route::get('/clear-cache', function () {
+        Artisan::call('optimize:clear');
+        return back()->with('success', 'Application cache cleared!');
+    })->name('admin.clear.cache');
 
     /**
      * Orders routes.
@@ -162,22 +167,22 @@ Route::group([
 
     //custom order
 
-    Route::get('custom-order',[ordersController::class,'custom_order'])->defaults('_config', [
+    Route::get('custom-order', [ordersController::class, 'custom_order'])->defaults('_config', [
         'view' => 'paymentprofile::admin.sales.orders.custom-order.create',
     ])->name('custom.add-order');
-    Route::post('create-custom-order',[ordersController::class,'create_custom_order'])->name('create.custom.add-order');
+    Route::post('create-custom-order', [ordersController::class, 'create_custom_order'])->name('create.custom.add-order');
 
 
 
     Route::get('customers/inquery', [paymentProfileController::class, 'displayInquerys'])->defaults('_config', [
         'view' => 'paymentprofile::admin.sales.customersInquery.index',
     ])->name('admin.sales.customersInquery.displayInquerys');
-    
+
     Route::get('customers/inquery/view/{id}', [paymentProfileController::class, 'viewInquery'])->name('admin.sales.customersInquery.viewInquery');
-    
+
     Route::post('customers/inquery/delete/{id}', [paymentProfileController::class, 'destroyInquery'])->name('admin.sales.customersInquery.destroyInquery');
-    
-    
+
+
     Route::get('customers/inquery/downloadfile/{file}', [paymentProfileController::class, 'downloadfile'])->name('admin.sales.customersInquery.downloadfile');
 
 });

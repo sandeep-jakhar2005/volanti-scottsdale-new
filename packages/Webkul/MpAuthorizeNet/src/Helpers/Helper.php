@@ -459,7 +459,7 @@ class Helper
             // $request->setRefId($this->refId);
             // $request->setTransactionRequest($transactionRequestType);
             // $controller = new AnetController\CreateTransactionController($request);
-            // $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::SANDBOX);
+            // $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION);
 
             $profileToCharge = new AnetAPI\CustomerProfilePaymentType();
             $profileToCharge->setCustomerProfileId($decodeUpdatedToken->customerResponse->customerProfileId);
@@ -479,9 +479,32 @@ class Helper
             $controller = new AnetController\CreateTransactionController($request);
             $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION);
 
-            Log::info('Response123:', ['response' => json_encode($response)]);
+            Log::info('Request:', ['response' => json_encode($response)]);
             $transactionResponse = $response->getTransactionResponse();
 
+            if ($transactionResponse && $transactionResponse->getErrors()) {
+
+                $errorText = $transactionResponse->getErrors()[0]->getErrorText();
+                session()->flash('warning', $errorText);
+
+                Log::error('Authorize.net Declined: ' . $errorText);
+
+                if (isset($order)) {
+                    $orderData = [
+                        'order_id' => $order['increment_id'],
+                        'status' => $order[' '],
+                        'Name' => (!empty($order['customer_first_name']) && !empty($order['customer_last_name']))
+                            ? $order['customer_first_name'] . ' ' . $order['customer_last_name']
+                            : $order['fbo_full_name'],
+                        'Email' => !empty($order['customer_email']) ? $order['customer_email'] : $order['fbo_email_address'],
+                        'Mail_Heading' => "Payment Declined",
+                        'Mail_Subject' => "Payment Failed Notification",
+                        'error_message' => $errorText
+                    ];
+
+                    SendOrderFailedEmail::dispatch($orderData);
+                }
+            }
             if ($transactionResponse != null && $transactionResponse->getMessages() != null) {
                 $transactionId = $transactionResponse->getTransId();
                 $this->orderTransactionRepository->create([
@@ -604,7 +627,7 @@ class Helper
 
             // // Create the controller and get the response
             // $controller = new AnetController\CreateTransactionController($request);
-            // $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::SANDBOX);
+            // $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION);
 
             // return $response;
             $order_id = request()->input('order_id');
@@ -690,36 +713,34 @@ class Helper
             $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION);
 
             log::info('response',['response'=>$response]);
-            $responseArray = json_decode(json_encode($response), true);
-            $messages = $responseArray['messages'] ?? [];
-            if (
-                isset($messages['resultCode']) &&
-                $messages['resultCode'] === 'Error'
-            ) {
-                $errorMessage = $messages['message'][0]['text'] ?? 'Unknown error';
-                log::error('Authorize.net error: ' . $errorMessage);
-
-                if(isset($order)){
-                $orderData = [
-                    'order_id' => $order['increment_id'],
-                    'status' => $order['status'],
-                    'Name' => (!empty($order['customer_first_name']) && !empty($order['customer_last_name']))
-                    ? $order['customer_first_name'] . ' ' . $order['customer_last_name']
-                    : $order['fbo_full_name'],
-                    'Email' => !empty($order['customer_email']) ? $order['customer_email'] : $order['fbo_email_address'],
-                    'Mail_Heading' => "Payment Processing Failure",
-                    'Mail_Subject' => "Payment Failed Notification",
-                    'error_message' => $errorMessage,
-                ];
-                // Dispatch the job to send email
-                SendOrderFailedEmail::dispatch($orderData);
-            }
-        }
 
             // Log::info('Response123:', ['response' => json_encode($response)]);
             $transactionResponse = $response->getTransactionResponse();
 
             log::info('transactionResponse',['transactionResponse'=>$transactionResponse]);
+            if ($transactionResponse && $transactionResponse->getErrors()) {
+
+                $errorText = $transactionResponse->getErrors()[0]->getErrorText();
+                session()->flash('warning', $errorText);
+
+                Log::error('Authorize.net Declined: ' . $errorText);
+
+                if (isset($order)) {
+                    $orderData = [
+                        'order_id' => $order['increment_id'],
+                        'status' => $order[' '],
+                        'Name' => (!empty($order['customer_first_name']) && !empty($order['customer_last_name']))
+                            ? $order['customer_first_name'] . ' ' . $order['customer_last_name']
+                            : $order['fbo_full_name'],
+                        'Email' => !empty($order['customer_email']) ? $order['customer_email'] : $order['fbo_email_address'],
+                        'Mail_Heading' => "Payment Declined",
+                        'Mail_Subject' => "Payment Failed Notification",
+                        'error_message' => $errorText
+                    ];
+
+                    SendOrderFailedEmail::dispatch($orderData);
+                }
+            }
 
             if ($transactionResponse != null && $transactionResponse->getMessages() != null) {
                 $transactionId = $transactionResponse->getTransId();
@@ -802,9 +823,12 @@ class Helper
 
     public function deleteCart()
     {
-        $this->mpauthorizenetcartRepository->deleteWhere([
-            'cart_id' => \Cart::getCart()->id
-        ]);
+        $cart = Cart::getCart();
+        if ($cart) {
+            $this->mpauthorizenetcartRepository->deleteWhere([
+                'cart_id' => \Cart::getCart()->id
+            ]);
+        }
     }
 
     // function chargeCustomerProfile($profileid, $paymentprofileid, $amount)
@@ -825,7 +849,7 @@ class Helper
     //     $request->setRefId($this->refId);
     //     $request->setTransactionRequest($transactionRequestType);
     //     $controller = new AnetController\CreateTransactionController($request);
-    //     $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::SANDBOX);
+    //     $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION);
 
     //     return $response;
     // }

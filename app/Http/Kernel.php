@@ -21,7 +21,6 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Webkul\Core\Http\Middleware\SecureHeaders::class,
-        
     ];
 
     /**
@@ -39,14 +38,16 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             // sandeep || add CheckSessionExpired
             \App\Http\Middleware\CheckSessionExpired::class,
-            //\Spatie\ResponseCache\Middlewares\CacheResponse::class,
         ],
 
         'api' => [
-//            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            //\Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+        'GetResponsecache' => [
+            \Spatie\ResponseCache\Middlewares\CacheResponse::class,
+        ]
     ];
 
     /**
@@ -67,7 +68,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'cart.merger' => \Webkul\Checkout\Http\Middleware\CartMerger::class,
         'check.order.assignment' => \App\Http\Middleware\checkDeliveryOrderAssign::class,
+        // Shyam added this for respose cache   
         'doNotCacheResponse' => \Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class,
-        'cacheResponse' => \Spatie\ResponseCache\Middlewares\CacheResponse::class,
     ];
 }

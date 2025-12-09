@@ -3,6 +3,11 @@
 @section('page_title')
     {{ __('contact_lang::app.shop.title') }}
 @endsection
+@section('seo')
+<link rel="canonical" href="{{ url()->current() }}" />
+<meta name="title" content="Contact Us | Volanti Jet Catering" />
+<meta name="description" content="Get in touch with Volanti Jet Catering for inquiries, orders" />
+@stop
 
 @section('seo')
 <link rel="canonical" href="{{ url()->current() }}" />

@@ -41,7 +41,7 @@ class CateringPackageController extends Controller
         $this->_config = request('_config');
     }
 
-    
+
     /**
      * Display a listing of the resource.
      *  
@@ -52,6 +52,15 @@ class CateringPackageController extends Controller
     public function index(Request $request)
     {
 
+        if ($request->ajax() && $request->type === 'load_all_airports') {
+            
+            $addresses = DB::table('delivery_location_airports')
+                ->where('active', '1')
+                ->get();
+
+            return response()->json($addresses);
+        }
+
         if ($request->ajax() && $request->type === 'address_search') {
 
             // dd($request);
@@ -60,12 +69,12 @@ class CateringPackageController extends Controller
             // $addresses = DB::table('delivery_location_airports')->where('active','1')->where('name', 'like', '%' . $request->name . '%')->orWhere('address', 'like', '%' . $request->name . '%')->get();
 
             $addresses = DB::table('delivery_location_airports')
-            ->where('active', '1')
-            ->where(function ($query) use ($request) {
-                $query->where('name', 'like', '%' . $request->name . '%')
-                    ->orWhere('address', 'like', '%' . $request->name . '%');
-            })
-            ->get();
+                ->where('active', '1')
+                ->where(function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->name . '%')
+                        ->orWhere('address', 'like', '%' . $request->name . '%');
+                })
+                ->get();
 
             //     $addresses =  DB::table('delivery_location_airports')
             // ->select('*')
@@ -84,7 +93,7 @@ class CateringPackageController extends Controller
                 }
                 $output .= '</ul>';
             } else {
-              // sandeep add ul tag
+                // sandeep add ul tag
                 $output .= '<ul class="list-group" style="height:65px; overflow:hidden">';
                 $output .= '<li class="list-group-item font-weight-bolder m-auto"> No any delivery location found <li>';
                 $output .= '</ul>';
@@ -149,7 +158,7 @@ class CateringPackageController extends Controller
                                     </div>
                                 </div>
                             </div>";
-            } 
+            }
 
             return response()->json(['options' => $output]);
         }
@@ -162,14 +171,14 @@ class CateringPackageController extends Controller
     public function create(Request $request)
     {
 
-           // sandeep  update defualt address in addresses table
-          if ($request->has('type') && $request->type == 'Update_Fbo_Billing') {
+        // sandeep  update defualt address in addresses table
+        if ($request->has('type') && $request->type == 'Update_Fbo_Billing') {
             $customer_last_address = request()->input('addresses_id');
             // $customer_id = request()->input('customer_id');
             DB::table('addresses')
-            ->where('customer_id', auth()->guard('customer')->id())
-            ->update(['default_address' => '0']);
-           
+                ->where('customer_id', auth()->guard('customer')->id())
+                ->update(['default_address' => '0']);
+
             DB::table('addresses')
                 ->where('id', $customer_last_address)
                 ->update(
@@ -279,15 +288,15 @@ class CateringPackageController extends Controller
             //     session(['token' => $customer_token]);
             // }
 
-        //   sandeep add code update latest fbo details
+            //   sandeep add code update latest fbo details
             if (Auth::check() === true) {
                 $customer_id = DB::table('fbo_details')->pluck('customer_id')->toArray();
-                
+
                 $latestRecord = DB::table('fbo_details')
                     ->where('customer_id', auth()->user()->id)
                     ->orderBy('id', 'desc')
                     ->first();
-            
+
                 if ($latestRecord) {
                     DB::table('fbo_details')
                         ->where('id', $latestRecord->id)
@@ -309,7 +318,7 @@ class CateringPackageController extends Controller
                     ->where('customer_token', $customer_token)
                     ->orderBy('id', 'desc')
                     ->first();
-            
+
                 if ($latestRecord) {
                     DB::table('fbo_details')
                         ->where('id', $latestRecord->id)
@@ -339,13 +348,13 @@ class CateringPackageController extends Controller
         if ($request->islogin === '1') {
 
             $customer = auth()->guard('customer')->user();
-     
+
 
             // $airport_data = Db::table('delivery_location_airports')->where('id',$request->airport_id)->first();
 
             // $country_states = Db::table('country_states')->where('id', $airport_data->state)->first();
             $addresses = Db::table('addresses')->pluck('customer_id')->toArray();
-         
+
             if (!in_array($customer->id, $addresses)) {
 
                 $addressId = DB::table('addresses')->insertGetId([
@@ -364,16 +373,14 @@ class CateringPackageController extends Controller
                 ]);
 
                 $airportData = DB::table('addresses')
-                ->where('id', $addressId)
-                ->first();
-                
-            return response()->json([
-                'status' => 'true',
-                'message' => 'successfully added data...!',
-                'data' => $airportData
-            ]);
+                    ->where('id', $addressId)
+                    ->first();
 
-            
+                return response()->json([
+                    'status' => 'true',
+                    'message' => 'successfully added data...!',
+                    'data' => $airportData
+                ]);
             } else {
 
                 if (isset($request->update_airport_id) && $request->update_airport_id != 0) {
@@ -416,8 +423,8 @@ class CateringPackageController extends Controller
                     // dd($customer_last_address); 
                     // sandeep add code
                     DB::table('addresses')
-                    ->where('customer_id', $customer->id)
-                    ->update(['default_address' => '0']);
+                        ->where('customer_id', $customer->id)
+                        ->update(['default_address' => '0']);
 
                     DB::table('addresses')
                         ->where('id', $customer_last_address)
@@ -502,7 +509,7 @@ class CateringPackageController extends Controller
                             'customer_token' => $request->customer_token,
                             'airport_fbo_id' => $request->input('selected_fbo_id'),
                             'airport_name' => $airport_data->name,
-                            
+
                         ]);
                     echo json_encode(['status' => 'successfully guest customer airport updated2']);
                 } else {
@@ -541,9 +548,7 @@ class CateringPackageController extends Controller
                         'message' => 'successfully guest customer airport updated3',
                         'data' => $airportData
                     ]);
-
                 }
-
             }
         }
     }
@@ -584,10 +589,10 @@ class CateringPackageController extends Controller
             // dd($customerToken);
             $query->where('customer_token', $customerToken);
         }
-        
+
         $addressId = request()->input('address_Id');
-        if($addressId){
-            $query->where('id',$addressId);
+        if ($addressId) {
+            $query->where('id', $addressId);
         }
         // Ensure we update only the latest record based on created_at timestamp
         $query->latest('created_at')->first();
@@ -600,6 +605,5 @@ class CateringPackageController extends Controller
         session()->flash('success', trans('Airport Fbo Details added successfully'));
 
         return response()->json(['response' => true, 'data' => $insertedRecord]);
-
     }
 }

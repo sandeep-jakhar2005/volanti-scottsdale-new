@@ -1,3 +1,4 @@
+
 @php
     // sandeep || get previous url 
        $previousUrl = url()->previous();
@@ -415,7 +416,7 @@ console.log('recaptchaRegsiterResponse',recaptchaRegsiterResponse);
 
         // Patterns
         const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        const phonePattern = /^\(\d{3}\) \d{3}-\d{4}$/;
+        const phonePattern = /^\(\d{3}\) \d{3}-\d{3,4}( \d{1,4})?$/;
         let phoneDigits = phoneNumber.replace(/\D/g, '').length;
         
 
@@ -447,9 +448,9 @@ console.log('recaptchaRegsiterResponse',recaptchaRegsiterResponse);
         } else {
             if (!fname) { $('.fname-error').text('First name is required.').fadeIn();if (!firstErrorElement) firstErrorElement = $('.fname-error'); hasError = true; }
                     if (phoneDigits < 10 || !phoneNumber || !phonePattern.test(phoneNumber)) { 
-                        $('.phone-error').text(phoneNumber ? 'Please enter a valid 10-14 digit phone number.' : 'Phone number is required.').fadeIn(); 
+                        $('.phone-error').text(phoneNumber ? 'Please enter a valid 9-14 digit phone number.' : 'Phone number is required.').fadeIn(); 
  if (!firstErrorElement) firstErrorElement = $('.phone-error');                       
- hasError = true; 
+ hasError = true;
                     }
                     if (!signemail || !emailPattern.test(signemail)) { 
                         $('.email-error1').text(email ? 'Please enter a valid email address.' : 'Email is required.').fadeIn(); 
@@ -550,16 +551,18 @@ console.log('empty captcah4');
  //   }
 
     if (field.hasClass('phone-field')) {
-        if (value.length === 0) {
-            field.siblings('.phone-error').text('Phone number is required.').fadeIn();
-            isValid = false;
-        } else if (value.replace(/\D/g, '').length < 10 || !/^\(\d{3}\) \d{3}-\d{4}$/.test(value)) {
-            field.siblings('.phone-error').text('Please enter a valid 10-14 digit phone number.').fadeIn();
-            isValid = false;
-        } else {
-            field.siblings('.phone-error').fadeOut();
-        }
+    const digitCount = value.replace(/\D/g, '').length;
+
+    if (value.length === 0) {
+        field.siblings('.phone-error').text('Phone number is required.').fadeIn();
+        isValid = false;
+    } else if (digitCount < 10 || digitCount > 14) {
+        field.siblings('.phone-error').text('Please enter a valid 10–14 digit phone number.').fadeIn();
+        isValid = false;
+    } else {
+        field.siblings('.phone-error').fadeOut();
     }
+}
 
     if (field.hasClass('email-field1')) {
 

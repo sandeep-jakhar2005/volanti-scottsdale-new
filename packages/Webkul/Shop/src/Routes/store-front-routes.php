@@ -3,6 +3,7 @@
 use ACME\CateringPackage\Http\Controllers\Shop\SignUpController;
 use ACME\paymentProfile\Http\Controllers\Shop\paymentProfileController;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Webkul\CMS\Http\Controllers\Shop\PagePresenterController;
@@ -50,8 +51,31 @@ Route::group(['middleware' => ['locale', 'theme', 'currency']], function () {
      */
     Route::get('/', [HomeController::class, 'index'])->defaults('_config', [
         'view' => 'shop::home.index',
-    ])->name('shop.home.index');
+    ])->middleware('doNotCacheResponse')->name('shop.home.index');
 
+// Route::get('/dynamic-home-data', [HomeController::class, 'getDynamicHomeData'])
+//     ->middleware('doNotCacheResponse')
+//     ->name('dynamic.home.data');
+
+Route::get('/ajax/get-user-address', function () {
+
+    $customer = auth()->guard('customer')->user();    
+    $guestToken = session()->token();
+    
+    if ($customer) {
+        $address = DB::table('addresses')
+            ->where('address_type','customer')
+            ->where('customer_id',$customer->id)
+            ->orderBy('created_at', 'desc')
+            ->first();
+    } else {
+        $address = DB::table('addresses')
+            ->where('customer_token',$guestToken)
+            ->first();
+    }
+
+    return response()->json($address);
+})->name('ajax.get-user-address')->middleware('doNotCacheResponse');
 
     // sandeep add logs page route
     Route::get('/logs', [HomeController::class, 'logs'])->name('error.logs');

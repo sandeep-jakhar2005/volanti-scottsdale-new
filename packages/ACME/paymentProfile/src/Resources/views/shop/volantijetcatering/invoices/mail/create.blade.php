@@ -178,7 +178,7 @@
                 Order No: <strong>{{ $order->increment_id }}</strong>
             </p>
 
-            @if (!(auth('admin')->check() && auth('admin')->user()->role_id === 1))
+            @if (!(auth('admin')->check() && auth('admin')->user()->role_id === 1) && $order->status !== 'paid')
     <p style="display: flex; gap:10px;align-items:center;">
             <a href="{{ route('order-invoice-view', ['orderid' => $order->id, 'customerid' => $order->customer_id]) }}"
                 style="
@@ -396,7 +396,7 @@
         </td>
     </tr>
 
-    <table style="margin-top: 15px;margin-bottom: 15px;width:100%;" class="table-width">
+    <table style="margin: auto;width:100%;max-width:90%" class="table-width">
         <tbody class="w-100">
             <tr style="vertical-align:text-top;display:flex;vertical-align:text-top;justify-content: space-around; line-break:anywhere">
                 <td style="width: 44%;">
@@ -493,6 +493,14 @@
                     </p>
                 </td>
             </tr>
+                        <tr>
+            <td style="padding: 20px; text-align: left;">
+            <a href="{{ isset($pdfUrl) ? $pdfUrl : '#' }}" 
+            target="_blank">
+                Click here to view/download Invoice
+            </a>
+            </td>
+</tr>
         </tbody>
     </table>
 </table>

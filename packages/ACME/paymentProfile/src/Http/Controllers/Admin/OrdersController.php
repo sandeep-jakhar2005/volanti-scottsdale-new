@@ -10,6 +10,7 @@ use ACME\paymentProfile\Mail\OrderCancel;
 use ACME\paymentProfile\Mail\OrderReject;
 // use ACME\paymentProfile\Mail\OrderNote;
 use ACME\paymentProfile\Models\OrderNotes;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -1342,31 +1343,91 @@ class OrdersController extends Controller
     }
 
 
-    public function update_billing_address(request $request)
-    {
-        DB::table('addresses')
-            ->where('order_id', $request->order_id)
-            ->where('address_type', 'order_billing')
-            ->update([
-                'address1' => $request->Address,
-                'postcode' => $request->postCode,
-                // 'city' => $request->Select_State,
-                'address2' => $request->Address2,
-                'city' => $request->city,
-                'phone' => $request->mobile,
-                'vat_id' => $request->vat,
-                'state' => $request->Select_State,
+    // public function update_billing_address(request $request)
+    // {
 
-            ]);
+    //     dd($request->all());
+    //     DB::table('addresses')
+    //         ->where('order_id', $request->order_id)
+    //         ->where('address_type', 'order_billing')
+    //         ->update([
+    //             'address1' => $request->Address,
+    //             'postcode' => $request->postCode,
+    //             // 'city' => $request->Select_State,
+    //             'address2' => $request->Address2,
+    //             'city' => $request->city,
+    //             'phone' => $request->mobile,
+    //             'vat_id' => $request->vat,
+    //             'state' => $request->Select_State,
+    //             'delivery_date' => $request->delivery_date,
+    //             'delivery_time' => $request->delivery_time,
 
-        // sandeep update quickbook invoice
-        $quickbookInvoiceId = DB::table('orders')->where('id', $request->order_id)->select('quickbook_invoice_id')->first();
-        if ($quickbookInvoiceId->quickbook_invoice_id) {
-            ProcessQuickBooksInvoice::dispatch($request->order_id);
+    //         ]);
+
+    //     // sandeep update quickbook invoice
+    //     $quickbookInvoiceId = DB::table('orders')->where('id', $request->order_id)->select('quickbook_invoice_id')->first();
+    //     if ($quickbookInvoiceId->quickbook_invoice_id) {
+    //         ProcessQuickBooksInvoice::dispatch($request->order_id);
+    //     }
+
+    //     return redirect()->back();
+    // }
+
+public function update_billing_address(Request $request)
+{
+    $updateData = [
+        'address1'       => $request->Address,
+        'address2'       => $request->Address2,
+        'delivery_date'  => $request->delivery_date,  // always included
+        'delivery_time'  => $request->delivery_time,  // always included
+    ];
+
+    // ---- Date parsing ----
+    if ($request->filled('delivery_date')) {
+
+        $input = trim($request->delivery_date);
+
+        if (strtolower($input) === 'today') {
+            $finalDate = Carbon::today();
+
+        } elseif (strtolower($input) === 'tomorrow') {
+            $finalDate = Carbon::tomorrow();
+
+        } else {
+            $clean = preg_replace('/^[A-Za-z]+\s*/', '', $input);
+            $clean = str_replace('-', '/', $clean);
+            [$month, $day] = explode('/', $clean);
+
+            $currentYear = date('Y');
+            $todayMonth = date('n');
+            $year = ($month < $todayMonth) ? $currentYear + 1 : $currentYear;
+
+            $finalDate = Carbon::create($year, $month, $day);
         }
 
-        return redirect()->back();
+        $updateData['delivery_date'] = $finalDate->format('Y-m-d');
     }
+
+    // ---- UPDATE ADDRESSES TABLE ----
+    DB::table('addresses')
+        ->where('order_id', $request->order_id)
+        ->where('address_type', 'order_billing')
+        ->update($updateData);
+
+    // ---- UPDATE ORDERS TABLE ----
+    DB::table('orders')
+        ->where('id', $request->order_id)
+        ->update([
+            'delivery_date' => $updateData['delivery_date'],
+            'delivery_time' => $updateData['delivery_time'],
+        ]);
+
+    return back()->with('success', 'Billing Address Updated');
+}
+
+
+
+
 
     public function update_purchase_no(request $request)
     {
@@ -1378,43 +1439,84 @@ class OrdersController extends Controller
             ]);
         return redirect()->back();
     }
-    public function add_handler_agent(request $request)
-    {
-        // dd($request);
-        $validate = request()->validate([
-            'mobile' => 'required|min:10|max:14',
+    // public function add_handler_agent(request $request)
+    // {
+    //     dd($request->all());
+    //     $validate = request()->validate([
+    //         'mobile' => 'required|min:10|max:14',
+    //     ]);
+    //     $agent = agentHandler::where('order_id', $request->order_id)->first();
+    //     // dd($request);
+    //     if ($agent) {
+
+    //         $agent->update([
+    //             // Update fields as needed
+    //             'Name' => $request->name,
+    //             'PPR_Permit' => $request->ppr_permit,
+    //             'Handling_charges' => $request->handling_charges,
+    //             'Mobile' => $validate['mobile'],
+    //         ]);
+    //     } else {
+
+    //         agentHandler::create([
+    //             'Name' => $request->name,
+    //             'PPR_Permit' => $request->ppr_permit,
+    //             'Handling_charges' => $request->handling_charges,
+    //             'order_id' => $request->order_id,
+    //             'Mobile' => $validate['mobile'],
+    //             // Add more fields as needed
+    //         ]);
+    //     }
+
+    //     // sandeep update quickbook invoice
+    //     $quickbookInvoiceId = DB::table('orders')->where('id', $request->order_id)->select('quickbook_invoice_id')->first();
+    //     if ($quickbookInvoiceId->quickbook_invoice_id) {
+    //         ProcessQuickBooksInvoice::dispatch($request->order_id);
+    //     }
+
+    //     return redirect()->back();
+    // }
+
+    public function add_handler_agent(Request $request)
+{
+    $validate = $request->validate([
+        'mobile' => 'required|min:10|max:20',
+    ]);
+
+    // dd($request->all());
+    // // convert mobile to digits only
+    // $mobile = preg_replace('/\D/', '', $request->mobile); // remove non-digits
+
+    // // avoid leading zero so MySQL does not convert to 0
+    // $mobile = ltrim($mobile, '0');
+
+    $agent = agentHandler::where('order_id', $request->order_id)->first();
+
+    if ($agent) {
+        $agent->update([
+            'Name'              => $request->name,
+            'PPR_Permit'        => $request->ppr_permit,
+            'Handling_charges'  => $request->handling_charges,
+            'Mobile'            => $validate['mobile'],
         ]);
-        $agent = agentHandler::where('order_id', $request->order_id)->first();
-        // dd($request);
-        if ($agent) {
-
-            $agent->update([
-                // Update fields as needed
-                'Name' => $request->name,
-                'PPR_Permit' => $request->ppr_permit,
-                'Handling_charges' => $request->handling_charges,
-                'Mobile' => $validate['mobile'],
-            ]);
-        } else {
-
-            agentHandler::create([
-                'Name' => $request->name,
-                'PPR_Permit' => $request->ppr_permit,
-                'Handling_charges' => $request->handling_charges,
-                'order_id' => $request->order_id,
-                'Mobile' => $request->mobile,
-                // Add more fields as needed
-            ]);
-        }
-
-        // sandeep update quickbook invoice
-        $quickbookInvoiceId = DB::table('orders')->where('id', $request->order_id)->select('quickbook_invoice_id')->first();
-        if ($quickbookInvoiceId->quickbook_invoice_id) {
-            ProcessQuickBooksInvoice::dispatch($request->order_id);
-        }
-
-        return redirect()->back();
+    } else {
+        agentHandler::create([
+            'Name'              => $request->name,
+            'PPR_Permit'        => $request->ppr_permit,
+            'Handling_charges'  => $request->handling_charges,
+            'order_id'          => $request->order_id,
+            'Mobile'            => $validate['mobile'],
+        ]);
     }
+
+    $quickbookInvoiceId = DB::table('orders')->where('id', $request->order_id)->select('quickbook_invoice_id')->first();
+    if ($quickbookInvoiceId->quickbook_invoice_id) {
+        ProcessQuickBooksInvoice::dispatch($request->order_id);
+    }
+
+    return redirect()->back();
+}
+
     public function package_slip($id)
     {
         $order = $this->orderRepository->findOrFail($id);

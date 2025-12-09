@@ -395,7 +395,6 @@ class InvoicesController extends Controller
     {
 
         try {
-            log::info('creaet quickbook invoice2332');
             $configData = $this->getQuickBooksConfig();
             $order = Order::where('id', $orderId)->first();
 
@@ -403,11 +402,9 @@ class InvoicesController extends Controller
                 
                 $tokenData = DB::table('quickbook_tokens')->where('client_id', $configData['client_id'])->first();
                 if (!$tokenData) {
-                    log::info('sandeep connect funtion');
                     return  $this->connect();
                 }
 
-                log::info('creaet invoice');
                 $accessToken = $tokenData->access_token;
                 $expiresAt = strtotime($tokenData->access_token_expires_at);
                 $refreshToken = $tokenData->refresh_token;
@@ -415,7 +412,6 @@ class InvoicesController extends Controller
     
                 // Check if refresh token is expired
                 if (empty($refreshToken) || (time() >= $refreshTokenExpiresAt)) {
-                    log::info('connnect funtion');
                     return  $this->connect();
                 }
 
@@ -424,7 +420,6 @@ class InvoicesController extends Controller
                     $tokens = $this->refreshAccessToken($configData['client_id'], $configData['client_secret'], $refreshToken,$configData['company_id']);
                     if ($tokens) {
                         $accessToken = $tokens['access_token'];
-                        log::info('accessToken');
                     } else {
                         return response()->json(['error' => 'Failed to refresh access token'], 401);
                     }
@@ -434,7 +429,6 @@ class InvoicesController extends Controller
                 $customerDetail = DB::table('customers')->find($order->customer_id);
                 $agent = agentHandler::where('order_id', $orderId)->first();
 
-                log::info('customer_id',['customer_id'=>$customerDetail]);
                 if (isset($agent->Handling_charges) && is_numeric($agent->Handling_charges)) {
                     $Handling_charges = $agent->Handling_charges;
                 }
@@ -447,10 +441,7 @@ class InvoicesController extends Controller
                     $quickbookCustomerId = $customerDetail->quickbook_customer_id;
                 }
 
-                // log::info('creaet customer');
-                //   $customerResponse = $this->createCustomer($customerDetail, $configData['company_id'], $accessToken,$orderId);
-                //     $quickbookCustomerId = $customerResponse['customerId'];
-                // log::info('create customer2');
+
 
                 $lines = [];
                 $itemsData = $order->items;
@@ -481,7 +472,7 @@ class InvoicesController extends Controller
                 $query = "SELECT * FROM Item WHERE Name = '{$itemName}'";
                 $existingItemResponse = Http::withToken($accessToken)
                     ->withHeaders(['Content-Type' => 'text/plain'])
-                    ->get("https://sandbox-quickbooks.api.intuit.com/v3/company/{$configData['company_id']}/query?query=" . urlencode($query) . "&minorversion=73");
+                    ->get("https://quickbooks.api.intuit.com/v3/company/{$configData['company_id']}/query?query=" . urlencode($query) . "&minorversion=73");
             
                 if (!$existingItemResponse->successful()) {
                     $responseBody = $existingItemResponse->body();
@@ -517,10 +508,9 @@ class InvoicesController extends Controller
                         ];
                         $createItemResponse = Http::withToken($accessToken)
                             ->withHeaders(['Content-Type' => 'application/json'])
-                            ->post("https://sandbox-quickbooks.api.intuit.com/v3/company/{$configData['company_id']}/item", $newItemData);
+                            ->post("https://quickbooks.api.intuit.com/v3/company/{$configData['company_id']}/item", $newItemData);
 
                             $responseData = json_decode(json_encode(simplexml_load_string($createItemResponse->body())), true);
-                            log::info($responseData);
                             $existingItems = $responseData['Item'] ?? [];
                         if ($createItemResponse->successful()) {
                             $lines[] = [
@@ -548,7 +538,6 @@ class InvoicesController extends Controller
             }
 
 
-            log::info('create invoice1');
 
             $invoiceData = [
                 "Line" => $lines, 
@@ -605,7 +594,6 @@ class InvoicesController extends Controller
              //  store inquiery id to orders table
             if ($result) {
                 $data = json_decode($result->getContent(), true);
-                log::info($data);
                 $id = $data['invoice']['Id'];
                 $invoiceLink = $data['invoice']['InvoiceLink'];
             
@@ -639,15 +627,15 @@ class InvoicesController extends Controller
     // sandeep || function to create invoice request
             private function createInvoiceRequest($companyId, $accessToken, $invoiceData,$orderId)
             {
-                log::info('creaet invoice435435');
             try{
 
                 $orders = DB::table('orders')->where('id',$orderId)->first();
+                
                 $invoiceId = $orders->quickbook_invoice_id;
                 if (!empty($invoiceId)) {
                     $existingInvoiceResponse = Http::withToken($accessToken)
                         ->withHeaders(['Content-Type' => 'application/json'])
-                        ->get("https://sandbox-quickbooks.api.intuit.com/v3/company/{$companyId}/invoice/{$invoiceId}?minorversion=73");
+                        ->get("https://quickbooks.api.intuit.com/v3/company/{$companyId}/invoice/{$invoiceId}?minorversion=73");
     
                 $existingInvoice = json_decode(json_encode(simplexml_load_string($existingInvoiceResponse->body())), true);
 
@@ -659,7 +647,7 @@ class InvoicesController extends Controller
                 
                 $updateResponse = Http::withToken($accessToken)
                     ->withHeaders(['Content-Type' => 'application/json'])
-                    ->post("https://sandbox-quickbooks.api.intuit.com/v3/company/{$companyId}/invoice?minorversion=73", $invoiceData);
+                    ->post("https://quickbooks.api.intuit.com/v3/company/{$companyId}/invoice?minorversion=73", $invoiceData);
     
                     $updatedInvoice = json_decode(json_encode(simplexml_load_string($updateResponse->body())), true);
 
@@ -673,7 +661,7 @@ class InvoicesController extends Controller
                 }else{
                     // not found invoice in quickbooks then create new
                         $response = Http::withToken($accessToken)
-                        ->post("https://sandbox-quickbooks.api.intuit.com/v3/company/$companyId/invoice?minorversion=73", $invoiceData);
+                        ->post("https://quickbooks.api.intuit.com/v3/company/$companyId/invoice?minorversion=73", $invoiceData);
 
                         if ($response->successful()) {
 
@@ -687,9 +675,11 @@ class InvoicesController extends Controller
                 }
 
                 }else{
+                
+
                         //    not found in database table then create new
                             $response = Http::withToken($accessToken)
-                                        ->post("https://sandbox-quickbooks.api.intuit.com/v3/company/$companyId/invoice?minorversion=73", $invoiceData);
+                                        ->post("https://quickbooks.api.intuit.com/v3/company/$companyId/invoice?minorversion=73", $invoiceData);
     
                             if ($response->successful()) {
                                 $decodedResponse = json_decode(json_encode(simplexml_load_string($response->body())), true);
@@ -729,7 +719,6 @@ class InvoicesController extends Controller
                     ]);
     
                     $data = json_decode($response->getBody(), true);
-                    log::info('data',['data'=>$data]);
 
                     DB::table('quickbook_tokens')->updateOrInsert(
                         ['client_id' => $client_id],
@@ -791,7 +780,7 @@ class InvoicesController extends Controller
                 // Query to check if the customer already exists by email
                     $response = Http::withToken($accessToken)
                         ->withHeaders(['Content-Type' => 'text/plain'])
-                        ->get("https://sandbox-quickbooks.api.intuit.com/v3/company/{$companyId}/query", [
+                        ->get("https://quickbooks.api.intuit.com/v3/company/{$companyId}/query", [
                             'query' => $query,
                         ]);
     log::info($response);
@@ -820,7 +809,7 @@ class InvoicesController extends Controller
                         // Customer does not exist, so we create a new one
                         $createResponse = Http::withToken($accessToken)
                             ->withHeaders(['Content-Type' => 'application/json'])
-                            ->post("https://sandbox-quickbooks.api.intuit.com/v3/company/{$companyId}/customer", $customerData);
+                            ->post("https://quickbooks.api.intuit.com/v3/company/{$companyId}/customer", $customerData);
                         
                         if ($createResponse->successful()) {
                             $createResponseData = json_decode(json_encode(simplexml_load_string($createResponse->body())), true);

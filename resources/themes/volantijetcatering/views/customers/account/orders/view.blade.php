@@ -641,7 +641,7 @@ $today = new DateTime('today');
             <div class="payment_button pt-3">
                 <form action="{{ route('order-invoice-view-detail', ['orderid'=> $order->id, 'customerid'=> $order->customer_id]) }}" method="POST">
                     @csrf
-                    <input type="hidden" name="email" value="{{ $order->customer_email }}">
+                    <input type="hidden" name="email" value="{{ $order->customer_email ?? $order->fbo_email_address }}">
                     <input type="hidden" name="tail_number" value="{{ $order->fbo_tail_number }}">
                     <button class="invoice_view_pay_button">Pay Now</button>
                 </form>
